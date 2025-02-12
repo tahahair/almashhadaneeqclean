@@ -446,8 +446,8 @@ console.log(handleClick);
         {/* Quote Section */}
         <div className="mb-10 text-center">
           <div className="relative inline-block">
-            <span className="absolute -left-4 -top-4 text-6xl text-[#0088CC]/20">"</span>
-            <span className="absolute -right-4 -bottom-4 text-6xl text-[#0088CC]/20">"</span>
+            <span className="absolute -left-4 -top-4 text-6xl text-[#0088CC]/20">&quot;</span>
+            <span className="absolute -right-4 -bottom-4 text-6xl text-[#0088CC]/20">&quot;</span>
             <h2 className="text-2xl md:text-3xl font-bold text-[#4B0082] px-6">
               قبل ما نكون إدارة المشهد الأنيق...     </h2>
               <h2 className="text-2xl md:text-3xl font-bold text-[#4B0082] px-6">
@@ -560,7 +560,7 @@ console.log(handleClick);
               "أخيراً ارتحنا من هم التنظيف"
             ].map((quote, index) => (
               <div key={index} className="bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full px-6 py-3">
-                <p className="text-[#4B0082] font-medium">"{quote}"</p>
+                <p className="text-[#4B0082] font-medium">&quot;{quote}&quot;</p>
               </div>
             ))}
           </div>
@@ -910,7 +910,7 @@ console.log(handleClick);
             <div className="p-8 bg-gray-50">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-gray-600 mb-4">شركات التنظيف العادية</h3>
-                <p className="text-xl text-gray-500">"جرب حظك"</p>
+                <p className="text-xl text-gray-500">&quot;جرب حظك&quot;</p>
               </div>
             </div>
             
@@ -918,7 +918,7 @@ console.log(handleClick);
             <div className="p-8 bg-gradient-to-br from-[#0088CC]/10 to-[#4B0082]/10">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text mb-4">نحن نقول لك</h3>
-                <p className="text-2xl font-bold text-[#4B0082]">"نضمن لك النتيجة 100%"</p>
+                <p className="text-2xl font-bold text-[#4B0082]">&quot;نضمن لك النتيجة 100%&quot;</p>
               </div>
             </div>
           </div>
@@ -1010,9 +1010,9 @@ console.log(handleClick);
         {/* Customer Quotes */}
         <div className="bg-blue-50 py-6 px-1 rounded-xl mb-6">
           <div className="text-[100%] text-gray-700 italic text-center">
-            <p className="py-2" >"أخيراً لقينا شركة نعتمد عليها"</p>
-            <p className="py-2">"ما نبي نغير... خلاص ارتحنا معاكم"</p>
-            <p className="py-2">"الفريق صار يعرف بيتنا أحسن مننا"</p>
+            <p className="py-2" >&quot;أخيراً لقينا شركة نعتمد عليها&quot;</p>
+            <p className="py-2">&quot;ما نبي نغير... خلاص ارتحنا معاكم&quot;</p>
+            <p className="py-2">&quot;الفريق صار يعرف بيتنا أحسن مننا&quot;</p>
           </div>
         </div>
 
@@ -1156,8 +1156,8 @@ console.log(handleClick);
        {/* Quote Section */}
        <div className="mb-10 text-center">
          <div className="relative inline-block">
-           <span className="absolute -left-4 -top-4 text-6xl text-[#0088CC]/20">"</span>
-           <span className="absolute -right-4 -bottom-4 text-6xl text-[#0088CC]/20">"</span>
+           <span className="absolute -left-4 -top-4 text-6xl text-[#0088CC]/20">&quot;</span>
+           <span className="absolute -right-4 -bottom-4 text-6xl text-[#0088CC]/20">&quot;</span>
            <h2 className="text-2xl md:text-3xl font-bold text-[#4B0082] px-6">
              Before we were the management of Elegant Scene...
            </h2>
@@ -1233,7 +1233,7 @@ console.log(handleClick);
      {/* Solution Section */}
      <div className="bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-3xl p-6 mb-12">
        <h3 className="text-xl md:text-2xl font-bold text-center text-[#4B0082] mb-6">
-         That's why we changed the equation
+         That&apos;s why we changed the equation
        </h3>
 
        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1271,7 +1271,7 @@ console.log(handleClick);
            "Finally, we're relieved of the burden of cleaning"
          ].map((quote, index) => (
            <div key={index} className="bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full px-6 py-3">
-             <p className="text-[#4B0082] font-medium">"{quote}"</p>
+             <p className="text-[#4B0082] font-medium">&quot;{quote}&quot;</p>
            </div>
          ))}
        </div>
@@ -1283,7 +1283,7 @@ console.log(handleClick);
          <br />
          <span className="text-yellow-600 glow-effect"> The Golden Guarantee </span>
          <br />
-         If you don't like the cleaning, you don't pay anything 💯
+         If you don&apos;t like the cleaning, you don&apos;t pay anything 💯
        </p>
      </div>
 
@@ -1411,7 +1411,7 @@ console.log(handleClick);
              We at the Management of Elegant Scene Cleaning Services...
            </h2>
            <p className="text-xl text-white/90">
-             As fathers and mothers, as men and women in the company's management, we fully understand your needs
+             As fathers and mothers, as men and women in the company&apos;s management, we fully understand your needs
            </p>
          </div>
        </div>
@@ -1618,7 +1618,7 @@ console.log(handleClick);
          <div className="p-8 bg-gray-50">
            <div className="text-center mb-6">
              <h3 className="text-2xl font-bold text-gray-600 mb-4">Regular Cleaning Companies</h3>
-             <p className="text-xl text-gray-500">"Try Your Luck"</p>
+             <p className="text-xl text-gray-500">&apos;Try Your Luck&apos;</p>
            </div>
          </div>
 
@@ -1626,7 +1626,7 @@ console.log(handleClick);
          <div className="p-8 bg-gradient-to-br from-[#0088CC]/10 to-[#4B0082]/10">
            <div className="text-center mb-6">
              <h3 className="text-2xl font-bold bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text mb-4">We Tell You</h3>
-             <p className="text-2xl font-bold text-[#4B0082]">"We Guarantee the Result 100%"</p>
+             <p className="text-2xl font-bold text-[#4B0082]">&apos;We Guarantee the Result 100%&apos;</p>
            </div>
          </div>
        </div>
@@ -1699,7 +1699,7 @@ console.log(handleClick);
         We are confident in our service...
       </p>
       <p className="text-2xl font-bold bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-        To the point of refunding your money if you don't like the result!
+        To the point of refunding your money if you don&apos;t like the result!
       </p>
     </div>
 
@@ -1719,9 +1719,9 @@ console.log(handleClick);
       {/* Customer Quotes */}
       <div className="bg-blue-50 py-6 px-1 rounded-xl mb-6">
         <div className="text-[100%] text-gray-700 italic text-center">
-          <p className="py-2">"Finally, we found a company we can rely on"</p>
-          <p className="py-2">"We don't want to change... we are comfortable with you"</p>
-          <p className="py-2">"The team knows our house better than us"</p>
+          <p className="py-2">&apos;Finally, we found a company we can rely on&apos;</p>
+          <p className="py-2">&apos;We don&apos;t want to change... we are comfortable with you&apos;</p>
+          <p className="py-2">&apos;The team knows our house better than us&apos;</p>
         </div>
       </div>
 
