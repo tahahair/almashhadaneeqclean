@@ -267,8 +267,7 @@ const Svgar: React.FC = () => {
     
   };
    // Save the new state to cookies
-
-
+console.log(handleClick);
   
 
   const handleClickmain: React.MouseEventHandler<HTMLDivElement> = () => {
@@ -307,18 +306,7 @@ const Svgar: React.FC = () => {
     }
    }, [lang]);
 
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const updateMedia = () => {
-      setIsDesktop(window.innerWidth >= 800); // Desktop threshold
-    };
-
-    updateMedia(); // Initial check
-    window.addEventListener('resize', updateMedia); // Listen for changes
-    return () => window.removeEventListener('resize', updateMedia);
-  }, []);
-
+ 
   
   // Render a loading indicator while the page waits for the cookie to load
   if (isLoading) {
