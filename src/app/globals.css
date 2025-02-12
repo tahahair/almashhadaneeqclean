@@ -1,0 +1,429 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+.text-banner {
+  position: absolute; /* Positioned relative to Frame5.svg */
+  top: 17%; /* Position near the bottom of the frame */
+  left: 47%; /* Center horizontally */
+  transform: translate(-50%, -40%); /* Center precisely */
+  font-family: var(--font-almarai), sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  text-align: center;
+  color: #ffffff;
+
+  /* Ensure the text stays on one line */
+  white-space: nowrap; /* Prevent wrapping */
+  
+
+  /* Responsive width */
+  width: calc(100% - 50px); /* Ensure it fits within the frame */
+  max-width: 50000px; /* Limit the max width */
+  
+  /* Responsive font size */
+  font-size: clamp(2px, 3.5vw, 64px); /* Min 12px, preferred 2% of viewport, max 18px */
+ 
+  
+  
+}
+.text-lang {
+  position: absolute; /* Positioned relative to Frame5.svg */
+  top: 45%; /* Position near the bottom of the frame */
+  left: 67%; /* Center horizontally */
+  transform: translate(-50%, -40%); /* Center precisely */
+  font-family: var(--font-almarai), sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  text-align: center;
+  color: hwb(0 0% 100%);
+  
+
+  
+  
+
+  /* Responsive width */
+  width: calc(100% - 50px); /* Ensure it fits within the frame */
+  max-width: 50000px; /* Limit the max width */
+  
+  /* Responsive font size */
+  font-size: clamp(2px, 3.5vw, 64px); /* Min 12px, preferred 2% of viewport, max 18px */
+ 
+  
+  
+}
+.text-lang2 {
+  position: absolute; /* Positioned relative to Frame5.svg */
+  left: 30%; /* Center horizontally */
+  transform: translate(-50%, -10%); /* Center precisely */
+  font-family: var(--font-almarai), sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  
+  color: hwb(0 0% 100%);
+   /* Prevent wrapping */
+ /* Prevent text from wrapping */
+  text-align: right;
+  /* Responsive width */
+  width: calc(100% - 30px); /* Ensure it fits within the frame */
+  max-width: 200%; /* Limit the max width to 100% of the container */
+
+  /* Responsive font size */
+  font-size: clamp(1px, 3.5vw, 64px); /* Min 2px, preferred 3.5% of viewport, max 64px */
+}
+
+
+/* styles/globals.css */
+
+.image-slider-container {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  overflow: hidden;
+}
+
+.image-slider-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-slider-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  cursor: pointer;
+}
+.mirrored-svg svg {
+  transform: scaleY(-1);
+}
+.text-comment {
+
+  font-family: 'Almarai', sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 26px;
+  text-align: center;
+  color: #000000;
+  flex: none;
+  order: 1;
+  line-height: 1.2; 
+  flex-grow: 0;
+  width: calc(100% - 30px); /* Ensure it fits within the frame */
+  max-width: 200%; /* Limit the max width to 100% of the container */
+
+  /* Responsive font size */
+  font-size: clamp(1px, 3.5vw, 64px); /* Min 2px, preferred 3.5% of viewport, max 64px */
+}
+
+.text-star {
+  position: absolute; /* Positioned relative to Frame5.svg */
+  top: 17%; /* Position near the bottom of the frame */
+  left: 40%; /* Center horizontally */
+  transform: translate(-75%, 10%); /* Center precisely */
+  font-family: var(--font-almarai), sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  text-align: center;
+  color: #000000;
+
+  /* Ensure the text stays on one line */
+  white-space: nowrap; /* Prevent wrapping */
+  
+
+  /* Responsive width */
+  width: calc(100% - 50px); /* Ensure it fits within the frame */
+  max-width: 50000px; /* Limit the max width */
+  
+  /* Responsive font size */
+  font-size: clamp(2px, 3.5vw, 64px); /* Min 12px, preferred 2% of viewport, max 18px */
+ 
+  
+  
+}
+
+.container-0-1-0 {
+  position: relative;
+  width: 360px;
+  height: 260px;
+  justify-content: start;
+  align-items: end;
+  gap: 4px;
+  display: flex;
+  flex-direction: column;
+}
+.container-1-2-0 {
+  position: relative;
+  width: auto;
+  height: auto;
+  background-color: #ff9500;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  gap: 32px;
+  display: flex;
+  padding: 12px 32px 12px 32px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+.container-3-4-0 {
+  position: absolute;
+  left: 337px;
+  top: 70px;
+  width: 24px;
+  height: 24px;
+  background-color: #f2f2f2;
+  justify-content: start;
+  align-items: start;
+  border-radius: 4px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.container-4-5-0 {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  width: 16px;
+  height: 16px;
+  background-color: #ffffff;
+  justify-content: start;
+  align-items: start;
+}
+.text-1-2-1 {
+  position: absolute;
+  left: 0px;
+  top: 156px;
+  width: auto;
+  height: auto;
+  color: #000000;
+  font-size: 14px;
+  font-family: Almarai, "Bold";
+  font-weight: 700;
+  text-align: center;
+  vertical-align: top;
+}
+.container-0-1-1 {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  justify-content: end;
+  align-items: center;
+  gap: 4px;
+  display: flex;
+}
+.text-1-2-0 {
+  position: absolute;
+  left: 0px;
+  top: 12px;
+  width: 100%;
+  height: 100%;
+  color: #000000;
+  font-size: 14px;
+  font-family: Almarai, "Regular";
+  font-weight: 400;
+  text-align: right;
+  vertical-align: top;
+}
+.container-1-2-1 {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  display: flex;
+}
+.container-2-3-0 {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #fbfbfb;
+  justify-content: start;
+  align-items: center;
+  border-radius: 4px;
+  gap: 4px;
+  display: flex;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+.text-3-4-0 {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  color: #222222;
+  font-size: 16px;
+  font-family: Poppins, "Medium";
+  font-weight: 500;
+  text-align: left;
+  vertical-align: center;
+}
+.container-2-3-1 {
+  position: absolute;
+  left: 169px;
+  top: 1px;
+  width: 14px;
+  height: 14px;
+  background-color: #ffffff;
+  justify-content: start;
+  align-items: start;
+}
+.container-0-1-2 {
+  position: relative;
+  width: 361px;
+  height: 66px;
+  justify-content: start;
+  align-items: end;
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+}
+.text-2-3-0 {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  color: #0c68f4;
+  font-size: 14px;
+  font-family: Almarai, "Regular";
+  font-weight: 400;
+  text-align: center;
+  vertical-align: top;
+}
+
+.svg-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 100px;
+}
+.slide-container {
+  background-color: rgb(255, 255, 255); /* Grey background for slides */
+   
+  justify-content: center;
+  align-items: center;
+  width: 400%; /* Fixed width for all slides */
+  height: 150px; /* Fixed height for all slides */
+   /* Ensures images stay within the slide */
+  display: flex; /* Center content inside the slide */
+  margin-bottom: 8%;
+  margin-top: 4%;
+  margin-left: 2%;
+  margin-left: 2%;
+  border-radius: 20px; /* Optional: Rounded corners */
+}
+
+.swiper-image {
+  max-width: 80%;
+  max-height: 100%;
+  object-fit: cover; /* Ensure images fit well */
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #FF9500; /* Change this to your desired color */
+}
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 96.5%;
+ 
+   
+}
+
+body {
+  transform: none !important;
+  zoom: 100%;
+  font-family: var(--font-almarai, sans-serif);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+ 
+@keyframes shine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shine {
+  animation: shine 2s infinite;
+  overflow: hidden;
+}
+
+
+@keyframes fade-in {
+  0% { opacity: 0; transform: scale(0.9); }
+  50% { opacity: 0.5; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+ }
+ 
+ .animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+ }
+ @keyframes marquee-ltr {
+  0% {
+      transform: translateX(100%);
+  }
+  100% {
+      transform: translateX(-100%);
+  }
+}
+
+@keyframes marquee-rtl {
+  0% {
+      transform: translateX(-100%);
+  }
+  100% {
+      transform: translateX(100%);
+  }
+}
+
+.animate-marquee-ltr {
+  display: inline-block;
+  animation: marquee-ltr 20s linear infinite;
+}
+
+.animate-marquee-rtl {
+  display: inline-block;
+  animation: marquee-rtl 20s linear infinite;
+}
+.glow-effect {
+  text-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ffcc00;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
