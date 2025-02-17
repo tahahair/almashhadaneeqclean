@@ -84,7 +84,7 @@ const StoriesGallery = () => {
   }, [currentStory, currentIndex]);
 
   return (
-    <div className="relative max-w-7xl mx-auto px-4 py-8">
+    <div className="relative max-w-7xl  ">
       {/* Stories Thumbnails */}
       <div className="relative">
         <button 

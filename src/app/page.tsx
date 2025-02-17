@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef ,  useEffect } from "react";
  
-import { Shield, Menu , X, Heart, Star, Quote, Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
+import { Shield,  Search, Sparkles,Menu , X, Heart, Star, Quote, Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
 import StoriesGallery from './StoriesGallery';
  
 import "swiper/css";
@@ -21,14 +21,14 @@ const GlowingButton: React.FC<{ mainText: string; subText: string }> = ({ mainTe
   return (
     <div className="text-center mt-4">
       <div className="relative inline-block">
-        <div className="absolute -inset-[1px] bg-gradient-to-r from-[#0088CC] to-[#4B0082] rounded-full blur-[2px] opacity-40 animate-pulse"></div>
+        <div className="absolute -inset-[1px] bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg blur-[2px] opacity-40 animate-pulse"></div>
         
         {/* Subtle glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC] to-[#4B0082] rounded-full blur-md opacity-20 group-hover:opacity-20 animate-pulse scale-90"></div>
-        <div className="absolute inset-3 bg-gradient-to-r from-[#0088CC] to-[#4B0082] rounded-full animate-ping opacity-80 scale-80 mx-4"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg blur-md opacity-20 group-hover:opacity-20 animate-pulse scale-90"></div>
+        <div className="absolute inset-3 bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg animate-ping opacity-80 scale-80 mx-4"></div>
 
-        <button className="group relative inline-flex flex-col items-center justify-center px-4 py-2 overflow-hidden rounded-full transition-all duration-300 hover:scale-102">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC] to-[#4B0082] scale-200 opacity-90 group-hover:opacity-100" />
+        <button className="group relative inline-flex flex-col items-center justify-center px-4 py-2 overflow-hidden rounded-lg transition-all duration-300 hover:scale-102">
+          <div className="absolute inset-0 bg-[#F26B05] scale-200 opacity-90 group-hover:opacity-100" />
           
           <div className="relative flex flex-col items-center text-white z-10">
             <span className="mt-1 text-lg font-medium">{mainText}</span>
@@ -40,7 +40,7 @@ const GlowingButton: React.FC<{ mainText: string; subText: string }> = ({ mainTe
   );
 };
 
-
+ 
 
 const Svgen: React.FC = () => {
   return (
@@ -322,7 +322,36 @@ const Svgar: React.FC = () => {
   const [showMinue, setshowMinue] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Track if data is being loaded
 
+  const features = [
+    {
+      title: "نفرق بين النظافة والطهارة",
+      icon: "✨"
+    },
+    {
+      title: "نعرف أهمية التطهير في المطابخ والحمامات",
+      icon: "🧼"
+    },
   
+  ];
+
+ 
+  const solutions = [
+    {
+      title: "نفس الفريق المتخصص لبيتك",
+      subtitle: "ما تشرح من جديد",
+      icon: "👥"
+    },
+    {
+      title: "نظام تنظيف مدروس",
+      subtitle: "نظافة وطهارة مضمونة",
+      icon: "✨"
+    },
+    {
+      title: "فريق موثوق",
+      subtitle: "راحة بال",
+      icon: "🤝"
+    }
+  ];
   // Load the cookie value before rendering the component
   useEffect(() => {
     const savedSvgState = Cookies.get('lang');
@@ -370,7 +399,24 @@ console.log(handleClick);
   const handleClick2: React.MouseEventHandler<SVGPathElement> = (): void => {
     setshowMinue((prevState) => !prevState);
   };
-
+ 
+    const stats = [
+      {
+        icon: <HomeIcon className="w-8 h-8 text-blue-500" />,
+        number: "+9080",
+        text: "منزل سعيد ✨"
+      },
+      {
+        icon: <Calendar className="w-8 h-8 text-blue-500" />,
+        number: "خبرة",
+        text: "سنوات في التنظيف"
+      },
+      {
+        icon: <Users className="w-8 h-8 text-blue-500" />,
+        number: "95%",
+        text: "من عملائنا يحجزون مجدداً"
+      }
+    ];
   useEffect(() => {
     const updateLanguage = (newLang: string) => {
       setAR(newLang === 'AR');
@@ -422,27 +468,27 @@ console.log(handleClick);
           <div className={`max-w-7xl mx-auto flex items-center justify-center`}>
             <Image src="/arabic.png" className="mx-2" alt="Flag of the United Arab Emirates" width={16} height={16} />
             <div className="overflow-hidden relative w-full">
-              <p className={`text-center ${AR ? "mt-1" : "mt-2"} text-l md:text-3xl lg:text-4xl font-bold`}>
+              <p className={`text-center ${AR ? "mt-1" : "mt-2"} text-l md:text-3xl lg:text-4xl font-bold mr-4`}>
                 {AR && textar}
                 {EN && texten}
               </p>
             </div>
-            <Image src="/arabic.png" className="mx-2" alt="Flag of the United Arab Emirates" width={16} height={16} />
+       
           </div>
         </div>
 
         {/* Header - Updated hover states and rings */}
         <header className="bg-white/80 backdrop-blur-sm sticky top-0 z-40 border-b">
-          <div className="max-w-7xl mx-auto px-8 py-4">
+          <div className="max-w-7xl mx-auto px-2 py-4">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-4">
                 <div className="relative">
                   <div className="absolute -inset-2 bg-blue-100 rounded-full blur-lg opacity-60"></div>
-                  <img onClick={() => showSection('main')} src="/logo.png" alt="Next Graft" className="h-16 relative" />
+                  <img onClick={() => showSection('main')} src="/logo.png" alt="Next Graft" className="h-12 relative" />
                 </div>
               </div>
               
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-2">
                 <div className="flex gap-3">
                   {['EN', 'AR'].map((langa) => {
                     const langKey = langa.toUpperCase() as keyof typeof langImages;
@@ -450,7 +496,7 @@ console.log(handleClick);
                       <button 
                         key={langa}
                         onClick={() => setlang(langa)}
-                        className={`relative rounded-full overflow-hidden w-10 h-10 transition-transform ${
+                        className={`relative rounded-full overflow-hidden w-8 h-8 transition-transform ${
                           lang === langa ? 'scale-110 ring-2 ring-blue-500' : 'hover:scale-105'
                         }`}
                       >
@@ -476,198 +522,181 @@ console.log(handleClick);
         {AR && (
 
 <div  dir="rtl">
-<div dir="rtl" className="relative overflow-hidden max-w-7xl mx-auto px-4 py-2">
+<div dir="rtl" className="relative overflow-hidden max-w-7xl    ">
 {/* Decorative background */}
 <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5" />
 <div className="absolute inset-0 bg-white/80 backdrop-blur-sm" />
- 
-<div className="relative bg-white/60 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-lg border border-[#0088CC]/20">
-
-
-
-  {/* Content */}
-  <h1 className="text-3xl md:text-5xl font-bold text-center mb-12 leading-tight bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-    نحن مختصّون بالتنظيف العميق فقط...
-  </h1>
-
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-    <div className="transform hover:scale-105 transition-all duration-300">
-      <div className="flex items-center gap-4 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-2xl p-6 hover:shadow-lg">
-        <HomeIcon className="w-12 h-12 text-[#0088CC]"/>
-        <div>
-          <div className="text-3xl font-bold text-[#4B0082]">+9080</div>
-          <div className="text-[#0088CC]">منزل سعيد ✨</div>
+       {/* Stories Gallery */}
+       <div className="flex-1 overflow-hidden  ">
+          <StoriesGallery />
         </div>
+
+        <div className="w-full max-w-6xl mx-auto p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg">
+      <h1 className="text-xl sm:text-3xl font-bold text-center mb-6 text-black">
+        نحن مختصّون بالتنظيف العميق فقط...
+      </h1>
+
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+        {stats.map((stat, index) => (
+          <div 
+            key={index}
+            className="transform hover:scale-102 transition-all duration-300"
+          >
+            <div className="h-full flex flex-col items-center justify-center text-center gap-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl py-6 px-2 sm:p-6 hover:shadow-md">
+              <div className="flex-shrink-0">
+                {stat.icon}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-lg sm:text-2xl font-bold text-black">{stat.number}</div>
+                <div className="text-sm sm:text-base text-gray-600 mt-1">{stat.text}</div>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
+
+      <GlowingButton mainText="احجز خدمة التنظيف الآن" subText="اضغط هنا للحجز ⬇️" />
+
+
     </div>
-
-    <div className="transform hover:scale-105 transition-all duration-300">
-      <div className="flex items-center gap-4 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-2xl p-6 hover:shadow-lg">
-        <Calendar className="w-12 h-12 text-[#0088CC]" />
-        <div>
-          <div className="text-3xl font-bold text-[#4B0082]">خبرة</div>
-          <div className="text-[#0088CC]">سنوات في التنظيف</div>
-        </div>
-      </div>
-    </div>
-
-    <div className="transform hover:scale-105 transition-all duration-300">
-      <div className="flex items-center gap-4 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-2xl p-6 hover:shadow-lg">
-        <Users className="w-12 h-12 text-[#0088CC]" />
-        <div>
-          <div className="text-3xl font-bold text-[#4B0082]">95%</div>
-          <div className="text-[#0088CC]">من عملائنا يحجزون مجدداً</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <GlowingButton mainText="احجز خدمة التنظيف الآن" subText="اضغط هنا للحجز ⬇️" />
-
-
-</div>
-
-<div className="relative overflow-hidden max-w-7xl mx-auto  py-8">
-      <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-lg border border-[#0088CC]/20">
-        {/* Quote Section */}
-        <div className="mb-10 text-center">
-          <div className="relative inline-block">
-            <span className="absolute -left-4 -top-4 text-6xl text-[#0088CC]/20">&quot;</span>
-            <span className="absolute -right-4 -bottom-4 text-6xl text-[#0088CC]/20">&quot;</span>
-            <h2 className="text-2xl md:text-3xl font-bold text-[#4B0082] px-6">
-              قبل ما نكون إدارة المشهد الأنيق...     </h2>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#4B0082] px-6">
+    <div className="max-w-6xl mx-auto py-4 space-y-6">
+      {/* القسم الأول */}
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+        <div className="text-center mb-6">
+          <div className="relative inline-block px-8 py-4">
+            <span className="absolute -left-2 -top-2 text-4xl text-gray-200">"</span>
+            <span className="absolute -right-2 -bottom-2 text-4xl text-gray-200">"</span>
+            <h2 className="text-lg md:text-xl font-bold text-black">
+              قبل ما نكون إدارة المشهد الأنيق...
+            </h2>
+            <h2 className="text-lg md:text-xl font-bold text-black">
               نحن عملاء أيضا لدى المشهد الأنيق
-              </h2>
+            </h2>
           </div>
         </div>
 
-        {/* Main Statement */}
-        <div className="text-center mb-8">
-          <h3 className="text-xl md:text-2xl font-semibold bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-            نفهم احتياجات العائلة العربية
-          </h3>
-        </div>
+        <h3 className="text-base md:text-lg font-semibold text-black text-center mb-4">
+          نفهم احتياجات العائلة العربية
+        </h3>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            {
-              title: "نفرق بين النظافة والطهارة",
-              icon: "✨"
-            },
-            {
-              title: "نعرف أهمية التطهير في المطابخ والحمامات",
-              icon: "🧼"
-            },
-            {
-              title: "دربنا فريقنا على معايير النظافة الإسلامية",
-              icon: "📋"
-            }
-          ].map((feature, index) => (
-            <div key={index} 
-                 className="transform hover:scale-105 transition-all duration-300">
-              <div className="flex flex-col items-center text-center gap-3 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl p-6 hover:shadow-lg border border-[#0088CC]/10">
-                <span className="text-4xl mb-2">{feature.icon}</span>
-                <p className="text-lg font-medium text-[#4B0082]">
-                  {feature.title}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-</div>
-
-<div className="relative overflow-hidden max-w-7xl mx-auto px-4 py-8">
-      <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-lg border border-[#0088CC]/20">
-        {/* Understanding Section */}
-        <div className="text-center mb-12">
-          <h2 className="text-[100%] font-bold bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text mb-8">
-            نعرف تماماً شعورك وماذا تحتاج
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {[
-              "نعرف تعب شرح نفس الكلام في كل مرة",
-              "نفهم قيمة الوقت الضائع في المراقبة",
-              "ندرك أهمية الثقة في فريق التنظيف",
-              "دربنا فريقنا على معايير النظافة الإسلامية"
-            ].map((point, index) => (
-              <div key={index} className="transform hover:scale-105 transition-all duration-300">
-                <div className="flex items-center gap-4 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-xl p-4 hover:shadow-lg">
-                  <span className="text-[#0088CC] text-xl">✓</span>
-                  <p className="text-[#4B0082] text-[80%]">{point}</p>
+        <div className="overflow-x-auto">
+          <div className="flex flex-nowrap gap-2 pb-4 px-2 min-w-full justify-start md:justify-center">
+            {features.map((feature, index) => (
+              <div key={index} className="flex-none w-[50%] md:w-[50%]">
+                <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow h-full">
+                  <div className="flex flex-col items-center text-center gap-2">
+                    <span className="text-3xl">{feature.icon}</span>
+                    <p className="text-sm md:text-base font-medium text-black leading-relaxed">
+                      {feature.title}
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
+     
 
-        {/* Solution Section */}
-        <div className="bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-3xl p-6 mb-12">
-          <h3 className="text-xl md:text-2xl font-bold text-center text-[#4B0082] mb-6">
-            لذلك غيرنا المعادلة
-          </h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                title: "نفس الفريق المتخصص لبيتك",
-                subtitle: "ما تشرح من جديد",
-                icon: "👥"
-              },
-              {
-                title: "نظام تنظيف مدروس",
-                subtitle: "نظافة وطهارة مضمونة",
-                icon: "✨"
-              },
-              {
-                title: "فريق موثوق",
-                subtitle: "راحة بال",
-                icon: "🤝"
-              }
-            ].map((solution, index) => (
-              <div key={index} className="bg-white/60 rounded-xl p-6 text-center transform hover:scale-105 transition-all duration-300">
-                <span className="text-3xl mb-4 block">{solution.icon}</span>
-                <h4 className="text-[#4B0082] font-bold mb-2">{solution.title}</h4>
-                <p className="text-[#0088CC]">{solution.subtitle}</p>
+      {/* القسم الثاني */}
+     
+        <h2 className="text-base md:text-lg font-bold text-black text-center mb-4">
+          نعرف تماماً شعورك وماذا تحتاج
+        </h2>
+        
+        <div className="grid grid-cols-2 gap-4 max-w-4xl mx-auto">
+          {[
+            {
+              text: "نعرف تعب شرح نفس الكلام في كل مرة",
+              icon: "🗣️"
+            },
+            {
+              text: "نفهم قيمة الوقت الضائع في المراقبة",
+              icon: "⏰"
+            },
+            {
+              text: "ندرك أهمية الثقة في فريق التنظيف",
+              icon: "🤝"
+            },
+            {
+              text: "دربنا فريقنا على معايير النظافة الإسلامية",
+              icon: "📋"
+            }
+          ].map((point, index) => (
+            <div key={index} className="h-32">
+              <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow h-full">
+                <div className="flex flex-col items-center text-center gap-3">
+                  <span className="text-3xl">{point.icon}</span>
+                  <p className="text-xs sm:text-sm md:text-base text-black leading-relaxed">
+                    {point.text}
+                  </p>
+                </div>
               </div>
-            ))}
+            </div>
+          ))}
+        </div>
+
+   
+      <h3 className="text-lg font-bold text-center text-black mb-3 md:mb-4 mt-4">
+        لذلك غيرنا المعادلة
+      </h3>
+      
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+        {solutions.map((solution, index) => (
+          <div key={index} className="w-full">
+            <div className="bg-gray-50 rounded-lg p-3 md:p-4 hover:shadow-md transition-shadow h-full">
+              <div className="text-center space-y-2 md:space-y-3">
+                <span className="text-2xl md:text-3xl block">{solution.icon}</span>
+                <h4 className="text-black font-bold text-sm md:text-base">
+                  {solution.title}
+                </h4>
+                <p className="text-gray-600 text-xs md:text-sm">
+                  {solution.subtitle}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+  
+
+      <div className="text-center my-6">
+      <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-3xl mx-auto px-4">
+        <div className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-cyan-500 p-0.5 rounded-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+          <div className="bg-white rounded-full px-6 py-3 flex items-center gap-3">
+            <Search className="w-5 h-5 flex-shrink-0" />
+            <p className="text-sm md:text-base font-medium whitespace-normal sm:whitespace-nowrap">
+              "هذا اللي كنا ندور عليه"
+            </p>
           </div>
         </div>
 
-        {/* Testimonials */}
-        <div className="text-center mb-12">
-          <div className="flex flex-col md:flex-row justify-center gap-4 mb-8">
-            {[
-              "هذا اللي كنا ندور عليه",
+        <div className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 p-0.5 rounded-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
+          <div className="bg-white rounded-full px-6 py-3 flex items-center gap-3">
+            <Sparkles className="w-5 h-5 flex-shrink-0" />
+            <p className="text-sm md:text-base font-medium whitespace-normal sm:whitespace-nowrap">
               "أخيراً ارتحنا من هم التنظيف"
-            ].map((quote, index) => (
-              <div key={index} className="bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full px-6 py-3">
-                <p className="text-[#4B0082] font-medium">&quot;{quote}&quot;</p>
-              </div>
-            ))}
+            </p>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div className="flex flex-col items-center text-center">
-  <p className="text-lg font-bold text-[#4B0082]">
-    كل هذا مضمون مع...  
-    <br />
-    <span className="text-yellow-600 glow-effect"> الضمان الذهبي </span>
-    <br />
-    إذا لم يعجبك التنظيف لا تدفع أي شيء 💯
-  </p>
-</div>
-
-
+        <div className="text-center">
+          <p className="text-base md:text-lg font-bold text-black">
+            كل هذا مضمون مع...
+            <br />
+            <span className="text-yellow-600">الضمان الذهبي</span>
+            <br />
+            إذا لم يعجبك التنظيف لا تدفع أي شيء 💯
+          </p>
+        </div>
 
         <GlowingButton mainText="احجز خدمة التنظيف الآن" subText="اضغط هنا للحجز ⬇️" />
 
       </div>
     </div>
+
+
 
     <div className="relative overflow-hidden max-w-7xl mx-auto px-4 py-8">
       <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-lg border border-[#0088CC]/20">
@@ -1182,7 +1211,7 @@ console.log(handleClick);
 
     
 </div>
-
+</div>
 
 
 
