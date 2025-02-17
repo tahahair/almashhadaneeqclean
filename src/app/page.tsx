@@ -564,8 +564,8 @@ console.log(handleClick);
       <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg">
         <div className="text-center mb-6">
           <div className="relative inline-block px-8 py-4">
-            <span className="absolute -left-2 -top-2 text-4xl text-gray-200">"</span>
-            <span className="absolute -right-2 -bottom-2 text-4xl text-gray-200">"</span>
+            <span className="absolute -left-2 -top-2 text-4xl text-gray-200">&quot;</span>
+            <span className="absolute -right-2 -bottom-2 text-4xl text-gray-200">&quot;</span>
             <h2 className="text-lg md:text-xl font-bold text-black">
               قبل ما نكون إدارة المشهد الأنيق...
             </h2>
@@ -665,7 +665,7 @@ console.log(handleClick);
           <div className="bg-white rounded-full px-6 py-3 flex items-center gap-3">
             <Search className="w-5 h-5 flex-shrink-0" />
             <p className="text-sm md:text-base font-medium whitespace-normal sm:whitespace-nowrap">
-              "هذا اللي كنا ندور عليه"
+            &quot;هذا اللي كنا ندور عليه&quot;
             </p>
           </div>
         </div>
@@ -674,7 +674,7 @@ console.log(handleClick);
           <div className="bg-white rounded-full px-6 py-3 flex items-center gap-3">
             <Sparkles className="w-5 h-5 flex-shrink-0" />
             <p className="text-sm md:text-base font-medium whitespace-normal sm:whitespace-nowrap">
-              "أخيراً ارتحنا من هم التنظيف"
+            &quot;أخيراً ارتحنا من هم التنظيف&quot;
             </p>
           </div>
         </div>
