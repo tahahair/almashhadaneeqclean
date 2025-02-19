@@ -612,10 +612,10 @@ console.log(handleClick);
         <div className="text-center mb-6">
           <div className="relative inline-block px-8 py-4">
             <span className="absolute -left-2 -top-2 text-4xl p-4 text-gray-400">
-              "
+            &quot;
             </span>
             <span className="absolute -right-2 -bottom-2 text-4xl px-4 text-gray-400">
-              "
+            &quot;
             </span>
             <h2 className="text-xl md:text-xl font-bold text-black">
               قبل ما نكون إدارة المشهد الأنيق...
@@ -736,8 +736,7 @@ console.log(handleClick);
                           <Search className="w-6 h-6 text-white" />
                         </div>
                         <span className="text-[120%] font-medium text-white text-right flex-1">
-                          "هذا اللي كنا ندور عليه"
-                        </span>
+                        &quot;هذا اللي كنا ندور عليه&quot;          </span>
                       </div>
                     </div>
                   </div>
@@ -751,8 +750,7 @@ console.log(handleClick);
                           <Sparkles className="w-6 h-6 text-white" />
                         </div>
                         <span className="text-[120%] font-medium text-white text-right flex-1">
-                          "أخيرًا ارتحنا من هم التنظيف"
-                        </span>
+                        &quot;أخيرًا ارتحنا من هم التنظيف&quot;       </span>
                       </div>
                     </div>
                   </div>
@@ -1223,7 +1221,7 @@ console.log(handleClick);
                   <h3 className="text-2xl font-bold text-gray-600 mb-4">
                     شركات التنظيف العادية
                   </h3>
-                  <p className="text-xl text-gray-500">"جرب حظك"</p>
+                  <p className="text-xl text-gray-500">&quot;جرب حظك&quot;</p>
                 </div>
               </div>
 
@@ -1234,8 +1232,7 @@ console.log(handleClick);
                     نحن نقول لك
                   </h3>
                   <p className="text-2xl font-bold text-[#4B0082]">
-                    "نضمن لك النتيجة 100%"
-                  </p>
+                  &quot;نضمن لك النتيجة 100%&quot; </p>
                 </div>
               </div>
             </div>
@@ -1347,9 +1344,9 @@ console.log(handleClick);
           <div className="bg-blue-50 py-6 px-1 rounded-xl mb-6">
             <div className="text-[100%] text-gray-700 italic text-center">
             <p className="py-2">عملاؤنا يخبروننا دائماً:</p>
-              <p className="py-2">"أخيراً لقينا شركة نعتمد عليها"</p>
-              <p className="py-2">"ما نبي نغير... خلاص ارتحنا معاكم"</p>
-              <p className="py-2">"الفريق صار يعرف بيتنا أحسن مننا"</p>
+              <p className="py-2">&quot;أخيراً لقينا شركة نعتمد عليها&quot;</p>
+              <p className="py-2">&quot;ما نبي نغير... خلاص ارتحنا معاكم&quot;</p>
+              <p className="py-2">&quot;الفريق صار يعرف بيتنا أحسن مننا&quot;</p>
             </div>
           </div>
 
