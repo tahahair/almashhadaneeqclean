@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef ,  useEffect } from "react";
  
-import { Shield,  Search, Sparkles,Menu , X, Heart, Star, Quote, Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
+import { Shield, MessageCircle  ,CheckCircle, ThumbsUp, Search, Sparkles,Menu , X, Heart, Star, Quote, Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
 import StoriesGallery from './StoriesGallery';
  
 import "swiper/css";
@@ -40,7 +40,21 @@ const GlowingButton: React.FC<{ mainText: string; subText: string }> = ({ mainTe
   );
 };
 
- 
+const FullArrow = () => (
+  <svg 
+    width="24" 
+    height="32" 
+    viewBox="0 0 24 32" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+    className="w-8 h-8 text-[#0088CC] animate-bounce"
+  >
+    <path
+      d="M13.0607 31.0607C12.4749 31.6464 11.5251 31.6464 10.9393 31.0607L1.3934 21.5147C0.807611 20.9289 0.807611 19.9792 1.3934 19.3934C1.97919 18.8076 2.92893 18.8076 3.51472 19.3934L12 27.8787L20.4853 19.3934C21.0711 18.8076 22.0208 18.8076 22.6066 19.3934C23.1924 19.9792 23.1924 20.9289 22.6066 21.5147L13.0607 31.0607ZM13.5 0L13.5 30H10.5L10.5 0L13.5 0Z"
+      fill="currentColor"
+    />
+  </svg>
+); 
 
 const Svgen: React.FC = () => {
   return (
@@ -330,8 +344,10 @@ const Svgar: React.FC = () => {
     {
       title: "نعرف أهمية التطهير في المطابخ والحمامات",
       icon: "🧼"
-    },
-  
+    },{
+      title: "دربنا فريقنا على معايير النظافة الإسلامية",
+              icon: "📋"
+}
   ];
 
  
@@ -521,24 +537,22 @@ console.log(handleClick);
 
         {AR && (
 
-<div  dir="rtl">
-<div dir="rtl" className="relative overflow-hidden max-w-7xl    ">
-{/* Decorative background */}
-<div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5" />
-<div className="absolute inset-0 bg-white/80 backdrop-blur-sm" />
-       {/* Stories Gallery */}
-       <div className="flex-1 overflow-hidden  ">
-          <StoriesGallery />
-        </div>
+<div dir="rtl">
+  <div dir="rtl" className="relative overflow-hidden max-w-7xl">
+    {/* Decorative background */}
+    <div className="absolute inset-0  " />
+    <div className="absolute inset-0   " />
 
-        <div className="w-full max-w-6xl mx-auto p-4 bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg">
-      <h1 className="text-xl sm:text-3xl font-bold text-center mb-6 text-black">
-        نحن مختصّون بالتنظيف العميق فقط...
+    <div className="w-full max-w-6xl mx-auto      ">
+      <h1 className="text-3xl sm:text-3xl  pt-4 font-bold text-center   text-black">
+        نحن مختصّون بالتنظيف العميق
       </h1>
-
-      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+      <h1 className="text-3xl sm:text-3xl pb-4 font-bold text-center text-black drop-shadow-lg bg-gradient-to-r from-black via-gray-700 to-black bg-clip-text text-transparent">
+        فقط ....
+      </h1>
+      <div className="grid grid-cols-3 gap-2 p-4 sm:gap-4">
         {stats.map((stat, index) => (
-          <div 
+          <div
             key={index}
             className="transform hover:scale-102 transition-all duration-300"
           >
@@ -547,42 +561,79 @@ console.log(handleClick);
                 {stat.icon}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-lg sm:text-2xl font-bold text-black">{stat.number}</div>
-                <div className="text-sm sm:text-base text-gray-600 mt-1">{stat.text}</div>
+                <div className="text-lg sm:text-2xl font-bold text-black">
+                  {stat.number}
+                </div>
+                <div className="text-sm sm:text-base text-gray-600 mt-1">
+                  {stat.text}
+                </div>
               </div>
             </div>
           </div>
         ))}
       </div>
 
-      <GlowingButton mainText="احجز خدمة التنظيف الآن" subText="اضغط هنا للحجز ⬇️" />
+      <GlowingButton
+        mainText="احجز خدمة التنظيف الآن"
+        subText="اضغط هنا للحجز ⬇️"
+      />
 
-
+      <div className="relative pt-4 pb-4 mt-4">
+        <div className="absolute inset-0 backdrop-blur-sm"></div>
+        <div className="relative z-10 flex flex-col items-center">
+          <Quote className="w-12 h-12 text-[#0088CC] animate-bounce" />
+          <h2 className="text-2xl md:text-4xl font-bold text-center py-4 bg-black text-transparent bg-clip-text relative">
+            ما يقوله عملاؤنا عن تجربتهم معنا
+          </h2>
+          <div className="flex items-center justify-center gap-8 mt-2">
+            <FullArrow />
+            <div className="flex gap-2">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star
+                  key={star}
+                  className="w-6 h-6 text-[#0088CC] animate-pulse"
+                />
+              ))}
+            </div>
+            <FullArrow />
+          </div>
+        </div>
+      </div>
     </div>
+     {/* Stories Gallery */}
+     <div className="flex-1 overflow-hidden  ">
+          <StoriesGallery />
+        </div>
+
     <div className="max-w-6xl mx-auto py-4 space-y-6">
+      
       {/* القسم الأول */}
-      <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 shadow-lg">
+      <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4  ">
         <div className="text-center mb-6">
           <div className="relative inline-block px-8 py-4">
-            <span className="absolute -left-2 -top-2 text-4xl text-gray-200">&quot;</span>
-            <span className="absolute -right-2 -bottom-2 text-4xl text-gray-200">&quot;</span>
-            <h2 className="text-lg md:text-xl font-bold text-black">
+            <span className="absolute -left-2 -top-2 text-4xl p-4 text-gray-400">
+              "
+            </span>
+            <span className="absolute -right-2 -bottom-2 text-4xl px-4 text-gray-400">
+              "
+            </span>
+            <h2 className="text-xl md:text-xl font-bold text-black">
               قبل ما نكون إدارة المشهد الأنيق...
             </h2>
-            <h2 className="text-lg md:text-xl font-bold text-black">
+            <h2 className="text-xl md:text-xl font-bold text-black mt-4">
               نحن عملاء أيضا لدى المشهد الأنيق
             </h2>
           </div>
         </div>
 
-        <h3 className="text-base md:text-lg font-semibold text-black text-center mb-4">
+        <h3 className="text-xl sm:text-xl pb-4 font-bold text-center text-black drop-shadow-lg bg-gradient-to-r from-black via-gray-700 to-black bg-clip-text text-transparent">
           نفهم احتياجات العائلة العربية
         </h3>
 
         <div className="overflow-x-auto">
           <div className="flex flex-nowrap gap-2 pb-4 px-2 min-w-full justify-start md:justify-center">
             {features.map((feature, index) => (
-              <div key={index} className="flex-none w-[50%] md:w-[50%]">
+              <div key={index} className="flex-none w-[32%] md:w-[33%]">
                 <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow h-full">
                   <div className="flex flex-col items-center text-center gap-2">
                     <span className="text-3xl">{feature.icon}</span>
@@ -595,38 +646,27 @@ console.log(handleClick);
             ))}
           </div>
         </div>
-     
 
-      {/* القسم الثاني */}
-     
-        <h2 className="text-base md:text-lg font-bold text-black text-center mb-4">
+        {/* القسم الثاني */}
+
+        <h2 className="text-2xl md:text-3xl pb-8  pt-8 font-bold text-center text-black drop-shadow-sm bg-gradient-to-r from-black via-gray-700 to-black bg-clip-text text-transparent">
           نعرف تماماً شعورك وماذا تحتاج
         </h2>
-        
-        <div className="grid grid-cols-2 gap-4 max-w-4xl mx-auto">
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 px-8 gap-6 mb-16">
           {[
-            {
-              text: "نعرف تعب شرح نفس الكلام في كل مرة",
-              icon: "🗣️"
-            },
-            {
-              text: "نفهم قيمة الوقت الضائع في المراقبة",
-              icon: "⏰"
-            },
-            {
-              text: "ندرك أهمية الثقة في فريق التنظيف",
-              icon: "🤝"
-            },
-            {
-              text: "دربنا فريقنا على معايير النظافة الإسلامية",
-              icon: "📋"
-            }
+            { text: "نعرف تعب شرح نفس الكلام في كل مرة", icon: "🗣️" },
+            { text: "نفهم قيمة الوقت الضائع في المراقبة", icon: "⏰" },
+            { text: "ندرك أهمية الثقة في فريق التنظيف", icon: "🤝" },
+            { text: "دربنا فريقنا على معايير النظافة الإسلامية", icon: "📋" }
           ].map((point, index) => (
-            <div key={index} className="h-32">
-              <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow h-full">
-                <div className="flex flex-col items-center text-center gap-3">
-                  <span className="text-3xl">{point.icon}</span>
-                  <p className="text-xs sm:text-sm md:text-base text-black leading-relaxed">
+            <div key={index} className="group">
+              <div className="bg-gray-50 rounded-2xl p-8 shadow hover:shadow-md transition-all h-full transform group-hover:-translate-y-1">
+                <div className="flex items-center gap-6">
+                  <span className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
+                    {point.icon}
+                  </span>
+                  <p className="text-[90%] md:text-[90%] text-black leading-relaxed">
                     {point.text}
                   </p>
                 </div>
@@ -635,298 +675,427 @@ console.log(handleClick);
           ))}
         </div>
 
-   
-      <h3 className="text-lg font-bold text-center text-black mb-3 md:mb-4 mt-4">
-        لذلك غيرنا المعادلة
-      </h3>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-        {solutions.map((solution, index) => (
-          <div key={index} className="w-full">
-            <div className="bg-gray-50 rounded-lg p-3 md:p-4 hover:shadow-md transition-shadow h-full">
-              <div className="text-center space-y-2 md:space-y-3">
-                <span className="text-2xl md:text-3xl block">{solution.icon}</span>
-                <h4 className="text-black font-bold text-sm md:text-base">
-                  {solution.title}
-                </h4>
-                <p className="text-gray-600 text-xs md:text-sm">
-                  {solution.subtitle}
-                </p>
+        <h3 className="text-xl sm:text-xl pb-4 pt-4  font-bold text-center text-black drop-shadow-lg bg-gradient-to-r from-black via-gray-700 to-black bg-clip-text text-transparent">
+          لذلك غيرنا المعادلة
+        </h3>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 px-8 lg:grid-cols-3 gap-3 md:gap-4">
+          {solutions.map((solution, index) => (
+            <div key={index} className="w-full">
+              <div className="bg-gray-50 rounded-lg p-3 md:p-4 hover:shadow-md transition-shadow h-full">
+                <div className="text-center space-y-2 md:space-y-3">
+                  <span className="text-2xl md:text-3xl block">
+                    {solution.icon}
+                  </span>
+                  <h4 className="text-black font-bold text-sm md:text-base">
+                    {solution.title}
+                  </h4>
+                  <p className="text-gray-600 text-xs md:text-sm">
+                    {solution.subtitle}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-  
-
-      <div className="text-center my-6">
-      <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-3xl mx-auto px-4">
-        <div className="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-cyan-500 p-0.5 rounded-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
-          <div className="bg-white rounded-full px-6 py-3 flex items-center gap-3">
-            <Search className="w-5 h-5 flex-shrink-0" />
-            <p className="text-sm md:text-base font-medium whitespace-normal sm:whitespace-nowrap">
-            &quot;هذا اللي كنا ندور عليه&quot;
-            </p>
-          </div>
+          ))}
         </div>
 
-        <div className="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 p-0.5 rounded-full transform transition-all duration-300 hover:scale-105 hover:shadow-lg">
-          <div className="bg-white rounded-full px-6 py-3 flex items-center gap-3">
-            <Sparkles className="w-5 h-5 flex-shrink-0" />
-            <p className="text-sm md:text-base font-medium whitespace-normal sm:whitespace-nowrap">
-            &quot;أخيراً ارتحنا من هم التنظيف&quot;
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+        <div className="relative max-w-2xl mx-auto p-4 mt-4">
+          {/* Gradient Border Container */}
+          <div className="p-[2px] rounded-3xl bg-gradient-to-r from-blue-500 via-blue-400 to-blue-300">
+            {/* Main Card */}
+            <div className="relative bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 rounded-3xl p-8 overflow-hidden">
+              {/* Decorative Elements */}
+              <div className="absolute top-0 right-0 w-40 h-40 bg-blue-300 opacity-20 rounded-full blur-3xl transform translate-x-20 -translate-y-20"></div>
+              <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-200 opacity-20 rounded-full blur-3xl transform -translate-x-20 translate-y-20"></div>
+              <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-400 opacity-10 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
 
-        <div className="text-center">
-          <p className="text-base md:text-lg font-bold text-black">
-            كل هذا مضمون مع...
-            <br />
-            <span className="text-yellow-600">الضمان الذهبي</span>
-            <br />
-            إذا لم يعجبك التنظيف لا تدفع أي شيء 💯
-          </p>
-        </div>
+              {/* Glass Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-sm"></div>
 
-        <GlowingButton mainText="احجز خدمة التنظيف الآن" subText="اضغط هنا للحجز ⬇️" />
+              {/* Content Container */}
+              <div className="relative z-10 space-y-8">
+                {/* Header Section */}
+                <div className="text-center space-y-4">
+                  <h3 className="text-4xl font-bold text-white tracking-wide">
+                    والنتيجة؟
+                  </h3>
+                  <div className="flex items-center justify-center gap-2 text-blue-100">
+                    <MessageCircle className="w-5 h-5" />
+                    <p className="text-xl font-medium">عملاؤنا يقولون:</p>
+                  </div>
+                </div>
 
-      </div>
-    </div>
+                {/* Testimonials Container */}
+                <div className="space-y-6">
+                  {/* First Testimonial */}
+                  <div className="group">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-300/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+                      <div className="relative flex items-center gap-4 bg-white/10 rounded-2xl p-2 hover:bg-white/[0.15] transition-all duration-300">
+                        <div className="bg-gradient-to-br from-blue-400/80 to-blue-500/80 p-3 rounded-xl group-hover:scale-110 transition-all duration-300 shadow-lg">
+                          <Search className="w-6 h-6 text-white" />
+                        </div>
+                        <span className="text-[120%] font-medium text-white text-right flex-1">
+                          "هذا اللي كنا ندور عليه"
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
+                  {/* Second Testimonial */}
+                  <div className="group">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-300/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+                      <div className="relative flex items-center gap-4 bg-white/10 rounded-2xl p-2 hover:bg-white/[0.15] transition-all duration-300">
+                        <div className="bg-gradient-to-br from-blue-400/80 to-blue-500/80 p-3 rounded-xl group-hover:scale-110 transition-all duration-300 shadow-lg">
+                          <Sparkles className="w-6 h-6 text-white" />
+                        </div>
+                        <span className="text-[120%] font-medium text-white text-right flex-1">
+                          "أخيرًا ارتحنا من هم التنظيف"
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-center  p-2 text-white ">
+                  <p className=" text-2xl font-bold text-white  ">
+                    كل هذا مضمون مع...
+                    <br />
+                    <span className="text-yellow-400">الضمان الذهبي</span>
+                    <br />
+                    <span className="text-[70%]">
+                      إذا لم يعجبك التنظيف لا تدفع أي شيء
+                    </span>
+                    <br />
+                    💯
+                  </p>
+                </div>
 
+                <GlowingButton
+                  mainText="احجز خدمة التنظيف الآن"
+                  subText="اضغط هنا للحجز ⬇️"
+                />
+              </div>
 
-    <div className="relative overflow-hidden max-w-7xl mx-auto px-4 py-8">
-      <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-lg border border-[#0088CC]/20">
-        <h2 className="text-2xl md:text-4xl font-bold text-center bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text mb-4">
-          لماذا تختار المشهد الأنيق لخدمات التنظيف؟
-        </h2>
-        
-        <p className="text-[#4B0082]/80 text-lg text-center mb-8">
-          بناءً على المئات من تقييمات العملاء على جوجل، وخبرتنا الطويلة في السوق، وشهادات عملائنا الذين جربوا شركات أخرى، توصلنا لهذه المقارنة الواقعية
-        </p>
-
-        <div className="overflow-x-auto">
-        <Svgar/>
-
-        </div>
-        <GlowingButton mainText="احصل على التنظيف المثالي" subText="اضغط هنا للحجز ⬇️" />
-
-    
-         
-      </div>
-    </div>
-    
-
-
-        <div className="relative">
-      {/* Testimonials Section */}
-      <div className="relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-r from-[#0088CC]/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 right-0 w-72 h-72 bg-gradient-to-l from-[#4B0082]/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-        </div>
-
-        {/* Header */}
-        <div className="relative pt-8 pb-4">
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 backdrop-blur-sm"></div>
-          <div className="relative z-10 flex flex-col items-center">
-            <Quote className="w-12 h-12 text-[#0088CC] mb-4 animate-bounce" />
-            <h2 className="text-2xl md:text-4xl font-bold text-center py-6 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text relative">
-              ما يقوله عملاؤنا عن تجربتهم معنا
-            </h2>
-            <div className="flex justify-center gap-2 mt-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <Star key={star} className="w-6 h-6 text-[#0088CC] animate-pulse" />
-              ))}
+              {/* Bottom Accent */}
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-200/30 to-transparent"></div>
             </div>
           </div>
         </div>
 
+        <div className="relative pt-4 pb-4 mt-4">
+          <div className="absolute inset-0 backdrop-blur-sm"></div>
+          <div className="relative z-10 flex flex-col items-center">
+            <Quote className="w-12 h-12 text-[#0088CC] animate-bounce" />
+            <h2 className="text-2xl md:text-4xl font-bold text-center py-4 bg-black text-transparent bg-clip-text relative">
+              ما يقوله عملاؤنا عن تجربتهم معنا
+            </h2>
+            <div className="flex items-center justify-center gap-8 mt-2">
+              <FullArrow />
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className="w-6 h-6 text-[#0088CC] animate-pulse"
+                  />
+                ))}
+              </div>
+              <FullArrow />
+            </div>
+          </div>
+        </div>
+        
+        </div>
         {/* Stories Gallery */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden  ">
           <StoriesGallery />
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-4 py-12">
-      <div className="bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-3xl p-8 md:p-12 shadow-lg relative overflow-hidden">
-        {/* Background decoration */}
-        <div className="absolute top-0 left-0 w-64 h-64 bg-[#0088CC]/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#4B0082]/10 rounded-full blur-3xl"></div>
-        
-        <h2 className="text-3xl font-bold text-center mb-12 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-          حقائق في أرقام
-        </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Customer Satisfaction */}
-          <div className="relative group">
-            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                  <Heart className="w-8 h-8 text-[#0088CC]" />
-                </div>
-                <div className="text-4xl font-bold text-[#4B0082] mb-2">95%</div>
-                <div className="text-[#0088CC] font-medium">نسبة رضا العملاء</div>
+      <div className="relative overflow-hidden max-w-7xl mx-auto px-4 py-2">
+        <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl p-8 md:p-12  ">
+          {/* القسم العلوي */}
+          <div className="text-center  py-8">
+            <div className="flex justify-center mb-6">
+              <div className="bg-blue-50 p-3 rounded-full">
+                <Sparkles className="text-blue-600 w-8 h-8" />
               </div>
             </div>
-          </div>
 
-          {/* Trusted Homes */}
-          <div className="relative group">
-            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                  <HomeIcon className="w-8 h-8 text-[#0088CC]" />
-                </div>
-                <div className="text-4xl font-bold text-[#4B0082] mb-2">+9080</div>
-                <div className="text-[#0088CC] font-medium">منزل يثق بخدماتنا</div>
-              </div>
-            </div>
-          </div>
+            {/* العنوان الرئيسي */}
+            <h1 className="text-4xl font-bold text-gray-800 mb-4">
+              لماذا تختار المشهد الأنيق لخدمات التنظيف؟
+            </h1>
 
-          {/* Recommendations */}
-          <div className="relative group">
-            <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-              <div className="relative z-10">
-                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                  <Users className="w-8 h-8 text-[#0088CC]" />
-                </div>
-                <div className="text-4xl font-bold text-[#4B0082] mb-2">8/10</div>
-                <div className="text-[#0088CC] font-medium">عملاء يوصون بنا لأقاربهم</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-      {/* Family Section */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-500">
-          {/* Header Section with animated gradient */}
-          <div className="relative px-6 py-12 text-center overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC] to-[#4B0082] opacity-90"></div>
-            <div className="absolute inset-0 bg-[url('/pattern.png')] opacity-10"></div>
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white drop-shadow-lg transform hover:scale-105 transition-transform">
-                نحن في إدارة المشهد الأنيق لخدمات التنظيف...
-              </h2>
-              <p className="text-xl text-white/90">
-                كآباء وأمهات، كرجال ونساء في إدارة الشركة، نفهم تماماً احتياجاتكم
+            {/* العنوان الفرعي */}
+            <div className="inline-block">
+              <p className="text-xl text-gray-600 font-medium">
+                مقارنة واقعية مبنية على :
               </p>
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className="p-8 bg-white/95 backdrop-blur-sm">
-            {/* Challenges Section */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center mb-8 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-                كنا في بيوتنا نواجه نفس التحديات:
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                  {
-                    icon: HomeIcon,
-                    text: "نعرف معنى العودة للبيت بعد يوم طويل... ونحتاج نراه نظيف ومرتب"
-                  },
-                  {
-                    icon: Heart,
-                    text: "نفهم قلق الأم على صحة أطفالها... وأهمية التعقيم العميق"
-                  },
-                  {
-                    icon: Shield,
-                    text: "ندرك إحراج ربة المنزل من النظافة السطحية... خاصة مع الضيوف"
-                  },
-                  {
-                    icon: Clock,
-                    text: "نعي أهمية الوقت العائلي... بدل ضياعه في متابعة شركات التنظيف"
-                  }
-                ].map((item, index) => (
-                  <div 
-                    key={index} 
-                    className="group flex items-start gap-4 p-6 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-                  >
-                    <div className="p-3 bg-white rounded-lg shadow-md group-hover:shadow-lg transition-shadow">
-                      <item.icon className="w-6 h-6 text-[#0088CC] group-hover:text-[#4B0082] transition-colors" />
+          {/* مصادر المقارنة */}
+          <div className="flex flex-wrap justify-center gap-6 mb-2 text-[90%]">
+            <div className="flex items-center gap-3 bg-gray-50 p-4 w-[100%] rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-yellow-100 p-2 rounded-full">
+                <Star className="text-yellow-500" size={24} />
+              </div>
+              <span className="font-medium">
+                المئات من تقييمات العملاء على جوجل
+              </span>
+            </div>
+            <div className="flex items-center gap-3 bg-gray-50 p-4 w-[100%] rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-green-100 p-2 rounded-full">
+                <CheckCircle className="text-green-500" size={24} />
+              </div>
+              <span className="font-medium">خبرتنا الطويلة في السوق</span>
+            </div>
+            <div className="flex items-center gap-3 bg-gray-50 p-4 w-[100%] rounded-lg shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-purple-100 p-2 rounded-full">
+                <ThumbsUp className="text-purple-500" size={24} />
+              </div>
+              <span className="font-medium ">
+                شهادات عملائنا الذين جربوا شركات أخرى
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto ">
+          <Svgar />
+        </div>
+        <GlowingButton
+          mainText="احصل على التنظيف المثالي"
+          subText="اضغط هنا للحجز ⬇️"
+        />
+    
+    </div>
+    <div className="relative overflow-hidden">
+      <div className="relative mt-4 ">
+        {/* Testimonials Section */}
+        <div className="relative overflow-hidden">
+          {/* Animated background elements */}
+          <div className="absolute inset-0">
+            <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-r from-[#0088CC]/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute bottom-0 right-0 w-72 h-72 bg-gradient-to-l from-[#4B0082]/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
+          </div>
+
+          {/* Header */}
+          <div className="relative pt-8 pb-4">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 backdrop-blur-sm"></div>
+            <div className="relative z-10 flex flex-col items-center">
+              <Quote className="w-12 h-12 text-[#0088CC] mb-4 animate-bounce" />
+              <h2 className="text-2xl md:text-4xl font-bold text-center py-6 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text relative">
+                ما يقوله عملاؤنا عن تجربتهم معنا
+              </h2>
+              <div className="flex justify-center gap-2 mt-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className="w-6 h-6 text-[#0088CC] animate-pulse"
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Stories Gallery */}
+          <div className="flex-1 overflow-hidden">
+            <StoriesGallery />
+          </div>
+        </div>
+        
+          <div className=" rounded-2xl md:rounded-3xl p-4 md:p-8   relative overflow-hidden">
+            {/* Background decoration */}
+            <div className="absolute top-0 left-0 w-32 md:w-64 h-32 md:h-64 bg-blue-100 rounded-full blur-2xl md:blur-3xl"></div>
+            <div className="absolute bottom-0 right-0 w-32 md:w-64 h-32 md:h-64 bg-purple-100 rounded-full blur-2xl md:blur-3xl"></div>
+
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 bg-black text-transparent bg-clip-text">
+              حقائق في أرقام
+            </h2>
+
+            <div className="flex flex-row overflow-x-auto gap-3 md:gap-4 pb-2 md:pb-4 px-1 snap-x snap-mandatory">
+              {/* Customer Satisfaction */}
+              <div className="group flex-none w-[31%] md:w-[31%] snap-start">
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 md:p-6 text-center shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full">
+                  <div className="relative z-10">
+                    <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+                      <Heart className="w-6 h-6 md:w-8 md:h-8 text-blue-500" />
                     </div>
-                    <p className="text-[#4B0082] text-lg group-hover:text-[#0088CC] transition-colors">
-                      {item.text}
-                    </p>
+                    <div className="text-3xl md:text-4xl font-bold text-purple-800 mb-1 md:mb-2">
+                      95%
+                    </div>
+                    <div className="text-sm md:text-base text-blue-500 font-medium">
+                      نسبة رضا العملاء
+                    </div>
                   </div>
-                ))}
+                </div>
+              </div>
+
+              {/* Trusted Homes */}
+              <div className="group flex-none w-[31%] md:w-[31%] snap-start">
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 md:p-6 text-center shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full">
+                  <div className="relative z-10">
+                    <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+                      <HomeIcon className="w-6 h-6 md:w-8 md:h-8 text-blue-500" />
+                    </div>
+                    <div className="text-3xl md:text-4xl font-bold text-purple-800 mb-1 md:mb-2">
+                      +9080
+                    </div>
+                    <div className="text-sm md:text-base text-blue-500 font-medium">
+                      منزل يثق بخدماتنا
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recommendations */}
+              <div className="group flex-none w-[31%] md:w-[31%] snap-start">
+                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 md:p-6 text-center shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full">
+                  <div className="relative z-10">
+                    <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
+                      <Users className="w-6 h-6 md:w-8 md:h-8 text-blue-500" />
+                    </div>
+                    <div className="text-3xl md:text-4xl font-bold text-purple-800 mb-1 md:mb-2">
+                      8/10
+                    </div>
+                    <div className="text-sm md:text-base text-blue-500 font-medium">
+                      عملاء يوصون بنا لأقاربهم
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
+         
 
-            {/* Solutions Section */}
-            <div className="mb-12">
-              <h3 className="text-2xl font-bold text-center mb-8 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-                لذلك صممنا نظام تنظيف يلبي كل هذه الاحتياجات:
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                  "فريق ثابت تثق فيه... مثل ما تثق في عائلتك",
-                  "نظافة عميقة... تريح قلب كل أم",
-                  "مواعيد منضبطة... تحترم وقت الأسرة"
-                ].map((text, index) => (
-                  <div 
-                    key={index} 
-                    className="group p-6 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-xl text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-                  >
-                    <p className="text-[#4B0082] text-lg group-hover:text-[#0088CC] transition-colors">
-                      {text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Closing Statement */}
-            <div className="text-center mb-12">
-              <div className="inline-block relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/20 to-[#4B0082]/20 blur-xl animate-pulse"></div>
-                <p className="relative z-10 text-2xl font-bold bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-                  نحن عائلة نخدم عائلتك...
-                  <br />
-                  بفهم واهتمام ✨
+         
+        {/* Family Section */}
+        <div className="max-w-7xl  ">
+             {/* Header Section with animated gradient */}
+            <div className="relative px-6 py-12 text-center text-black overflow-hidden">
+               <div className="relative z-10">
+                <h2 className="text-3xl md:text-4xl font-bold mb-4   drop-shadow-lg transform hover:scale-105 transition-transform">
+                  نحن في إدارة المشهد الأنيق لخدمات التنظيف...
+                </h2>
+                <p className="text-xl text-black/90">
+                  كآباء وأمهات، كرجال ونساء في إدارة الشركة، نفهم تماماً
+                  احتياجاتكم
                 </p>
               </div>
-            </div>
+      
 
-            <GlowingButton mainText="احجز تنظيفاً بمعايير عائلية" subText="اضغط هنا للحجز ⬇️" />
+            {/* Main Content */}
+            <div className="p-8   backdrop-blur-sm">
+              {/* Challenges Section */}
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center mb-8 bg-black text-transparent bg-clip-text">
+                  كنا في بيوتنا نواجه نفس التحديات:
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {[
+                    {
+                      icon: HomeIcon,
+                      text: "نعرف معنى العودة للبيت بعد يوم طويل... ونحتاج نراه نظيف ومرتب"
+                    },
+                    {
+                      icon: Heart,
+                      text: "نفهم قلق الأم على صحة أطفالها... وأهمية التعقيم العميق"
+                    },
+                    {
+                      icon: Shield,
+                      text: "ندرك إحراج ربة المنزل من النظافة السطحية... خاصة مع الضيوف"
+                    },
+                    {
+                      icon: Clock,
+                      text: "نعي أهمية الوقت العائلي... بدل ضياعه في متابعة شركات التنظيف"
+                    }
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className="group flex items-start gap-4 p-6 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                    >
+                      <div className="p-3 bg-white rounded-lg shadow-md group-hover:shadow-lg transition-shadow">
+                        <item.icon className="w-6 h-6 text-[#0088CC] group-hover:text-[#4B0082] transition-colors" />
+                      </div>
+                      <p className="text-[#4B0082] text-lg group-hover:text-[#0088CC] transition-colors">
+                        {item.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Solutions Section */}
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-center mb-8 bg-black text-transparent bg-clip-text">
+                  لذلك صممنا نظام تنظيف يلبي كل هذه الاحتياجات:
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[
+                    "فريق ثابت تثق فيه... مثل ما تثق في عائلتك",
+                    "نظافة عميقة... تريح قلب كل أم",
+                    "مواعيد منضبطة... تحترم وقت الأسرة"
+                  ].map((text, index) => (
+                    <div
+                      key={index}
+                      className="group p-6 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-xl text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+                    >
+                      <p className="text-[#4B0082] text-lg group-hover:text-[#0088CC] transition-colors">
+                        {text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Closing Statement */}
+              <div className="text-center mb-8">
+                <div className="inline-block relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/20 to-[#4B0082]/20 blur-xl animate-pulse"></div>
+                  <p className="relative z-10 text-2xl font-bold bg-black text-transparent bg-clip-text">
+                    نحن عائلة نخدم عائلتك...
+                    <br />
+                    بفهم واهتمام
+                  </p>
+                  <span className=" text-3xl "> ✨</span>
+                </div>
+              </div>
+
+              <GlowingButton
+                mainText="احجز تنظيفاً بمعايير عائلية"
+                subText="اضغط هنا للحجز ⬇️"
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-
-
-
-    <div className="min-h-screen bg-gradient-to-b from-white via-blue-50 to-white" dir="rtl">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="bg-gradient-to-r from-[#0088CC] to-[#4B0082] rounded-3xl p-10 text-white relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
-            <div className="absolute bottom-0 right-0 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
-            
+        <div className="max-w-7xl mx-auto px-4 ">
+          <div className=" rounded-3xl p-10 text-black relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-72 h-72 bg-black/10 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-0 right-0 w-72 h-72 bg-black/10 rounded-full blur-3xl animate-pulse" />
+
             <div className="relative z-10">
-              <h1 className="text-4xl font-bold text-center mb-4">ضماناتنا لك:</h1>
+              <h1 className="text-4xl font-bold text-center mb-4">
+                ضماناتنا لك:
+              </h1>
               <div className="grid gap-6 max-w-2xl mx-auto">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-2 hover:bg-white/20 transition-all duration-300">
-                  <p className="text-[100%]">✓ نظافة مضمونة أو استرجع فلوسك</p>
+                <div className="bg-black/10 backdrop-blur-sm rounded-2xl p-2 hover:bg-black/20 transition-all duration-300">
+                  <p className="text-[100%]">
+                    ✓ نظافة مضمونة أو استرجع فلوسك
+                  </p>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-2 hover:bg-white/20 transition-all duration-300">
+                <div className="bg-black/10 backdrop-blur-sm rounded-2xl p-2 hover:bg-black/20 transition-all duration-300">
                   <p className="text-[100%]">✓ فريق مرخص وموثق رسمياً</p>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-2 hover:bg-white/20 transition-all duration-300">
-                  <p className="text-[100%]">✓ نفس مستوى الجودة في كل زيارة</p>
+                <div className="bg-black/10 backdrop-blur-sm rounded-2xl p-2 hover:bg-black/20 transition-all duration-300">
+                  <p className="text-[100%]">
+                    ✓ نفس مستوى الجودة في كل زيارة
+                  </p>
                 </div>
               </div>
             </div>
@@ -935,284 +1104,330 @@ console.log(handleClick);
       </div>
 
       {/* Services Section */}
-      <div className="max-w-7xl mx-auto px-4  ">
-        <h2 className="text-4xl font-bold text-center mb-12 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
+      <div className="max-w-7xl mx-auto px-4 py-8 ">
+        <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
           خدماتنا 🏠
         </h2>
-        
-        <div className="grid gap-8 ">
-          {/* House & Villa Service */}
-          <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 mr-16" />
-            <div className="relative z-10 ">
-              <div className="w-16 h-16 mb-6 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                <HomeIcon className="w-8 h-8 text-[#0088CC]" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#4B0082] mb-4">منازل وفلل ✓</h3>
-              <p className="text-gray-600 text-lg">نظام تنظيف عميق | تعقيم شامل | نتيجة مضمونة</p>
+        <div className="grid gap-8">
+      {/* House & Villa Service */}
+      <div className="group relative bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
+        <div className="relative z-10">
+          <div className="flex items-center mb-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
+              <HomeIcon className="w-8 h-8 text-[#0088CC]" />
             </div>
+            <h3 className="text-2xl font-bold text-[#4B0082] mr-4">
+              منازل وفلل ✓
+            </h3>
           </div>
-
-          {/* Office Service */}
-          <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
-            <div className="relative z-10">
-              <div className="w-16 h-16 mb-6 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                <Building2 className="w-8 h-8 text-[#0088CC]" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#4B0082] mb-4">مكاتب وشركات ✓</h3>
-              <p className="text-gray-600 text-lg">نظافة سريعة مسائية | بدون تعطيل عملك</p>
-            </div>
-          </div>
-
-          {/* Furnished Apartments */}
-          <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
-            <div className="relative z-10">
-              <div className="w-16 h-16 mb-6 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                <HomeIcon className="w-8 h-8 text-[#0088CC]" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#4B0082] mb-4">شقق مفروشة ✓</h3>
-              <p className="text-gray-600 text-lg">معايير فندقية | عناية مركزة بكل ركن</p>
-            </div>
-          </div>
-
-          {/* Restaurant Kitchens */}
-          <div className="group relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
-            <div className="relative z-10">
-              <div className="w-16 h-16 mb-6 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                <UtensilsCrossed className="w-8 h-8 text-[#0088CC]" />
-              </div>
-              <h3 className="text-2xl font-bold text-[#4B0082] mb-4">مطابخ المطاعم ✓</h3>
-              <p className="text-gray-600 text-lg">تعقيم احترافي | معايير صحية عالمية</p>
-            </div>
-          </div>
+          <p className="text-gray-600 text-lg">
+            نظام تنظيف عميق | تعقيم شامل | نتيجة مضمونة
+          </p>
         </div>
+      </div>
+
+      {/* Office Service */}
+      <div className="group relative bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
+        <div className="relative z-10">
+          <div className="flex items-center mb-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
+              <Building2 className="w-8 h-8 text-[#0088CC]" />
+            </div>
+            <h3 className="text-2xl font-bold text-[#4B0082] mr-4">
+              مكاتب وشركات ✓
+            </h3>
+          </div>
+          <p className="text-gray-600 text-lg">
+            نظافة سريعة مسائية | بدون تعطيل عملك
+          </p>
+        </div>
+      </div>
+
+      {/* Furnished Apartments */}
+      <div className="group relative bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
+        <div className="relative z-10">
+          <div className="flex items-center mb-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
+              <HomeIcon className="w-8 h-8 text-[#0088CC]" />
+            </div>
+            <h3 className="text-2xl font-bold text-[#4B0082] mr-4">
+              شقق مفروشة ✓
+            </h3>
+          </div>
+          <p className="text-gray-600 text-lg">
+            معايير فندقية | عناية مركزة بكل ركن
+          </p>
+        </div>
+      </div>
+
+      {/* Restaurant Kitchens */}
+      <div className="group relative bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
+        <div className="relative z-10">
+          <div className="flex items-center mb-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
+              <UtensilsCrossed className="w-8 h-8 text-[#0088CC]" />
+            </div>
+            <h3 className="text-2xl font-bold text-[#4B0082] mr-4">
+              مطابخ المطاعم ✓
+            </h3>
+          </div>
+          <p className="text-gray-600 text-lg">
+            تعقيم احترافي | معايير صحية عالمية
+          </p>
+        </div>
+      </div>
+    </div>
       </div>
 
       {/* Statistics */}
       <div className="max-w-7xl mx-auto px-4 py-4 text-center">
-        <div className="bg-white rounded-3xl p-12 shadow-xl relative overflow-hidden">
+        <div className="bg-white rounded-3xl p-12   relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5" />
           <div className="relative z-10">
             <p className="text-2xl text-[#4B0082] font-bold mb-8">
-              أكثر من 9080 عميل اختاروا نظام تنظيفنا المتخصص... لأنه يضمن نظافة عميقة تدوم أطول 💯
+              أكثر من 9080 عميل اختاروا نظام تنظيفنا المتخصص... لأنه يضمن نظافة
+              عميقة تدوم أطول 💯
             </p>
           </div>
-        </div>
-      </div>
-
-<GlowingButton mainText="  جرب نظام التنظيف المتخصص " subText=" ⬇️ النتيجة مضمونة أو استرد فلوسك ⬇️" />
-
-      {/* Footer Note */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <p className="text-center text-gray-600">
-          *كل خدماتنا تشمل نظام تنظيف خاص ومواد عالمية وفريق مدرب
-        </p>
-      </div>
-    </div>
-
-
-
-
-    <div className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-white to-[#f0f9ff] p-8" dir="rtl">
-      {/* Hero Comparison */}
-      <div className="max-w-5xl mx-auto mb-16">
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-          <div className="grid md:grid-cols-2 divide-x-2 divide-x-reverse divide-dashed">
-            {/* Regular Companies */}
-            <div className="p-8 bg-gray-50">
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold text-gray-600 mb-4">شركات التنظيف العادية</h3>
-                <p className="text-xl text-gray-500">&quot;جرب حظك&quot;</p>
-              </div>
-            </div>
-            
-            {/* Our Company */}
-            <div className="p-8 bg-gradient-to-br from-[#0088CC]/10 to-[#4B0082]/10">
-              <div className="text-center mb-6">
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text mb-4">نحن نقول لك</h3>
-                <p className="text-2xl font-bold text-[#4B0082]">&quot;نضمن لك النتيجة 100%&quot;</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Golden Guarantee */}
-      <div className="max-w-5xl mx-auto mb-16">
-        <div className="bg-gradient-to-r from-[#0088CC] to-[#4B0082] rounded-3xl py-12 px-2 text-white relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full transform translate-x-1/2 -translate-y-1/2" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full transform -translate-x-1/2 translate-y-1/2" />
           
-          <div className="relative z-10">
-            <h2 className="text-[150%] font-bold text-center mb-8">ضماننا الذهبي بسيط وواضح:</h2>
-            <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto px-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-2 py-6 hover:bg-white/20 transition-all duration-300">
-                <p className="text-[100%]">  تكون راضي... أو نعيد التنظيف مجاناً</p>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl py-6 px-2 hover:bg-white/20 transition-all duration-300">
-                <p className="text-[100%]">ما اقتنعت؟ تسترد فلوسك كاملة</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Why We Can Guarantee */}
-      <div className="max-w-5xl mx-auto mb-16">
-        <h3 className="text-2xl font-bold text-center mb-4 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-          ليش نقدر نضمن لك هذا الضمان؟ لأن عندنا:
-        </h3>
-        <div className="grid md:grid-cols-3 gap-6">
-          {[
-            { icon: Clock, text: "خبرة سنوات في التنظيف العميق" },
-            { icon: Users, text: "فريق مدرب على أعلى المعايير" },
-            { icon: Shield, text: "نظام تنظيف مجرب ومضمون" }
-          ].map((item, index) => (
-            <div key={index} className="group bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-              <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                <item.icon className="w-6 h-6 text-[#0088CC] group-hover:text-[#4B0082] transition-colors duration-300" />
-              </div>
-              <p className="text-center text-gray-700">{item.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Without Guarantee */}
-      <div className="max-w-5xl mx-auto mb-8">
-        <div className="bg-gray-50 rounded-3xl p-8">
-          <h3 className="text-2xl font-bold text-center mb-8 text-gray-700">بدون هذا الضمان:</h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              "راح تضطر تجرب شركة ورا شركة",
-              "تخسر وقتك وفلوسك",
-              "وفي النهاية... نفس المشكلة"
-            ].map((text, index) => (
-              <div key={index} className="flex items-center gap-4 bg-white p-4 rounded-xl shadow">
-                <X className="w-6 h-6 text-red-500 flex-shrink-0" />
-                <p className="text-gray-600">{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Confidence Statement */}
-      <div className="max-w-3xl mx-auto mb-4 text-center">
-        <p className="text-2xl font-bold bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-          احنا واثقين من خدمتنا...        </p>
-          <p className="text-2xl font-bold bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-          لدرجة نرد فلوسك إذا ما عجبتك النتيجة!
-          </p>
-      </div>
-
-     <GlowingButton mainText="   احجز تنظيفاً مضموناً 100%" subText="اضغط هنا للحجز ⬇️" />
-      
-      
-    </div>
-
-
-    <div className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-white to-[#f0f9ff] p-8" dir="rtl">
-      {/* Customer Loyalty Section */}
-      <div className="max-w-5xl mx-auto mb-16 bg-white rounded-3xl shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-          لماذا 95% من عملائنا يستمرون معنا؟
-        </h1>
-
-        {/* Customer Quotes */}
-        <div className="bg-blue-50 py-6 px-1 rounded-xl mb-6">
-          <div className="text-[100%] text-gray-700 italic text-center">
-            <p className="py-2" >&quot;أخيراً لقينا شركة نعتمد عليها&quot;</p>
-            <p className="py-2">&quot;ما نبي نغير... خلاص ارتحنا معاكم&quot;</p>
-            <p className="py-2">&quot;الفريق صار يعرف بيتنا أحسن مننا&quot;</p>
-          </div>
-        </div>
-
-        {/* Secrets of Success */}
-        <div className="mb-6">
-          <h2 className="text-2xl font-semibold text-center text-[#4B0082] mb-4">
-            السر في استمرارهم معنا:
-          </h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {[
-              "نفس مستوى النظافة في كل مرة",
-              "نفس الفريق المتخصص لكل بيت",
-              "نفس المواعيد المنضبطة دائماً"
-            ].map((text, index) => (
-              <div key={index} className="bg-blue-100 py-4 px-4 rounded-xl text-[80%] flex items-center justify-right">
-                <CheckCircle2 className="text-green-500 ml-3" />
-                <p className="text-gray-700">{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Customer Statistics */}
-        <div className="bg-gradient-to-br from-[#0088CC]/10 to-[#4B0082]/10 py-6 px-4 rounded-xl mb-6">
-          <h2 className="text-2xl font-semibold text-center text-[#4B0082] mb-4">
-            بعد أول تجربة معنا:
-          </h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {[
-              "95% من العملاء يحجزون مرة ثانية",
-              "90% يطلبون تنظيف أسبوعي أو شهري",
-              "85% يوصون أقاربهم وأصدقائهم بخدماتنا"
-            ].map((text, index) => (
-              <div key={index} className="bg-white py-4 px-4 rounded-xl text-[80%]  text-right ">
-                <p className="text-gray-700">{text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Guaranteed Results */}
-        <div className="bg-green-50 py-6 px-2 rounded-xl text-center mb-8">
-          <h2 className="text-2xl font-bold text-green-800 mb-4">
-            لأن النتيجة دايماً وحدة:
-          </h2>
-          <div className="flex flex-col items-right  space-y-3">
-            {[
-              "بيت نظيف",
-              "عائلة مرتاحة",
-              "خدمة مضمونة"
-            ].map((text, index) => (
-              <div key={index} className="flex items-right mr-8">
-                <CheckCircle2 className="text-green-600 ml-2" />
-                <span>{text}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Call to Action */}
-        <GlowingButton 
-          mainText="انضم لعملائنا المميزين" 
-          subText="انقر هنا ⬇️" 
+        <GlowingButton
+          mainText="  جرب نظام التنظيف المتخصص "
+          subText=" ⬇️ النتيجة مضمونة أو استرد فلوسك ⬇️"
         />
+
+        {/* Footer Note */}
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <p className="text-center text-gray-600">
+            *كل خدماتنا تشمل نظام تنظيف خاص ومواد عالمية وفريق مدرب
+          </p>
+        </div>
+        </div>
+
+      </div>
+
+      <div
+        className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-white to-[#f0f9ff] p-8"
+        dir="rtl"
+      >
+        {/* Hero Comparison */}
+        <div className="max-w-5xl mx-auto mb-16">
+          <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
+            <div className="grid md:grid-cols-2 divide-x-2 divide-x-reverse divide-dashed">
+              {/* Regular Companies */}
+              <div className="p-8 bg-gray-50">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-gray-600 mb-4">
+                    شركات التنظيف العادية
+                  </h3>
+                  <p className="text-xl text-gray-500">"جرب حظك"</p>
+                </div>
+              </div>
+
+              {/* Our Company */}
+              <div className="p-8 bg-gradient-to-br from-[#0088CC]/10 to-[#4B0082]/10">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold bg-black/90 text-transparent bg-clip-text mb-4">
+                    نحن نقول لك
+                  </h3>
+                  <p className="text-2xl font-bold text-[#4B0082]">
+                    "نضمن لك النتيجة 100%"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Golden Guarantee */}
+        <div className="max-w-5xl mx-auto mb-16">
+          <div className="bg-gradient-to-r from-[#0088CC] to-[#4B0082] rounded-3xl py-12 px-2 text-white relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full transform translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full transform -translate-x-1/2 translate-y-1/2" />
+
+            <div className="relative z-10">
+  <h2 className="text-[150%] font-bold text-center mb-8">
+    ضماننا الذهبي بسيط وواضح:
+  </h2>
+  <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto px-6">
+    <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-2 py-6 hover:bg-white/20 transition-all duration-300">
+      <p className="text-[100%] text-center">
+        تكون راضي... أو نعيد التنظيف مجاناً
+      </p>
+    </div>
+    <div className="bg-white/10 backdrop-blur-sm rounded-2xl py-6 px-2 hover:bg-white/20 transition-all duration-300">
+      <p className="text-[100%] text-center">ما اقتنعت؟ تسترد فلوسك كاملة</p>
+    </div>
+  </div>
+</div>
+          </div>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-4 mb-16">
+      <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 bg-black text-transparent bg-clip-text">
+        ليش نقدر نضمن لك هذا الضمان؟ <br></br> لأن عندنا:
+      </h3>
+      <div className="flex flex-row justify-center flex-wrap gap-4">
+        {[
+          { icon: Clock, text: "خبرة سنوات في التنظيف العميق" },
+          { icon: Users, text: "فريق مدرب على أعلى المعايير" },
+          { icon: Shield, text: "نظام تنظيف مجرب ومضمون" }
+        ].map((item, index) => (
+          <div
+            key={index}
+            className="group bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex-1 w-[31%] "
+          >
+            <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
+              <item.icon className="w-6 h-6 text-[#0088CC] group-hover:text-[#4B0082] transition-colors duration-300" />
+            </div>
+            <p className="text-center text-gray-700 text-sm sm:text-base">{item.text}</p>
+          </div>
+        ))}
       </div>
     </div>
 
+        {/* Without Guarantee */}
+        <div className="max-w-5xl mx-auto mb-8">
+          <div className="bg-gray-50 rounded-3xl p-8">
+            <h3 className="text-2xl font-bold text-center mb-8 text-gray-700">
+              بدون هذا الضمان:
+            </h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                "راح تضطر تجرب شركة ورا شركة",
+                "تخسر وقتك وفلوسك",
+                "وفي النهاية... نفس المشكلة"
+              ].map((text, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-4 bg-white p-4 rounded-xl shadow"
+                >
+                  <X className="w-6 h-6 text-red-500 flex-shrink-0" />
+                  <p className="text-gray-600">{text}</p>
+                </div>
+              ))}
+            </div>
+                    {/* Confidence Statement */}
+        <div className="max-w-3xl mx-auto mb-4 mt-4 text-center">
+          <p className="text-2xl font-bold bg-black text-transparent bg-clip-text">
+            احنا واثقين من خدمتنا...
+          </p>
+          <p className="text-2xl font-bold bg-black/70 text-transparent bg-clip-text">
+            لدرجة نرد فلوسك إذا ما عجبتك النتيجة!
+          </p>
+        </div>
+        
+        <GlowingButton
+          mainText="   احجز تنظيفاً مضموناً 100%"
+          subText="اضغط هنا للحجز ⬇️"
+        />
+
+          </div>
+          
+        </div>
 
 
 
+      </div>
 
+      <div
+        className="min-h-screen bg-gradient-to-br from-[#f0f9ff] via-white to-[#f0f9ff] "
+        dir="rtl"
+      >
+        {/* Customer Loyalty Section */}
+        <div className="max-w-5xl mx-auto mb-16 bg-white rounded-3xl shadow-xl p-8">
+          <h1 className="text-3xl font-bold text-center mb-6 bg-black text-transparent bg-clip-text">
+            لماذا 95% من عملائنا يستمرون معنا؟
+          </h1>
 
+          {/* Customer Quotes */}
+          <div className="bg-blue-50 py-6 px-1 rounded-xl mb-6">
+            <div className="text-[100%] text-gray-700 italic text-center">
+            <p className="py-2">عملاؤنا يخبروننا دائماً:</p>
+              <p className="py-2">"أخيراً لقينا شركة نعتمد عليها"</p>
+              <p className="py-2">"ما نبي نغير... خلاص ارتحنا معاكم"</p>
+              <p className="py-2">"الفريق صار يعرف بيتنا أحسن مننا"</p>
+            </div>
+          </div>
 
+          {/* Secrets of Success */}
+          <div className="mb-6">
+            <h2 className="text-2xl font-semibold text-center text-black/80 mb-4">
+              السر في استمرارهم معنا:
+            </h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                "نفس مستوى النظافة في كل مرة",
+                "نفس الفريق المتخصص لكل بيت",
+                "نفس المواعيد المنضبطة دائماً"
+              ].map((text, index) => (
+                <div
+                  key={index}
+                  className="bg-blue-100 py-4 px-4 rounded-xl text-[80%] flex items-center justify-right"
+                >
+                  <CheckCircle2 className="text-green-500 ml-3" />
+                  <p className="text-gray-700">{text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
 
+          {/* Customer Statistics */}
+          <div className="bg-gradient-to-br from-[#0088CC]/10 to-[#4B0082]/10 py-6 px-4 rounded-xl mb-6">
+            <h2 className="text-2xl font-semibold text-center text-black mb-4">
+              بعد أول تجربة معنا:
+            </h2>
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                "95% من العملاء يحجزون مرة ثانية",
+                "90% يطلبون تنظيف أسبوعي أو شهري",
+                "85% يوصون أقاربهم وأصدقائهم بخدماتنا"
+              ].map((text, index) => (
+                <div
+                  key={index}
+                  className="bg-white py-4 px-4 rounded-xl text-[80%]  text-right "
+                >
+                  <p className="text-gray-700">{text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
 
+          {/* Guaranteed Results */}
+          <div className="bg-green-50 py-6 px-2 rounded-xl text-center mb-8">
+            <h2 className="text-2xl font-bold text-green-800 mb-4">
+              لأن النتيجة دايماً وحدة:
+            </h2>
+            <div className="flex flex-col items-right  space-y-3">
+              {[
+                "بيت نظيف",
+                "عائلة مرتاحة",
+                "خدمة مضمونة"
+              ].map((text, index) => (
+                <div key={index} className="flex items-right mr-8">
+                  <CheckCircle2 className="text-green-600 ml-2" />
+                  <span>{text}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-
-
-
-
-
-    
+          {/* Call to Action */}
+          <GlowingButton
+            mainText="انضم لعملائنا المميزين"
+            subText="انقر هنا ⬇️"
+          />
+            <div className="p-12"> 
+            </div>
+        </div>
+      
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-
 
 
         )}
