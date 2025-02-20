@@ -1508,10 +1508,10 @@ console.log(handleClick);
            <div className="text-center mb-6">
              <div className="relative inline-block px-8 py-4">
                <span className="absolute -left-2 -top-2 text-4xl p-4 text-gray-400">
-               "
+               &quot;
                </span>
                <span className="absolute -right-2 -bottom-2 text-4xl px-4 text-gray-400">
-               "
+               &quot;
                </span>
                <h2 className="text-xl md:text-xl font-bold text-black">
                  Before we were Elegant Scene Management...
@@ -1632,7 +1632,7 @@ console.log(handleClick);
                              <Search className="w-6 h-6 text-white" />
                            </div>
                            <span className="text-[120%] font-medium text-white text-right flex-1">
-                             "This is what we were looking for"
+                           &quot;This is what we were looking for&quot;
                            </span>
                          </div>
                        </div>
@@ -1647,7 +1647,7 @@ console.log(handleClick);
                              <Sparkles className="w-6 h-6 text-white" />
                            </div>
                            <span className="text-[120%] font-medium text-white text-right flex-1">
-                             "Finally, we are relieved of the cleaning burden"
+                           &quot;Finally, we are relieved of the cleaning burden&quot;
                            </span>
                          </div>
                        </div>
@@ -1660,7 +1660,7 @@ console.log(handleClick);
                        <span className="text-yellow-400">The Golden Guarantee</span>
                        <br />
                        <span className="text-[70%]">
-                         If you don't like the cleaning, don't pay anything
+                         If you don&apos;t like the cleaning, don&apos;t pay anything
                        </span>
                        <br />
                        💯
@@ -2125,7 +2125,7 @@ console.log(handleClick);
                       <h3 className="text-2xl font-bold text-gray-600 mb-4">
                         Regular Cleaning Companies
                       </h3>
-                      <p className="text-xl text-gray-500">"Try Your Luck"</p>
+                      <p className="text-xl text-gray-500">&apos;Try Your Luck&apos;</p>
                     </div>
                   </div>
     
@@ -2136,7 +2136,7 @@ console.log(handleClick);
                         We Tell You
                       </h3>
                       <p className="text-2xl font-bold text-[#4B0082]">
-                      "We Guarantee You 100% Result" </p>
+                      &apos;We Guarantee You 100% Result&apos; </p>
                     </div>
                   </div>
                 </div>
@@ -2217,7 +2217,7 @@ console.log(handleClick);
                 We Are Confident in Our Service...
               </p>
               <p className="text-2xl font-bold bg-black/70 text-transparent bg-clip-text">
-                To The Point Where We Refund Your Money if You Don't Like The Result!
+                To The Point Where We Refund Your Money if You Don&apos;t Like The Result!
               </p>
             </div>
             
@@ -2248,9 +2248,9 @@ console.log(handleClick);
               <div className="bg-blue-50 py-6 px-1 rounded-xl mb-6">
                 <div className="text-[100%] text-gray-700 italic text-center">
                 <p className="py-2">Our Customers Always Tell Us:</p>
-                  <p className="py-2">"Finally Found a Company We Can Rely On"</p>
-                  <p className="py-2">"We Don't Want to Change... We're Comfortable With You"</p>
-                  <p className="py-2">"The Team Now Knows Our House Better Than Us"</p>
+                  <p className="py-2">&apos;Finally Found a Company We Can Rely On&apos;</p>
+                  <p className="py-2">&apos;We Don&apos;t Want to Change... We're Comfortable With You&apos;</p>
+                  <p className="py-2">&apos;The Team Now Knows Our House Better Than Us&apos;</p>
                 </div>
               </div>
     
