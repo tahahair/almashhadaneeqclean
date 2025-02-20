@@ -195,7 +195,9 @@ const StoriesGallery = () => {
              </div>
            </div>
               )}
-              <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-r from-[#0088CC] to-[#4B0082]">
+             
+             <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-r from-[#0088CC] to-[#4B0082] shadow-golden-glow">
+                
                 <div className="w-full h-full rounded-full overflow-hidden border-2 border-white">
                   <img
                     src={image.url}
@@ -205,7 +207,9 @@ const StoriesGallery = () => {
                 </div>
               </div>
               <p className="text-sm text-gray-700 mt-1">{image.title}</p>
+              
             </div>
+            
           ))}
         </div>
       </div>
