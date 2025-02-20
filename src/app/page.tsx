@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef ,  useEffect } from "react";
  
-import { Shield, MessageCircle  ,CheckCircle, ThumbsUp, Search, Sparkles,Menu , X, Heart, Star, Quote, Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
+import { Shield, MessageCircle  ,CheckCircle, ThumbsUp, Search, Sparkles,Menu , X, Heart, Star,  Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
 import StoriesGallery from './StoriesGallery';
  
 import "swiper/css";
