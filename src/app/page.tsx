@@ -2249,7 +2249,7 @@ console.log(handleClick);
                 <div className="text-[100%] text-gray-700 italic text-center">
                 <p className="py-2">Our Customers Always Tell Us:</p>
                   <p className="py-2">&apos;Finally Found a Company We Can Rely On&apos;</p>
-                  <p className="py-2">&apos;We Don&apos;t Want to Change... We're Comfortable With You&apos;</p>
+                  <p className="py-2">&apos;We Don&apos;t Want to Change... We&apos;re Comfortable With You&apos;</p>
                   <p className="py-2">&apos;The Team Now Knows Our House Better Than Us&apos;</p>
                 </div>
               </div>
