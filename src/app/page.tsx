@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef ,  useEffect } from "react";
  
-import { Shield, MessageCircle  ,CheckCircle, ThumbsUp, Search, Sparkles,Menu , X, Heart, Star,  Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
+import { Shield, MessageCircle  ,ShieldCheck ,CheckCircle, ThumbsUp, Search, Sparkles,Menu , X, Heart, Star,  Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
 import StoriesGallery from './StoriesGallery';
  
 import "swiper/css";
@@ -570,7 +570,48 @@ console.log(handleClick);
         mainText="احجز خدمة التنظيف الآن"
         subText="اضغط هنا للحجز ⬇️"
       />
+<div className="p-4  ">
+{/* Main Container */}
+<div className="max-w-md  mx-auto bg-gradient-to-l from-amber-500 to-yellow-500 p-[2px] rounded-2xl">
+        <div className="bg-white rounded-2xl px-6 py-4">
+          {/* Title */}
+          <div className="text-center mb-2">
+            <span className="text-transparent bg-clip-text bg-gradient-to-l from-amber-600 to-yellow-600 text-xl font-bold">
+              الضمان الذهبي 100% ✨
+            </span>
+          </div>
 
+          {/* No Risk Message */}
+          <div className="text-center mb-4">
+            <span className="text-sm text-gray-600">
+              جرب خدماتنا بدون أي مخاطرة - الدفع فقط عند رضاك التام
+            </span>
+          </div>
+
+          {/* Points */}
+          <div className="space-y-3">
+            <div className="flex flex-row-reverse justify-center items-center gap-3 text-center">
+              <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+              <span className="text-gray-700">غير راضٍ؟ نعيد التنظيف مجاناً</span>
+            </div>
+            <div className="flex flex-row-reverse justify-center items-center gap-3 text-center">
+              <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+              <span className="text-gray-700">لم تقتنع؟ استرداد كامل المبلغ</span>
+            </div>
+          </div>
+
+          {/* Trust Badge */}
+          <div className="mt-4 text-center">
+            <div className="inline-flex items-center justify-center gap-2 bg-green-50 px-4 py-1.5 rounded-full">
+              <ShieldCheck className="w-4 h-4 text-green-600" />
+              <span className="text-sm text-green-700">احجز بثقة، لا مخاطرة نهائياً</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+      
+      <hr className="m-6 border-t border-gray-200 " />
       <div className="relative pt-4 pb-4 mt-4">
         <div className="absolute inset-0 backdrop-blur-sm"></div>
         <div className="relative z-10 flex flex-col items-center">
