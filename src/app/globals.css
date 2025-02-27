@@ -430,3 +430,120 @@ body {
 .shadow-golden-glow {
   box-shadow: 0 0 10px rgb(255, 217, 0); /* توهج ذهبي */
 }
+/* Progress Indicator Styles */
+.progress-container {
+  margin: 0 0 30px 0;
+  padding: 20px 10px;
+  position: relative;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin: 0 auto;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  text-align: center;
+}
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 2px solid #e0e0e0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
+  position: relative;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.progress-step.active .step-circle {
+  border-color: #4e73df;
+  background-color: #4e73df;
+}
+
+.progress-step.current .step-circle {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.15);
+}
+
+.step-number {
+  font-size: 14px;
+  font-weight: bold;
+  color: #777;
+  transition: all 0.3s ease;
+}
+
+.step-check {
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+}
+
+.progress-step.active .step-number {
+  color: white;
+}
+
+.step-label {
+  font-size: 12px;
+  color: #777;
+  text-align: center;
+  transition: all 0.3s ease;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progress-step.active .step-label {
+  color: #333;
+  font-weight: 500;
+}
+
+.step-connector {
+  position: absolute;
+  top: 18px;
+  right: calc(50% + 18px);
+  left: calc(-50% + 18px);
+  height: 2px;
+  background-color: #e0e0e0;
+  z-index: 1;
+}
+
+.step-connector.active {
+  background-color: #4e73df;
+}
+
+@media (max-width: 480px) {
+  .progress-container {
+      padding: 15px 5px;
+  }
+  
+  .step-circle {
+      width: 30px;
+      height: 30px;
+  }
+  
+  .step-label {
+      font-size: 10px;
+      max-width: 70px;
+  }
+  
+  .step-connector {
+      top: 15px;
+      right: calc(50% + 15px);
+      left: calc(-50% + 15px);
+  }
+}

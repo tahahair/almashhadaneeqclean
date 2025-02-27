@@ -1,9 +1,8 @@
 "use client";
 import React, { useState, useRef ,  useEffect } from "react";
- 
 import { Shield, MessageCircle  ,ShieldCheck ,CheckCircle, ThumbsUp, Search, Sparkles,Menu , X, Heart, Star,  Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
 import StoriesGallery from './StoriesGallery';
- 
+import Link from "next/link";
 import "swiper/css";
 import './globals.css';
 
@@ -18,6 +17,9 @@ export default function Home() {
   const [scrollTarget, setScrollTarget] = useState<number>(0); // Scroll position
 console.log(Shield);
 const GlowingButton: React.FC<{ mainText: string; subText: string }> = ({ mainText, subText }) => {
+  const handleClick = () => {
+    window.location.href = "/book";
+  };
   return (
     <div className="text-center mt-4">
       <div className="relative inline-block">
@@ -26,8 +28,8 @@ const GlowingButton: React.FC<{ mainText: string; subText: string }> = ({ mainTe
         {/* Subtle glow effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg blur-md opacity-20 group-hover:opacity-20 animate-pulse scale-90"></div>
         <div className="absolute inset-3 bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg animate-ping opacity-80 scale-80 mx-4"></div>
-
-        <button className="group relative inline-flex flex-col items-center justify-center px-4 py-2 overflow-hidden rounded-lg transition-all duration-300 hover:scale-102">
+        <Link href="/book">
+        <button   className="group relative inline-flex flex-col items-center justify-center px-4 py-2 overflow-hidden rounded-lg transition-all duration-300 hover:scale-102">
           <div className="absolute inset-0 bg-[#F26B05] scale-200 opacity-90 group-hover:opacity-100" />
           
           <div className="relative flex flex-col items-center text-white z-10">
@@ -35,6 +37,7 @@ const GlowingButton: React.FC<{ mainText: string; subText: string }> = ({ mainTe
             <span className="mt-1 text-sm font-medium animate-bounce">{subText}</span>
           </div>
         </button>
+        </Link>
       </div>
     </div>
   );
@@ -530,8 +533,8 @@ console.log(handleClick);
 
         {AR && (
 
-<div dir="rtl">
-  <div dir="rtl" className="relative bg-white/90 overflow-hidden max-w-7xl">
+<div dir="rtl"   >
+  <div  className="relative bg-white/90 overflow-hidden max-w-7xl mx-auto text-center">
     {/* Decorative background */}
     <div className="absolute inset-0  " />
     <div className="absolute inset-0   " />
@@ -1473,7 +1476,7 @@ console.log(handleClick);
         {EN && (
   
      <div>
-     <div className="relative bg-white/90 overflow-hidden max-w-7xl">
+     <div className="relative bg-white/90 overflow-hidden mx-auto max-w-7xl">
         
        <div className="absolute inset-0  " />
        <div className="absolute inset-0   " />
