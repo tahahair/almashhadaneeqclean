@@ -1,5 +1,5 @@
 "use client";
-import { Suspense } from 'react';
+import { useEffect } from 'react';
 import LogoutButton from "../components/LogoutButton";
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from "next/navigation";
@@ -7,19 +7,19 @@ import { useRouter } from "next/navigation";
 export default function CustomerDashboard() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  // Get the 'book' parameter as a string and convert to boolean
   const bookParam = searchParams.get('book');
 
-  if (bookParam) {
-    router.push(`/book`);
-  }
+  // Use useEffect for handling the redirect
+  useEffect(() => {
+    if (bookParam) {
+      router.push(`/book`);
+    }
+  }, [bookParam, router]);
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div>
-        <h1 className="text-3xl font-bold">Welcome, Customer!</h1>
-        <LogoutButton text="تسجيل الخروج" />
-      </div>
-    </Suspense>
+    <div>
+      <h1 className="text-3xl font-bold">Welcome, Customer!</h1>
+      <LogoutButton text="تسجيل الخروج" />
+    </div>
   );
 }
