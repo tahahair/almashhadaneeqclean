@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSearchParams } from 'next/navigation';
 
 export default function AuthPage() {
   const [name, setName] = useState("");
@@ -10,10 +9,8 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [logedin, setLogedin] = useState(false);
   const router = useRouter();
-  const searchParams = useSearchParams();
   
   // Get the 'book' parameter as a string and convert to boolean
-  const bookParam = searchParams.get('book');
   // UseEffect to check if the user is already logged in
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -42,7 +39,7 @@ export default function AuthPage() {
      // You can determine this value based on your logic
     
     if (userType === "CUSTOMER") {
-      router.push(`/customer-dashboard?book=${bookParam}`);
+      router.push(`/customer-dashboard`);
     } else if (userType === "ADMIN") {
       router.push(`/admin-dashboard `);
     } else if (userType === "WORKER") {
