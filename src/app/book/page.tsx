@@ -6,89 +6,7 @@ import Script from 'next/script';
 import LogoutButton from "../components/LogoutButton";
 import LeafletMap from "../components/maps";
 // Google Maps type declarations remain the same
-// Declare google maps types for TypeScript
-declare global {
-    interface Window {
-        google: typeof google;
-    }
-    namespace customGoogle {
-        namespace maps {
-            class Map {
-                constructor(mapDiv: Element, opts?: MapOptions);
-                setCenter(latLng: LatLng | LatLngLiteral): void;
-                controls: {
-                    [index: number]: MVCArray<MVCObject>;
-                };
-            }
-            class Marker {
-                constructor(opts?: MarkerOptions);
-                setPosition(latLng: LatLng | LatLngLiteral): void;
-                getPosition(): LatLng;
-            }
-            class Geocoder {
-                geocode(request: GeocoderRequest, callback: (results: GeocoderResult[], status: GeocoderStatus) => void): void;
-            }
-            class LatLng {
-                constructor(lat: number, lng: number);
-                lat(): number;
-                lng(): number;
-            }
-            class MVCObject {
-                constructor();
-            }
-            class MVCArray<T> {
-                push(element: T): number;
-            }
-            enum ControlPosition {
-                TOP_RIGHT,
-                TOP_LEFT,
-                TOP_CENTER,
-                BOTTOM_RIGHT,
-                BOTTOM_LEFT,
-                BOTTOM_CENTER
-            }
-            interface LatLngLiteral {
-                lat: number;
-                lng: number;
-            }
-            interface MapOptions {
-                zoom?: number | null;
-                center?: LatLng | LatLngLiteral | null;
-            }
-            interface MarkerOptions {
-                position?: LatLng | LatLngLiteral | null;
-                map?: Map | null;
-                draggable?: boolean | null;
-            }
-            interface GeocoderRequest {
-                location?: LatLng | LatLngLiteral | null;
-            }
-            interface GeocoderResult {
-                address_components: GeocoderAddressComponent[];
-                formatted_address: string;
-            }
-            interface GeocoderAddressComponent {
-                long_name: string;
-                short_name: string;
-                types: string[];
-            }
-            interface MapMouseEvent {
-                latLng: LatLng | null;
-            }
-            enum GeocoderStatus {
-                OK = "OK",
-                ZERO_RESULTS = "ZERO_RESULTS",
-                OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT",
-                REQUEST_DENIED = "REQUEST_DENIED",
-                INVALID_REQUEST = "INVALID_REQUEST",
-                UNKNOWN_ERROR = "UNKNOWN_ERROR"
-            }
-            namespace event {
-                function addListener(instance: any, eventName: string, handler: Function): any;
-            }
-        }
-    }
-}
+// Declare google maps types for TypeScript 
 
 interface OfferTimeSlot {
     date: string;
@@ -105,6 +23,7 @@ const TabsPage = () => {
     const [selectedCity, setSelectedCity] = useState("");
     const [addressDetails, setAddressDetails] = useState("");
     const [locationNotes, setLocationNotes] = useState("");
+    console.log("mapLoaded", setLocationNotes);
     const [locationUrl, setLocationUrl] = useState("");
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<google.maps.Map | null>(null);
@@ -148,8 +67,8 @@ const TabsPage = () => {
     useEffect(() => {
         const today = new Date();
         const year = today.getFullYear();
-        let month = today.getMonth() + 1;
-        let day = today.getDate();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
 
         const formattedMonth = month < 10 ? `0${month}` : `${month}`;
         const formattedDay = day < 10 ? `0${day}` : `${day}`;
@@ -199,40 +118,7 @@ const getCurrentLocation = () => {
     }
 };
     // Create a custom control for the current location button
-    const createCurrentLocationButton = (map: google.maps.Map) => {
-        // Function implementation remains the same, just change the type
-        const controlDiv = document.createElement('div');
-
-        // Set CSS for the control border
-        const controlUI = document.createElement('div');
-        controlUI.style.backgroundColor = '#fff';
-        controlUI.style.border = '2px solid #fff';
-        controlUI.style.borderRadius = '3px';
-        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-        controlUI.style.cursor = 'pointer';
-        controlUI.style.marginRight = '10px';
-        controlUI.style.marginTop = '10px';
-        controlUI.style.textAlign = 'center';
-        controlUI.title = 'الموقع الحالي';
-        controlDiv.appendChild(controlUI);
-
-        // Set CSS for the control interior
-        const controlText = document.createElement('div');
-        controlText.style.color = 'rgb(25,25,25)';
-        controlText.style.fontFamily = 'Arial,sans-serif';
-        controlText.style.fontSize = '16px';
-        controlText.style.lineHeight = '38px';
-        controlText.style.paddingLeft = '5px';
-        controlText.style.paddingRight = '5px';
-        controlText.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994.994 0 0 0 13 3.06V1h-2v2.06A8.994.994 0 0 0 3.06 11H1v2h2.06A8.994.994 0 0 0 11 20.94V23h2v-2.06A8.994.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
-        controlUI.appendChild(controlText);
-
-        // Setup the click event listener
-        controlUI.addEventListener('click', getCurrentLocation);
-
-        return controlDiv;
-    };
-
+     
     useEffect(() => {
         // Check if the Google Maps script is loaded and the map container exists
         if (typeof window !== 'undefined' && window.google && mapRef.current && currentTab === 1) {
@@ -255,9 +141,7 @@ const getCurrentLocation = () => {
             markerRef.current = marker;
     
             // Add the current location button to the map
-            const locationButton = createCurrentLocationButton(map);
-            map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
-    
+     
             // Get device's current location if permission is granted
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -571,7 +455,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                     return;
                 }
 
-                 const selectedDateObj = new Date(selectedDate);
+                 
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
