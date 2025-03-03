@@ -5,8 +5,90 @@ import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import LogoutButton from "../components/LogoutButton";
 import LeafletMap from "../components/maps";
- 
-
+// Google Maps type declarations remain the same
+// Declare google maps types for TypeScript
+declare global {
+    interface Window {
+        google: typeof google;
+    }
+    namespace customGoogle {
+        namespace maps {
+            class Map {
+                constructor(mapDiv: Element, opts?: MapOptions);
+                setCenter(latLng: LatLng | LatLngLiteral): void;
+                controls: {
+                    [index: number]: MVCArray<MVCObject>;
+                };
+            }
+            class Marker {
+                constructor(opts?: MarkerOptions);
+                setPosition(latLng: LatLng | LatLngLiteral): void;
+                getPosition(): LatLng;
+            }
+            class Geocoder {
+                geocode(request: GeocoderRequest, callback: (results: GeocoderResult[], status: GeocoderStatus) => void): void;
+            }
+            class LatLng {
+                constructor(lat: number, lng: number);
+                lat(): number;
+                lng(): number;
+            }
+            class MVCObject {
+                constructor();
+            }
+            class MVCArray<T> {
+                push(element: T): number;
+            }
+            enum ControlPosition {
+                TOP_RIGHT,
+                TOP_LEFT,
+                TOP_CENTER,
+                BOTTOM_RIGHT,
+                BOTTOM_LEFT,
+                BOTTOM_CENTER
+            }
+            interface LatLngLiteral {
+                lat: number;
+                lng: number;
+            }
+            interface MapOptions {
+                zoom?: number | null;
+                center?: LatLng | LatLngLiteral | null;
+            }
+            interface MarkerOptions {
+                position?: LatLng | LatLngLiteral | null;
+                map?: Map | null;
+                draggable?: boolean | null;
+            }
+            interface GeocoderRequest {
+                location?: LatLng | LatLngLiteral | null;
+            }
+            interface GeocoderResult {
+                address_components: GeocoderAddressComponent[];
+                formatted_address: string;
+            }
+            interface GeocoderAddressComponent {
+                long_name: string;
+                short_name: string;
+                types: string[];
+            }
+            interface MapMouseEvent {
+                latLng: LatLng | null;
+            }
+            enum GeocoderStatus {
+                OK = "OK",
+                ZERO_RESULTS = "ZERO_RESULTS",
+                OVER_QUERY_LIMIT = "OVER_QUERY_LIMIT",
+                REQUEST_DENIED = "REQUEST_DENIED",
+                INVALID_REQUEST = "INVALID_REQUEST",
+                UNKNOWN_ERROR = "UNKNOWN_ERROR"
+            }
+            namespace event {
+                function addListener(instance: any, eventName: string, handler: Function): any;
+            }
+        }
+    }
+}
 
 interface OfferTimeSlot {
     date: string;
@@ -18,6 +100,7 @@ const TabsPage = () => {
     const [currentTab, setCurrentTab] = useState(0);
     const [user, setUser] = useState<{ name: string; phone: string; phoneVerified: boolean } | null>(null);
     const [mapLoaded, setMapLoaded] = useState(false);
+    console.log("mapLoaded", mapLoaded);
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [selectedCity, setSelectedCity] = useState("");
     const [addressDetails, setAddressDetails] = useState("");
@@ -39,8 +122,7 @@ const TabsPage = () => {
     const [numberOfCleaners, setNumberOfCleaners] = useState<number>(1);
     const [availableCleaners, setAvailableCleaners] = useState<number>(15);
     const totalCleaners = 15;
-    const [repetitionType, setRepetitionType] = useState<'everyWeek' | 'everyDay' | 'twiceAMonth' | null>(null);
-
+ 
     // States for offer times remain the same
     const [offerTimeSlots, setOfferTimeSlots] = useState<OfferTimeSlot[]>([]);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
@@ -90,7 +172,191 @@ const TabsPage = () => {
     }, []);
 
     // Function to get the user's current location
+    // Fix the getCurrentLocation function
+const getCurrentLocation = () => {
+    if (navigator.geolocation && mapInstanceRef.current && markerRef.current) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+
+                // Set map center to user's location
+                mapInstanceRef.current?.setCenter(userLocation);
+                markerRef.current?.setPosition(userLocation);
+                setSelectedLocation(userLocation);
+
+                // Try to get address details from coordinates
+                getAddressFromCoordinates(userLocation);
+            },
+            () => {
+                // Handle geolocation error or permission denied
+                alert("تعذر الوصول إلى موقعك الحالي");
+                console.log("Unable to retrieve your location");
+            }
+        );
+    }
+};
+    // Create a custom control for the current location button
+    const createCurrentLocationButton = (map: google.maps.Map) => {
+        // Function implementation remains the same, just change the type
+        const controlDiv = document.createElement('div');
+
+        // Set CSS for the control border
+        const controlUI = document.createElement('div');
+        controlUI.style.backgroundColor = '#fff';
+        controlUI.style.border = '2px solid #fff';
+        controlUI.style.borderRadius = '3px';
+        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
+        controlUI.style.cursor = 'pointer';
+        controlUI.style.marginRight = '10px';
+        controlUI.style.marginTop = '10px';
+        controlUI.style.textAlign = 'center';
+        controlUI.title = 'الموقع الحالي';
+        controlDiv.appendChild(controlUI);
+
+        // Set CSS for the control interior
+        const controlText = document.createElement('div');
+        controlText.style.color = 'rgb(25,25,25)';
+        controlText.style.fontFamily = 'Arial,sans-serif';
+        controlText.style.fontSize = '16px';
+        controlText.style.lineHeight = '38px';
+        controlText.style.paddingLeft = '5px';
+        controlText.style.paddingRight = '5px';
+        controlText.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994.994 0 0 0 13 3.06V1h-2v2.06A8.994.994 0 0 0 3.06 11H1v2h2.06A8.994.994 0 0 0 11 20.94V23h2v-2.06A8.994.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
+        controlUI.appendChild(controlText);
+
+        // Setup the click event listener
+        controlUI.addEventListener('click', getCurrentLocation);
+
+        return controlDiv;
+    };
+
+    useEffect(() => {
+        // Check if the Google Maps script is loaded and the map container exists
+        if (typeof window !== 'undefined' && window.google && mapRef.current && currentTab === 1) {
+            // Initialize the map centered on UAE
+            const initialPosition = { lat: 25.276987, lng: 55.296249 }; // Dubai coordinates as default
+            const map = new google.maps.Map(mapRef.current, {
+                zoom: 10,
+                center: initialPosition,
+            });
     
+            // Store map instance in ref for later access
+            mapInstanceRef.current = map;
+    
+            // Add a marker for the selected location
+            const marker = new google.maps.Marker({
+                position: initialPosition,
+                map: map,
+                draggable: true,
+            });
+            markerRef.current = marker;
+    
+            // Add the current location button to the map
+            const locationButton = createCurrentLocationButton(map);
+            map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
+    
+            // Get device's current location if permission is granted
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+    
+                        // Set map center to user's location
+                        map.setCenter(userLocation);
+                        marker.setPosition(userLocation);
+                        setSelectedLocation(userLocation);
+    
+                        // Try to get address details from coordinates
+                        getAddressFromCoordinates(userLocation);
+                    },
+                    () => {
+                        // Handle geolocation error or permission denied
+                        console.log("Unable to retrieve your location");
+                    }
+                );
+            }
+    
+            // Update selected location when marker is dragged
+            google.maps.event.addListener(marker, 'dragend', () => {
+                const position = marker.getPosition();
+                if (position) {
+                    setSelectedLocation({
+                        lat: position ? position.lat() : 0,
+                        lng: position ? position.lng() : 0,
+                    });
+                }
+    
+                // Update address details when marker position changes
+                getAddressFromCoordinates({
+                    lat: position ? position.lat() : 0,
+                    lng: position ? position.lng() : 0,
+                });
+            });
+    
+            // Update marker position when map is clicked
+            google.maps.event.addListener(map, 'click', (event: google.maps.MapMouseEvent) => {
+                if (event.latLng) {
+                    marker.setPosition(event.latLng);
+                    setSelectedLocation({
+                        lat: event.latLng.lat(),
+                        lng: event.latLng.lng(),
+                    });
+    
+                    // Update address details when map is clicked
+                    getAddressFromCoordinates({
+                        lat: event.latLng.lat(),
+                        lng: event.latLng.lng(),
+                    });
+                }
+            });
+    
+            setMapLoaded(true);
+        }
+    }, [currentTab]);
+
+    // Function to get address details from coordinates using Geocoding API
+   // Fix the getAddressFromCoordinates function
+const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: location }, (results: google.maps.GeocoderResult[] | null, status: google.maps.GeocoderStatus) => {
+        if (status === "OK" && results && results[0]) {
+            const addressComponents = results[0].address_components;
+
+            // Try to find city from address components
+            const cityComponent = addressComponents.find(
+                component => component.types.includes("locality")
+            );
+
+            if (cityComponent) {
+                const cityName = cityComponent.long_name;
+                // Check if the city is one of the UAE emirates we're interested in
+                const normalizedCityName = cityName.toLowerCase();
+                if (normalizedCityName.includes("dubai") || normalizedCityName.includes("دبي")) {
+                    setSelectedCity("Dubai");
+                } else if (normalizedCityName.includes("sharjah") || normalizedCityName.includes("الشارقة")) {
+                    setSelectedCity("Sharjah");
+                } else if (normalizedCityName.includes("ajman") || normalizedCityName.includes("عجمان")) {
+                    setSelectedCity("Ajman");
+                } else if (normalizedCityName.includes("umm al quwain") || normalizedCityName.includes("أم القيوين")) {
+                    setSelectedCity("Umm Al Quwain");
+                }
+            }
+
+            // Set the formatted address
+            setAddressDetails(results[0].formatted_address);
+
+            // Generate Google Maps URL for the location
+            const locationLink = `https://www.google.com/maps?q=${location.lat},${location.lng}`;
+            setLocationUrl(locationLink);
+        }
+    });
+};
 
     const handleNext = () => {
         // Add validation for location tab

@@ -20,6 +20,7 @@ const GlowingButton: React.FC<{ mainText: string; subText: string }> = ({ mainTe
   const handleClick = () => {
     window.location.href = "/book";
   };
+  console.log(handleClick);
   return (
     <div className="text-center mt-4">
       <div className="relative inline-block">
