@@ -4,84 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import LogoutButton from "../components/LogoutButton";
+import LeafletMap from "../components/maps";
+ 
 
-// Google Maps type declarations remain the same
-// Declare google maps types for TypeScript
-declare global {
-    interface Window {
-        google: typeof google;
-    }
-    namespace google {
-        namespace maps {
-            class Map {
-                constructor(mapDiv: Element, opts?: MapOptions);
-                setCenter(latLng: LatLng | LatLngLiteral): void;
-                controls: {
-                    [index: number]: MVCArray<MVCObject>;
-                };
-            }
-            class Marker {
-                constructor(opts?: MarkerOptions);
-                setPosition(latLng: LatLng | LatLngLiteral): void;
-                getPosition(): LatLng;
-            }
-            class Geocoder {
-                geocode(request: GeocoderRequest, callback: (results: GeocoderResult[], status: GeocoderStatus) => void): void;
-            }
-            class LatLng {
-                constructor(lat: number, lng: number);
-                lat(): number;
-                lng(): number;
-            }
-            class MVCObject {
-                constructor();
-            }
-            class MVCArray<T> {
-                push(element: T): number;
-            }
-            class ControlPosition {
-                static TOP_RIGHT: number;
-                static TOP_LEFT: number;
-                static TOP_CENTER: number;
-                static BOTTOM_RIGHT: number;
-                static BOTTOM_LEFT: number;
-                static BOTTOM_CENTER: number;
-            }
-            interface LatLngLiteral {
-                lat: number;
-                lng: number;
-            }
-            interface MapOptions {
-                zoom?: number;
-                center?: LatLng | LatLngLiteral;
-            }
-            interface MarkerOptions {
-                position?: LatLng | LatLngLiteral;
-                map?: Map;
-                draggable?: boolean;
-            }
-            interface GeocoderRequest {
-                location?: LatLng | LatLngLiteral;
-            }
-            interface GeocoderResult {
-                address_components: GeocoderAddressComponent[];
-                formatted_address: string;
-            }
-            interface GeocoderAddressComponent {
-                long_name: string;
-                short_name: string;
-                types: string[];
-            }
-            interface MapMouseEvent {
-                latLng: LatLng;
-            }
-            type GeocoderStatus = "OK" | "ZERO_RESULTS" | "OVER_QUERY_LIMIT" | "REQUEST_DENIED" | "INVALID_REQUEST" | "UNKNOWN_ERROR";
-            namespace event {
-                function addListener(instance: any, eventName: string, handler: Function): any;
-            }
-        }
-    }
-}
 
 interface OfferTimeSlot {
     date: string;
@@ -99,8 +24,8 @@ const TabsPage = () => {
     const [locationNotes, setLocationNotes] = useState("");
     const [locationUrl, setLocationUrl] = useState("");
     const mapRef = useRef<HTMLDivElement>(null);
-    const markerRef = useRef<google.maps.Marker | null>(null);
     const mapInstanceRef = useRef<google.maps.Map | null>(null);
+    const markerRef = useRef<google.maps.Marker | null>(null)
     const router = useRouter();
 
     // States for Time and Offer Selection remain the same
@@ -165,186 +90,7 @@ const TabsPage = () => {
     }, []);
 
     // Function to get the user's current location
-    const getCurrentLocation = () => {
-        if (navigator.geolocation && mapInstanceRef.current && markerRef.current) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const userLocation = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
-
-                    // Set map center to user's location
-                    mapInstanceRef.current?.setCenter(userLocation);
-                    markerRef.current?.setPosition(userLocation);
-                    setSelectedLocation(userLocation);
-
-                    // Try to get address details from coordinates
-                    getAddressFromCoordinates(userLocation);
-                },
-                () => {
-                    // Handle geolocation error or permission denied
-                    alert("تعذر الوصول إلى موقعك الحالي");
-                    console.log("Unable to retrieve your location");
-                }
-            );
-        }
-    };
-
-    // Create a custom control for the current location button
-    const createCurrentLocationButton = (map: google.maps.Map) => {
-        const controlDiv = document.createElement('div');
-
-        // Set CSS for the control border
-        const controlUI = document.createElement('div');
-        controlUI.style.backgroundColor = '#fff';
-        controlUI.style.border = '2px solid #fff';
-        controlUI.style.borderRadius = '3px';
-        controlUI.style.boxShadow = '0 2px 6px rgba(0,0,0,.3)';
-        controlUI.style.cursor = 'pointer';
-        controlUI.style.marginRight = '10px';
-        controlUI.style.marginTop = '10px';
-        controlUI.style.textAlign = 'center';
-        controlUI.title = 'الموقع الحالي';
-        controlDiv.appendChild(controlUI);
-
-        // Set CSS for the control interior
-        const controlText = document.createElement('div');
-        controlText.style.color = 'rgb(25,25,25)';
-        controlText.style.fontFamily = 'Arial,sans-serif';
-        controlText.style.fontSize = '16px';
-        controlText.style.lineHeight = '38px';
-        controlText.style.paddingLeft = '5px';
-        controlText.style.paddingRight = '5px';
-        controlText.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994.994 0 0 0 13 3.06V1h-2v2.06A8.994.994 0 0 0 3.06 11H1v2h2.06A8.994.994 0 0 0 11 20.94V23h2v-2.06A8.994.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
-        controlUI.appendChild(controlText);
-
-        // Setup the click event listener
-        controlUI.addEventListener('click', getCurrentLocation);
-
-        return controlDiv;
-    };
-
-    // Initialize and handle map after the Google Maps script is loaded
-    useEffect(() => {
-        // Check if the Google Maps script is loaded and the map container exists
-        if (typeof window !== 'undefined' && window.google && mapRef.current && currentTab === 1) {
-            // Initialize the map centered on UAE
-            const initialPosition = { lat: 25.276987, lng: 55.296249 }; // Dubai coordinates as default
-            const map = new google.maps.Map(mapRef.current, {
-                zoom: 10,
-                center: initialPosition,
-            });
-
-            // Store map instance in ref for later access
-            mapInstanceRef.current = map;
-
-            // Add a marker for the selected location
-            const marker = new google.maps.Marker({
-                position: initialPosition,
-                map: map,
-                draggable: true,
-            });
-            markerRef.current = marker;
-
-            // Add the current location button to the map
-            const locationButton = createCurrentLocationButton(map);
-            map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
-
-            // Get device's current location if permission is granted
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const userLocation = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
-                        };
-
-                        // Set map center to user's location
-                        map.setCenter(userLocation);
-                        marker.setPosition(userLocation);
-                        setSelectedLocation(userLocation);
-
-                        // Try to get address details from coordinates
-                        getAddressFromCoordinates(userLocation);
-                    },
-                    () => {
-                        // Handle geolocation error or permission denied
-                        console.log("Unable to retrieve your location");
-                    }
-                );
-            }
-
-            // Update selected location when marker is dragged
-            google.maps.event.addListener(marker, 'dragend', () => {
-                const position: google.maps.LatLng = marker.getPosition();
-                setSelectedLocation({
-                    lat: position.lat(),
-                    lng: position.lng(),
-                });
-
-                // Update address details when marker position changes
-                getAddressFromCoordinates({
-                    lat: position.lat(),
-                    lng: position.lng(),
-                });
-            });
-
-            // Update marker position when map is clicked
-            google.maps.event.addListener(map, 'click', (event: google.maps.MapMouseEvent) => {
-                marker.setPosition(event.latLng);
-                setSelectedLocation({
-                    lat: event.latLng.lat(),
-                    lng: event.latLng.lng(),
-                });
-
-                // Update address details when map is clicked
-                getAddressFromCoordinates({
-                    lat: event.latLng.lat(),
-                    lng: event.latLng.lng(),
-                });
-            });
-
-            setMapLoaded(true);
-        }
-    }, [currentTab]);
-
-    // Function to get address details from coordinates using Geocoding API
-    const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
-        const geocoder = new google.maps.Geocoder();
-        geocoder.geocode({ location: location }, (results: google.maps.GeocoderResult[], status: google.maps.GeocoderStatus) => {
-            if (status === "OK" && results[0]) {
-                const addressComponents = results[0].address_components;
-
-                // Try to find city from address components
-                const cityComponent = addressComponents.find(
-                    component => component.types.includes("locality")
-                );
-
-                if (cityComponent) {
-                    const cityName = cityComponent.long_name;
-                    // Check if the city is one of the UAE emirates we're interested in
-                    const normalizedCityName = cityName.toLowerCase();
-                    if (normalizedCityName.includes("dubai") || normalizedCityName.includes("دبي")) {
-                        setSelectedCity("Dubai");
-                    } else if (normalizedCityName.includes("sharjah") || normalizedCityName.includes("الشارقة")) {
-                        setSelectedCity("Sharjah");
-                    } else if (normalizedCityName.includes("ajman") || normalizedCityName.includes("عجمان")) {
-                        setSelectedCity("Ajman");
-                    } else if (normalizedCityName.includes("umm al quwain") || normalizedCityName.includes("أم القيوين")) {
-                        setSelectedCity("Umm Al Quwain");
-                    }
-                }
-
-                // Set the formatted address
-                setAddressDetails(results[0].formatted_address);
-
-                // Generate Google Maps URL for the location
-                const locationLink = `https://www.google.com/maps?q=${location.lat},${location.lng}`;
-                setLocationUrl(locationLink);
-            }
-        });
-    };
+    
 
     const handleNext = () => {
         // Add validation for location tab
@@ -438,14 +184,61 @@ const TabsPage = () => {
             setCurrentTab(currentTab - 1);
         }
     };
-
-    const handleConfirm = () => {
-        alert("تم تأكيد البيانات");
-        // Add your confirmation logic here, such as navigating to another page
-        // For example:
-        // router.push('/confirmation');
+    const handleConfirm = async () => {
+        // Prepare the data for submission
+        const bookingData = {
+            name: user?.name || '',  // Use name from user object
+            phone: user?.phone || '',  // Use phone from user object
+            city: selectedCity,
+            address: addressDetails,
+            locationUrl: locationUrl,
+            serviceType:
+                serviceType === 'oneTime'
+                    ? 'ONE_TIME'
+                    : selectedOffer === 'offer1'
+                        ? 'OFFER_4'
+                        : selectedOffer === 'offer2'
+                            ? 'OFFER_8'
+                            : selectedOffer === 'offer3'
+                                ? 'OFFER_12'
+                                : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
+            date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
+            timePeriod:
+                selectedMorningTime && !selectedAfternoonTime
+                    ? 'MORNING'
+                    : !selectedMorningTime && selectedAfternoonTime
+                        ? 'EVENING'
+                        : 'MORNING', // Default to MORNING if neither or both are selected. Important
+            extraHours: selectedMorningTime && !selectedAfternoonTime? morningExtraHours: selectedAfternoonTime&& !selectedMorningTime ? afternoonExtraHours:0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
+    
+            workerCount: numberOfCleaners,
+            price: totalPrice,
+        };
+    
+        try {
+            // Send the booking data to the API endpoint
+            const response = await fetch('/api/bookings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(bookingData),
+            });
+    
+            if (response.ok) {
+                alert('تم تأكيد الحجز بنجاح!');
+                // Optionally, redirect to a confirmation page or reset the form
+                router.push('/confirmation');
+            } else {
+                const errorData = await response.json();
+                alert(`حدث خطأ أثناء تأكيد الحجز: ${errorData.error || 'Unknown error'}`);
+                console.error('API Error:', errorData);
+            }
+        } catch (error) {
+            alert('حدث خطأ أثناء الاتصال بالخادم.');
+            console.error('Fetch Error:', error);
+        }
     };
-
     // Function to calculate available cleaners
     const calculateAvailableCleaners = () => {
         // This is a placeholder.  You'll need to replace this with your actual logic
@@ -640,71 +433,7 @@ const ProgressIndicator = () => {
                     <div className={`tab ${currentTab === 1 ? 'active' : ''}`}>
                         <h2>اختيار الموقع</h2>
                         {currentTab === 1 && (
-                            <div className="location-container">
-                                {/* Map container */}
-                                <div className="map-container" ref={mapRef}></div>
-
-                                <div className="form-group">
-                                    <label>المدينة:</label>
-                                    <select
-                                        value={selectedCity}
-                                        onChange={(e) => setSelectedCity(e.target.value)}
-                                        required
-                                        className="select-field"
-                                    >
-                                        <option value="">اختر المدينة</option>
-                                        <option value="Dubai">دبي</option>
-                                        <option value="Sharjah">الشارقة</option>
-                                        <option value="Ajman">عجمان</option>
-                                        <option value="Umm Al Quwain">أم القيوين</option>
-                                    </select>
-
-                                    <label>العنوان (للقراءة فقط):</label>
-                                    <textarea
-                                        value={addressDetails}
-                                        readOnly
-                                        placeholder="سيظهر العنوان تلقائياً عند تحديد الموقع"
-                                        rows={2}
-                                        className="readonly-field"
-                                    />
-
-                                    <label>ملاحظات إضافية عن الموقع:</label>
-                                    <textarea
-                                        value={locationNotes}
-                                        onChange={(e) => setLocationNotes(e.target.value)}
-                                        placeholder="أدخل أي تفاصيل إضافية عن الموقع مثل: رقم المبنى، الطابق، علامات مميزة، إلخ"
-                                        rows={3}
-                                    />
-
-                                    {selectedLocation && (
-                                        <>
-                                            <div className="coordinates-info">
-                                                <p>الإحداثيات: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}</p>
-                                            </div>
-
-                                            <label>رابط الموقع:</label>
-                                            <div className="location-url-container">
-                                                <input
-                                                    type="text"
-                                                    value={locationUrl}
-                                                    readOnly
-                                                    className="readonly-field"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    className="copy-btn"
-                                                    onClick={() => {
-                                                        navigator.clipboard.writeText(locationUrl);
-                                                        alert("تم نسخ الرابط بنجاح");
-                                                    }}
-                                                >
-                                                    نسخ
-                                                </button>
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
+                            <LeafletMap/>
                         )}
                     </div>
 
@@ -807,6 +536,7 @@ const ProgressIndicator = () => {
 
                                         <div className="cleaner-section flex flex-col space-y-2 p-4 border rounded-lg bg-gray-50 rtl"> 
     <label className="font-medium text-gray-700">عدد عمال النظافة:</label> 
+    
     <div className="counter-input flex items-center justify-center space-x-2 rtl:space-x-reverse"> 
         <button  
             type="button"  
@@ -1838,8 +1568,7 @@ const ProgressIndicator = () => {
                         font-size: 10px;
                     }
 
-                    .offers-container {
-                        gap: 8px;
+                    .offers-container {                        gap: 8px;
                     }
 
                     .offer-price {

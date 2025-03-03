@@ -6,17 +6,47 @@ datasource db {
   provider = "postgresql"
   url      =  "postgresql://postgres.orfgmlvsefwjqwqrnakd:BH5krwSd0GqFHfMV@aws-0-eu-central-1.pooler.supabase.com:5432/postgres"
 }
+
 enum UserType {
   CUSTOMER
   ADMIN
   WORKER
 }
+
+enum ServiceType {
+  OFFER_4
+  OFFER_8
+  OFFER_12
+  ONE_TIME
+}
+
+enum TimePeriod {
+  MORNING
+  EVENING
+}
+
 model User {
   id        String @id @default(uuid())
   phone     String @unique
   name      String?
   type      UserType @default(CUSTOMER) 
-  password String
+  password  String
   phoneVerified Boolean  @default(false)  
+  createdAt DateTime @default(now())
+}
+
+model Booking {
+  id        String @id @default(uuid())
+  name      String
+  phone     String
+  city      String
+  address   String
+  locationUrl String?
+  serviceType ServiceType
+  date      DateTime
+  timePeriod TimePeriod
+  extraHours Int @default(0)
+  workerCount Int @default(1)
+  price     Float
   createdAt DateTime @default(now())
 }
