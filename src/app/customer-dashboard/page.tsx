@@ -1,11 +1,8 @@
 "use client";
-import { useEffect } from 'react';
 import LogoutButton from "../components/LogoutButton";
-import { useRouter } from "next/navigation";
-
+ 
 export default function CustomerDashboard() {
-  const router = useRouter();
-
+ 
 
   return (
     <div>
