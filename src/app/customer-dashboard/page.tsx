@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from 'react';
 import LogoutButton from "../components/LogoutButton";
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from "next/navigation";
@@ -14,9 +15,11 @@ export default function CustomerDashboard() {
   }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Welcome, Customer!</h1>
-      <LogoutButton text="تسجيل الخروج" />
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div>
+        <h1 className="text-3xl font-bold">Welcome, Customer!</h1>
+        <LogoutButton text="تسجيل الخروج" />
+      </div>
+    </Suspense>
   );
 }
