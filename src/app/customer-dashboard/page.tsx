@@ -1,20 +1,11 @@
 "use client";
 import { useEffect } from 'react';
 import LogoutButton from "../components/LogoutButton";
-import { useSearchParams } from 'next/navigation';
 import { useRouter } from "next/navigation";
 
 export default function CustomerDashboard() {
-  const searchParams = useSearchParams();
   const router = useRouter();
-  const bookParam = searchParams.get('book');
 
-  // Use useEffect for handling the redirect
-  useEffect(() => {
-    if (bookParam) {
-      router.push(`/book`);
-    }
-  }, [bookParam, router]);
 
   return (
     <div>
