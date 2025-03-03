@@ -91,32 +91,7 @@ const TabsPage = () => {
     }, []);
 
     // Function to get the user's current location
-    // Fix the getCurrentLocation function
-const getCurrentLocation = () => {
-    if (navigator.geolocation && mapInstanceRef.current && markerRef.current) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const userLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                };
-
-                // Set map center to user's location
-                mapInstanceRef.current?.setCenter(userLocation);
-                markerRef.current?.setPosition(userLocation);
-                setSelectedLocation(userLocation);
-
-                // Try to get address details from coordinates
-                getAddressFromCoordinates(userLocation);
-            },
-            () => {
-                // Handle geolocation error or permission denied
-                alert("تعذر الوصول إلى موقعك الحالي");
-                console.log("Unable to retrieve your location");
-            }
-        );
-    }
-};
+    // Fix the getCurrentLocation function 
     // Create a custom control for the current location button
      
     useEffect(() => {
