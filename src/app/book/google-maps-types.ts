@@ -85,7 +85,10 @@ export class Geocoder {
 }
 
 export class LatLng {
-    constructor(_lat: number, _lng: number) {}
+    constructor(_lat: number, _lng: number) {
+        console.log("LatLng constructor",_lat,_lng);
+    }
+    
     lat(): number { return 0; }
     lng(): number { return 0; }
 }
@@ -95,7 +98,7 @@ export class MVCObject {
 }
 
 export class MVCArray<T> {
-    push(_element: T): number { return 0; }
+    push(_element: T): number { console.log(_element);return 0; }
 }
 
 // Replace event namespace with an object containing functions
@@ -106,6 +109,7 @@ export const event = {
         _eventName: string, 
         _handler: (e: unknown) => void
     ): { remove: () => void } => {
+        console.log(_instance, _eventName, _handler);
         return { remove: () => {} };
     }
 };
