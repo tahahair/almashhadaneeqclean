@@ -100,6 +100,7 @@ const TabsPage = () => {
     const [currentTab, setCurrentTab] = useState(0);
     const [user, setUser] = useState<{ name: string; phone: string; phoneVerified: boolean } | null>(null);
     const [mapLoaded, setMapLoaded] = useState(false);
+    console.log("mapLoaded", mapLoaded);
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [selectedCity, setSelectedCity] = useState("");
     const [addressDetails, setAddressDetails] = useState("");
@@ -121,8 +122,7 @@ const TabsPage = () => {
     const [numberOfCleaners, setNumberOfCleaners] = useState<number>(1);
     const [availableCleaners, setAvailableCleaners] = useState<number>(15);
     const totalCleaners = 15;
-    const [repetitionType, setRepetitionType] = useState<'everyWeek' | 'everyDay' | 'twiceAMonth' | null>(null);
-
+ 
     // States for offer times remain the same
     const [offerTimeSlots, setOfferTimeSlots] = useState<OfferTimeSlot[]>([]);
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
@@ -148,8 +148,8 @@ const TabsPage = () => {
     useEffect(() => {
         const today = new Date();
         const year = today.getFullYear();
-        let month = today.getMonth() + 1;
-        let day = today.getDate();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
 
         const formattedMonth = month < 10 ? `0${month}` : `${month}`;
         const formattedDay = day < 10 ? `0${day}` : `${day}`;
@@ -199,7 +199,7 @@ const getCurrentLocation = () => {
     }
 };
     // Create a custom control for the current location button
-    const createCurrentLocationButton = (map: google.maps.Map) => {
+    const createCurrentLocationButton = () => {
         // Function implementation remains the same, just change the type
         const controlDiv = document.createElement('div');
 
@@ -255,7 +255,7 @@ const getCurrentLocation = () => {
             markerRef.current = marker;
     
             // Add the current location button to the map
-            const locationButton = createCurrentLocationButton(map);
+            const locationButton = createCurrentLocationButton();
             map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
     
             // Get device's current location if permission is granted
@@ -571,7 +571,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                     return;
                 }
 
-                 const selectedDateObj = new Date(selectedDate);
+
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
