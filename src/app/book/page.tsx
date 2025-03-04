@@ -373,7 +373,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
             name: user?.name || '',  // Use name from user object
             phone: user?.phone || '',  // Use phone from user object
             city: selectedCity,
-            address: addressDetails,
+            address: addressDetails + "\n " + locationNotes,
             locationUrl: locationUrl,
             serviceType:
                 serviceType === 'oneTime'
