@@ -400,7 +400,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     
         try {
             // Send the booking data to the API endpoint
-            const response = await fetch('/api/bookings', {
+            const response = await fetch('/api/booking', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
