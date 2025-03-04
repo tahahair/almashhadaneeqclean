@@ -74,20 +74,18 @@ export class Map {
 }
 
 export class Marker {
-    constructor(opts?: MarkerOptions) {}
-    setPosition(latLng: LatLng | LatLngLiteral): void {}
+    constructor() {}
+    setPosition(): void {}
     getPosition(): LatLng { return new LatLng(0, 0); }
 }
 
 export class Geocoder {
     geocode(
-        request: GeocoderRequest, 
-        callback: (results: GeocoderResult[], status: GeocoderStatus) => void
     ): void {}
 }
 
 export class LatLng {
-    constructor(lat: number, lng: number) {}
+    constructor(_lat: number, _lng: number) {}
     lat(): number { return 0; }
     lng(): number { return 0; }
 }
@@ -97,16 +95,16 @@ export class MVCObject {
 }
 
 export class MVCArray<T> {
-    push(element: T): number { return 0; }
+    push(_element: T): number { return 0; }
 }
 
 // Replace event namespace with an object containing functions
 export const event = {
     // Fix the any types with proper type definitions
     addListener: <T>(
-        instance: T, 
-        eventName: string, 
-        handler: (e: unknown) => void
+        _instance: T, 
+        _eventName: string, 
+        _handler: (e: unknown) => void
     ): { remove: () => void } => {
         return { remove: () => {} };
     }
