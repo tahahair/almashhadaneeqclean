@@ -11,7 +11,7 @@ import {
 import convertToSubcurrency from "../../../lib/convertToSubcurrency";
  
 const CheckoutPage = ({ amount, language, bookingData }: { amount: number; language: "ar" | "en"; bookingData: string }) => {
-  const router = useRouter();
+ 
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState<string>();
