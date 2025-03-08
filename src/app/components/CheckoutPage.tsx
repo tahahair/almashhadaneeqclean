@@ -10,7 +10,7 @@ import {
 } from "@stripe/react-stripe-js";
 import convertToSubcurrency from "../../../lib/convertToSubcurrency";
  
-const CheckoutPage = ({ amount, language, bookingData }: { amount: number; language: "ar" | "en"; bookingData: any }) => {
+const CheckoutPage = ({ amount, language, bookingData }: { amount: number; language: "ar" | "en"; bookingData: string }) => {
   const router = useRouter();
   const stripe = useStripe();
   const elements = useElements();

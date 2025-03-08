@@ -7,7 +7,7 @@ export default function SubmitBooking() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [isSent, setIsSent] = useState(false);
-    const [bookingData, setBookingData] = useState(null);
+ 
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {

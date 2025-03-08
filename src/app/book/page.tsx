@@ -50,6 +50,7 @@ const TabsPage = () => {
     const router = useRouter();
 
     const [showMinue, setshowMinue] = useState(false);
+    console.log("showMinue", showMinue);
     const handleClick2: React.MouseEventHandler<SVGPathElement> = (): void => {
       setshowMinue((prevState) => !prevState);
     };
@@ -395,61 +396,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
             setCurrentTab(currentTab - 1);
         }
     };
-    const handleConfirm = async () => {
-        // Prepare the data for submission
-        const bookingData = {
-            name: user?.name || '',  // Use name from user object
-            phone: user?.phone || '',  // Use phone from user object
-            city: selectedCity,
-            address: addressDetails + "\n " + locationNotes,
-            locationUrl: locationUrl,
-            serviceType:
-                serviceType === 'oneTime'
-                    ? 'ONE_TIME'
-                    : selectedOffer === 'offer1'
-                        ? 'OFFER_4'
-                        : selectedOffer === 'offer2'
-                            ? 'OFFER_8'
-                            : selectedOffer === 'offer3'
-                                ? 'OFFER_12'
-                                : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
-            date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
-            timePeriod:
-                selectedMorningTime && !selectedAfternoonTime
-                    ? 'MORNING'
-                    : !selectedMorningTime && selectedAfternoonTime
-                        ? 'EVENING'
-                        : 'MORNING', // Default to MORNING if neither or both are selected. Important
-            extraHours: selectedMorningTime && !selectedAfternoonTime? morningExtraHours: selectedAfternoonTime&& !selectedMorningTime ? afternoonExtraHours:0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
-    
-            workerCount: numberOfCleaners,
-            price: totalPrice,
-        };
-    
-        try {
-            // Send the booking data to the API endpoint
-            const response = await fetch('/api/booking', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(bookingData),
-            });
-    
-            if (response.ok) {
-                alert('تم تأكيد الحجز بنجاح!');
-                // Optionally, redirect to a confirmation page or reset the form
-                router.push('/confirmation');
-            } else {
-                const errorData = await response.json();
-                alert(`حدث خطأ أثناء تأكيد الحجز: ${errorData.error || 'Unknown error'}`);
-                console.error('API Error:', errorData);
-            }
-        } catch (error) {
-            alert('حدث خطأ أثناء الاتصال بالخادم.');
-            console.error('Fetch Error:', error);
-        }
-    };
+     
     // Function to calculate available cleaners
     const calculateAvailableCleaners = () => {
         // This is a placeholder.  You'll need to replace this with your actual logic
