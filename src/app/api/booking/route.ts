@@ -4,11 +4,12 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // Add new booking
+// Add new booking
 export async function POST(req: Request) {
     try {
         const data = await req.json();
         const booking = await prisma.booking.create({ data });
-        return NextResponse.json(booking, { status: 201 });
+        return NextResponse.json({ id: booking.id }, { status: 201 });
     } catch (error) {
         return NextResponse.json({ error: (error as Error).message }, { status: 400 });
     }

@@ -4,15 +4,36 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import LogoutButton from "../components/LogoutButton";
+import CheckoutPage from "../components/CheckoutPage";
+import { Menu    } from 'lucide-react';
+
+ import { Elements } from "@stripe/react-stripe-js";
+ import { loadStripe } from "@stripe/stripe-js";
  
- 
+ if (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {
+   throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
+ }
+ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
 
 interface OfferTimeSlot {
     date: string;
     timeSlot: string;
 }
+ 
 
+
+  const langImages = {
+    
+    EN: '/english.png',
+    AR: '/arabic.png'
+  };
 const TabsPage = () => {
+    // const router = useRouter(); // Duplicate declaration removed
+    const showSection = () => {
+    
+        router.push(`/`);
+      };
     // All state declarations remain the same
     const [currentTab, setCurrentTab] = useState(0);
     const [user, setUser] = useState<{ name: string; phone: string; phoneVerified: boolean } | null>(null);
@@ -27,6 +48,13 @@ const TabsPage = () => {
     const mapInstanceRef = useRef<google.maps.Map | null>(null);
     const markerRef = useRef<google.maps.Marker | null>(null)
     const router = useRouter();
+
+    const [showMinue, setshowMinue] = useState(false);
+    const handleClick2: React.MouseEventHandler<SVGPathElement> = (): void => {
+      setshowMinue((prevState) => !prevState);
+    };
+  const [lang, setlang] = useState("");
+ 
 
     // States for Time and Offer Selection remain the same
     const [serviceType, setServiceType] = useState<'oneTime' | 'offer'>('oneTime');
@@ -84,7 +112,7 @@ const TabsPage = () => {
         if (userData && userData.phoneVerified && userData.logedin) {
             setUser(userData);
         } else {
-            router.push('/login?book=${bookValue}');
+            router.push('/login');
         }
     }, []);
 
@@ -591,6 +619,48 @@ const ProgressIndicator = () => {
 };
     return (
         <>
+
+    {/* Header - Updated hover states and rings */}
+    <header className="bg-white/80 backdrop-blur-sm sticky top-0 z-40 border-b">
+          <div className="max-w-7xl mx-auto px-2 py-4">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-4">
+                <div className="relative">
+                  <div className="absolute -inset-2 bg-blue-100 rounded-full blur-lg opacity-60"></div>
+                  <img onClick={() => showSection( )} src="/logo.png" alt="Next Graft" className="h-12 relative" />
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <div className="flex gap-3">
+                  {['EN', 'AR'].map((langa) => {
+                    const langKey = langa.toUpperCase() as keyof typeof langImages;
+                    return (
+                      <button 
+                        key={langa}
+                        onClick={() => setlang(langa)}
+                        className={`relative rounded-full overflow-hidden w-8 h-8 transition-transform ${
+                          lang === langa ? 'scale-110 ring-2 ring-blue-500' : 'hover:scale-105'
+                        }`}
+                      >
+                        <img 
+                          src={langImages[langKey]}
+                          alt={langKey} 
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+                <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors" onClick={handleClick2 as unknown as React.MouseEventHandler<HTMLButtonElement>}>
+                  <Menu className="w-8 h-8 text-gray-700" /> 
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+
             {/* Load Google Maps JavaScript API */}
             <Script
                 src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyAaDAaMUyqGhUKIZWQ-QbsQloq60oyBi8s&libraries=places`}
@@ -980,53 +1050,46 @@ const ProgressIndicator = () => {
                                         <span className="total-value">{totalPrice} AED</span>
                                     </div>
                                 </div>
-
+           
                                 <div className="payment-info">
                                     <h3>معلومات بطاقة الائتمان</h3>
-                                    <div className="card-container">
-                                        <div className="form-group">
-                                            <label>رقم البطاقة:</label>
-                                            <input 
-                                                type="text" 
-                                                placeholder="رقم البطاقة" 
-                                                className="card-input"
-                                                inputMode="numeric"
-                                                pattern="[0-9]*"
-                                            />
-                                        </div>
-                                        
-                                        <div className="card-row">
-                                            <div className="form-group half">
-                                                <label>تاريخ الانتهاء:</label>
-                                                <input 
-                                                    type="text" 
-                                                    placeholder="MM/YY" 
-                                                    className="card-input"
-                                                    inputMode="numeric"
-                                                />
-                                            </div>
-                                            <div className="form-group half">
-                                                <label>رمز التحقق (CVV):</label>
-                                                <input 
-                                                    type="text" 
-                                                    placeholder="CVV" 
-                                                    className="card-input"
-                                                    inputMode="numeric"
-                                                    pattern="[0-9]*"
-                                                    maxLength={4}
-                                                />
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="form-group">
-                                            <label>اسم حامل البطاقة:</label>
-                                            <input 
-                                                type="text" 
-                                                placeholder="الاسم كما يظهر على البطاقة" 
-                                                className="card-input"
-                                            />
-                                        </div>
-                                    </div>
+                                    <Elements
+        stripe={stripePromise}
+        options={{
+          mode: "payment",
+          amount: totalPrice*100,
+          currency: "aed",
+        }}
+      >
+        <CheckoutPage amount={totalPrice} language="ar" bookingData={JSON.stringify({
+            name: user?.name || '',  // Use name from user object
+            phone: user?.phone || '',  // Use phone from user object
+            city: selectedCity,
+            address: addressDetails + "\n " + locationNotes,
+            locationUrl: locationUrl,
+            serviceType:
+                serviceType === 'oneTime'
+                    ? 'ONE_TIME'
+                    : selectedOffer === 'offer1'
+                        ? 'OFFER_4'
+                        : selectedOffer === 'offer2'
+                            ? 'OFFER_8'
+                            : selectedOffer === 'offer3'
+                                ? 'OFFER_12'
+                                : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
+            date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
+            timePeriod:
+                selectedMorningTime && !selectedAfternoonTime
+                    ? 'MORNING'
+                    : !selectedMorningTime && selectedAfternoonTime
+                        ? 'EVENING'
+                        : 'MORNING', // Default to MORNING if neither or both are selected. Important
+            extraHours: selectedMorningTime && !selectedAfternoonTime? morningExtraHours: selectedAfternoonTime&& !selectedMorningTime ? afternoonExtraHours:0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
+    
+            workerCount: numberOfCleaners,
+            price: totalPrice,
+        } )} />
+      </Elements>
                                 </div>
                             </>
                         )}
@@ -1043,14 +1106,12 @@ const ProgressIndicator = () => {
                             <span className="btn-text">رجوع</span>
                         </button>
                     )}
-                    {currentTab < 3 ? (
+                    {currentTab < 3 && (
                         <button className="btn-next" onClick={handleNext}>
                             <span className="btn-text">التالي</span>
                             <span className="btn-icon">←</span>
                         </button>
-                    ) : (
-                        <button className="btn-confirm" onClick={handleConfirm}>تأكيد</button>
-                    )}
+                    ) }
                 </div>
             </div>
             <style jsx>{`
