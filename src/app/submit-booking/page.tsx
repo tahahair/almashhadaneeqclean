@@ -1,27 +1,22 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function SubmitBooking() {
+function SubmitBookingContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [isSent, setIsSent] = useState(false);
- 
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const redirect_status = searchParams.get("redirect_status");
 
-        // If redirect_status is not "succeeded", show an error message
         if (redirect_status !== "succeeded") {
             setError("حدث خطأ أثناء تأكيد الحجز.");
             setIsLoading(false);
             return;
         }
-
-        // Process the booking data if needed
-        // Assuming that bookingData will be fetched or set here
 
         setIsSent(true); // Assuming booking was successful when redirect_status is "succeeded"
         setIsLoading(false);
@@ -55,5 +50,13 @@ export default function SubmitBooking() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function SubmitBooking() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <SubmitBookingContent />
+        </Suspense>
     );
 }
