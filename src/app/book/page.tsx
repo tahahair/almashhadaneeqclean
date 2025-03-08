@@ -28,8 +28,13 @@ interface OfferTimeSlot {
     EN: '/english.png',
     AR: '/arabic.png'
   };
+
+
+  
 const TabsPage = () => {
     // const router = useRouter(); // Duplicate declaration removed
+
+
     const showSection = () => {
     
         router.push(`/`);
@@ -55,7 +60,7 @@ const TabsPage = () => {
       setshowMinue((prevState) => !prevState);
     };
   const [lang, setlang] = useState("");
- 
+  
 
     // States for Time and Offer Selection remain the same
     const [serviceType, setServiceType] = useState<'oneTime' | 'offer'>('oneTime');
@@ -71,13 +76,16 @@ const TabsPage = () => {
  
     // States for offer times remain the same
     const [offerTimeSlots, setOfferTimeSlots] = useState<OfferTimeSlot[]>([]);
+    let items: string[] = [];
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
     const [illegalOfferDays, setIllegalOfferDays] = useState<string[]>([]);
 
     // Available time slots
+    //const availableTimeSlots = [
+       // "الفترة الصباحية من 11:00-11:30 الى 15:00-15:30","الفترة المسائية من 16:00-16:30 الى 20:00-20:30"  ];
     const availableTimeSlots = [
-        "الفترة الصباحية من 11:00-11:30 الى 15:00-15:30","الفترة المسائية من 16:00-16:30 الى 20:00-20:30"  ];
-
+            "MORNING","EVENING"  ];
+    
     // Offers
     const offers = [
         { id: 'offer1', label: '4 hours X 4 times in a month one cleaner 340 AED', times: 4, price: 340 },
@@ -266,6 +274,76 @@ const getCurrentLocation = () => {
         }
     }, [currentTab]);
 
+
+
+    const createBookingdata = () => {
+        items=[];
+if (offerTimeSlots  && offerTimeSlots.length > 3) {
+    console.log("offerTimeSlots is running" );
+        for (let i = 0; i < offerTimeSlots.length; i++) {
+
+            items.push(JSON.stringify({name: user?.name || '',  // Use name from user object
+                phone: user?.phone || '',  // Use phone from user object
+                city: selectedCity,
+                address: addressDetails + "\n " + locationNotes,
+                locationUrl: locationUrl,
+                serviceType:
+                    serviceType === 'oneTime'
+                        ? 'ONE_TIME'
+                        : selectedOffer === 'offer1'
+                            ? 'OFFER_4'
+                            : selectedOffer === 'offer2'
+                                ? 'OFFER_8'
+                                : selectedOffer === 'offer3'
+                                    ? 'OFFER_12'
+                                    : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
+                date:new Date( offerTimeSlots[i].date) , // Convert to DateTime, handle empty string
+                timePeriod:offerTimeSlots[i].timeSlot,
+                    
+                extraHours: selectedMorningTime && !selectedAfternoonTime? morningExtraHours: selectedAfternoonTime&& !selectedMorningTime ? afternoonExtraHours:0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
+        
+                workerCount: numberOfCleaners,
+                price: totalPrice,
+            } ));
+        
+        
+          }
+        return items;}
+          else{
+            console.log("one items.push  is running" );
+            
+            items.push(JSON.stringify({
+                name: user?.name || '',  // Use name from user object
+                phone: user?.phone || '',  // Use phone from user object
+                city: selectedCity,
+                address: addressDetails + "\n " + locationNotes,
+                locationUrl: locationUrl,
+                serviceType:
+                    serviceType === 'oneTime'
+                        ? 'ONE_TIME'
+                        : selectedOffer === 'offer1'
+                            ? 'OFFER_4'
+                            : selectedOffer === 'offer2'
+                                ? 'OFFER_8'
+                                : selectedOffer === 'offer3'
+                                    ? 'OFFER_12'
+                                    : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
+                date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
+                timePeriod:
+                    selectedMorningTime && !selectedAfternoonTime
+                        ? 'MORNING'
+                        : !selectedMorningTime && selectedAfternoonTime
+                            ? 'EVENING'
+                            : 'MORNING', // Default to MORNING if neither or both are selected. Important
+                extraHours: selectedMorningTime && !selectedAfternoonTime? morningExtraHours: selectedAfternoonTime&& !selectedMorningTime ? afternoonExtraHours:0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
+        
+                workerCount: numberOfCleaners,
+                price: totalPrice,
+            } ));
+            return [items[0]]
+          }
+
+        }
     // Function to get address details from coordinates using Geocoding API
    // Fix the getAddressFromCoordinates function
 const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
@@ -306,6 +384,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
 
     const handleNext = () => {
         // Add validation for location tab
+       
         if (currentTab === 1 && !selectedLocation) {
             alert("الرجاء تحديد الموقع على الخريطة");
             return;
@@ -474,15 +553,25 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
               
                 const newTimeSlot: OfferTimeSlot = { date: selectedDate, timeSlot: selectedTimeSlot };
                 setOfferTimeSlots([...offerTimeSlots, newTimeSlot]);
+                console.log("Offer time slots", offerTimeSlots);
+                
 
                  // Add the selected date to the illegalOfferDays array
                 setIllegalOfferDays([...illegalOfferDays, selectedDate]);
+                console.log("illegalOfferDays", illegalOfferDays);
+                console.log("Items", items);
+        
             } else {
                 alert(`لقد وصلت إلى الحد الأقصى لعدد المواعيد المتاحة لهذا العرض (${maxOfferTimes}).`);
             }
+
+           
+
         } else {
             alert("الرجاء تحديد التاريخ والوقت.");
         }
+
+     
     };
 
     // Function to remove time slot for offer
@@ -1008,34 +1097,7 @@ const ProgressIndicator = () => {
           currency: "aed",
         }}
       >
-        <CheckoutPage amount={totalPrice} language="ar" bookingData={JSON.stringify({
-            name: user?.name || '',  // Use name from user object
-            phone: user?.phone || '',  // Use phone from user object
-            city: selectedCity,
-            address: addressDetails + "\n " + locationNotes,
-            locationUrl: locationUrl,
-            serviceType:
-                serviceType === 'oneTime'
-                    ? 'ONE_TIME'
-                    : selectedOffer === 'offer1'
-                        ? 'OFFER_4'
-                        : selectedOffer === 'offer2'
-                            ? 'OFFER_8'
-                            : selectedOffer === 'offer3'
-                                ? 'OFFER_12'
-                                : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
-            date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
-            timePeriod:
-                selectedMorningTime && !selectedAfternoonTime
-                    ? 'MORNING'
-                    : !selectedMorningTime && selectedAfternoonTime
-                        ? 'EVENING'
-                        : 'MORNING', // Default to MORNING if neither or both are selected. Important
-            extraHours: selectedMorningTime && !selectedAfternoonTime? morningExtraHours: selectedAfternoonTime&& !selectedMorningTime ? afternoonExtraHours:0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
-    
-            workerCount: numberOfCleaners,
-            price: totalPrice,
-        } )} />
+        <CheckoutPage amount={totalPrice} language="ar" bookingData={createBookingdata()} />
       </Elements>
                                 </div>
                             </>

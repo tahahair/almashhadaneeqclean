@@ -7,9 +7,10 @@ import {
   useElements,
   PaymentElement,
 } from "@stripe/react-stripe-js";
+
 import convertToSubcurrency from "../../../lib/convertToSubcurrency";
  
-const CheckoutPage = ({ amount, language, bookingData }: { amount: number; language: "ar" | "en"; bookingData: string }) => {
+const CheckoutPage = ({ amount, language, bookingData }: { amount: number; language: "ar" | "en"; bookingData: string[] }) => {
  
   const stripe = useStripe();
   const elements = useElements();
@@ -33,7 +34,7 @@ const CheckoutPage = ({ amount, language, bookingData }: { amount: number; langu
     event.preventDefault();
     setLoading(true);
 
-let bookingId = null;
+let bookingId = [];
 
     if (!stripe || !elements) {
       return;
@@ -49,19 +50,21 @@ let bookingId = null;
 console.log(bookingData);
 try {
   // Send the booking data to the API endpoint
+  for (let i = 0; i < bookingData.length;
+    i++) {
   const response = await fetch('/api/booking', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
       },
-      body: bookingData,
+      body: bookingData[i],
   });
 
   if (response.ok) {
  
       // Optionally, redirect to a confirmation page or reset the form
       const responseData = await response.json();
-      bookingId = responseData.id; // Store the returned id
+      bookingId.push(responseData.id); // Store the returned id
 
  
   } else {
@@ -69,7 +72,8 @@ try {
       alert(`حدث خطأ أثناء تأكيد الحجز: ${errorData.error || 'Unknown error'}`);
       console.error('API Error:', errorData);
   }
-} catch (error) {
+}}
+ catch (error) {
   alert('حدث خطأ أثناء الاتصال بالخادم.');
   console.error('Fetch Error:', error);
 }
@@ -85,12 +89,13 @@ try {
     if (error) {
       setErrorMessage(error.message);
       try {
+        for (let i = 0; i < bookingId.length; i++) {
         const response = await fetch('/api/booking', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ id: bookingId }), // Pass the id of the booking to delete
+            body: JSON.stringify({ id: bookingId[i] }), // Pass the id of the booking to delete
         });
 
         if (response.ok) {
@@ -103,7 +108,8 @@ try {
             alert(`حدث خطأ أثناء حذف الحجز: ${errorData.error || 'Unknown error'}`);
             console.error('API Error:', errorData);
         }
-    } catch (error) {
+    } }
+    catch (error) {
         alert('حدث خطأ أثناء الاتصال بالخادم.');
         console.error('Fetch Error:', error);
     }
