@@ -34,7 +34,7 @@ const CheckoutPage = ({ amount, language, bookingData }: { amount: number; langu
     event.preventDefault();
     setLoading(true);
 
-let bookingId = [];
+const bookingId = [];
 
     if (!stripe || !elements) {
       return;
