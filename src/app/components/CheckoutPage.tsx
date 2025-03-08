@@ -78,7 +78,7 @@ try {
       elements,
       clientSecret,
       confirmParams: {
-        return_url: `http://www.localhost:3000/submit-booking`,
+        return_url: `https://almashhadaneeq.vercel.app/submit-booking`,
       },
     });
 
