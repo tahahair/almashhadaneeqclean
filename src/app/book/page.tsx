@@ -3,8 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from "next/navigation";
 import Script from 'next/script';
-import LogoutButton from "../components/LogoutButton";
-import CheckoutPage from "../components/CheckoutPage";
+ import CheckoutPage from "../components/CheckoutPage";
 import { Menu } from 'lucide-react';
 
 import { Elements } from "@stripe/react-stripe-js";
