@@ -5,40 +5,40 @@ import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import LogoutButton from "../components/LogoutButton";
 import CheckoutPage from "../components/CheckoutPage";
-import { Menu    } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
- import { Elements } from "@stripe/react-stripe-js";
- import { loadStripe } from "@stripe/stripe-js";
- 
- if (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {
-   throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
- }
- const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+if (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {
+    throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
+}
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 
 interface OfferTimeSlot {
     date: string;
     timeSlot: string;
 }
- 
 
 
-  const langImages = {
-    
+
+const langImages = {
+
     EN: '/english.png',
     AR: '/arabic.png'
-  };
+};
 
 
-  
+
 const TabsPage = () => {
     // const router = useRouter(); // Duplicate declaration removed
 
 
     const showSection = () => {
-    
+
         router.push(`/`);
-      };
+    };
     // All state declarations remain the same
     const [currentTab, setCurrentTab] = useState(0);
     const [user, setUser] = useState<{ name: string; phone: string; phoneVerified: boolean } | null>(null);
@@ -57,10 +57,15 @@ const TabsPage = () => {
     const [showMinue, setshowMinue] = useState(false);
     console.log("showMinue", showMinue);
     const handleClick2: React.MouseEventHandler<SVGPathElement> = (): void => {
-      setshowMinue((prevState) => !prevState);
+        setshowMinue((prevState) => !prevState);
     };
-  const [lang, setlang] = useState("");
-  
+    const [lang, setlang] = useState("");
+
+    // NEW: States for search functionality
+    const [searchTerm, setSearchTerm] = useState('');
+    const [suggestions, setSuggestions] = useState<google.maps.places.AutocompletePrediction[]>([]);
+    const [autocompleteService, setAutocompleteService] = useState<google.maps.places.AutocompleteService | null>(null);
+
 
     // States for Time and Offer Selection remain the same
     const [serviceType, setServiceType] = useState<'oneTime' | 'offer'>('oneTime');
@@ -69,11 +74,11 @@ const TabsPage = () => {
     const [selectedMorningTime, setSelectedMorningTime] = useState<boolean>(false);
     const [selectedAfternoonTime, setSelectedAfternoonTime] = useState<boolean>(false);
     const [morningExtraHours, setMorningExtraHours] = useState<number>(0);
-    const [afternoonExtraHours, setAfternoonExtraHours] = useState<number  >(0);
+    const [afternoonExtraHours, setAfternoonExtraHours] = useState<number>(0);
     const [numberOfCleaners, setNumberOfCleaners] = useState<number>(1);
     const [availableCleaners, setAvailableCleaners] = useState<number>(15);
     const totalCleaners = 15;
- 
+
     // States for offer times remain the same
     const [offerTimeSlots, setOfferTimeSlots] = useState<OfferTimeSlot[]>([]);
     let items: string[] = [];
@@ -82,10 +87,11 @@ const TabsPage = () => {
 
     // Available time slots
     //const availableTimeSlots = [
-       // "الفترة الصباحية من 11:00-11:30 الى 15:00-15:30","الفترة المسائية من 16:00-16:30 الى 20:00-20:30"  ];
+    // "الفترة الصباحية من 11:00-11:30 الى 15:00-15:30","الفترة المسائية من 16:00-16:30 الى 20:00-20:30"  ];
     const availableTimeSlots = [
-            "MORNING","EVENING"  ];
-    
+        "MORNING", "EVENING"
+    ];
+
     // Offers
     const offers = [
         { id: 'offer1', label: '4 hours X 4 times in a month one cleaner 340 AED', times: 4, price: 340 },
@@ -97,7 +103,7 @@ const TabsPage = () => {
     const maxOfferTimes = selectedOfferData ? selectedOfferData.times : 0;
 
     const [minDate, setMinDate] = useState<string>('');
-    
+
     // Set min date effect - remains the same
     useEffect(() => {
         const today = new Date();
@@ -127,31 +133,31 @@ const TabsPage = () => {
 
     // Function to get the user's current location
     // Fix the getCurrentLocation function
-const getCurrentLocation = () => {
-    if (navigator.geolocation && mapInstanceRef.current && markerRef.current) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const userLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                };
+    const getCurrentLocation = () => {
+        if (navigator.geolocation && mapInstanceRef.current && markerRef.current) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
 
-                // Set map center to user's location
-                mapInstanceRef.current?.setCenter(userLocation);
-                markerRef.current?.setPosition(userLocation);
-                setSelectedLocation(userLocation);
+                    // Set map center to user's location
+                    mapInstanceRef.current?.setCenter(userLocation);
+                    markerRef.current?.setPosition(userLocation);
+                    setSelectedLocation(userLocation);
 
-                // Try to get address details from coordinates
-                getAddressFromCoordinates(userLocation);
-            },
-            () => {
-                // Handle geolocation error or permission denied
-                alert("تعذر الوصول إلى موقعك الحالي");
-                console.log("Unable to retrieve your location");
-            }
-        );
-    }
-};
+                    // Try to get address details from coordinates
+                    getAddressFromCoordinates(userLocation);
+                },
+                () => {
+                    // Handle geolocation error or permission denied
+                    alert("تعذر الوصول إلى موقعك الحالي");
+                    console.log("Unable to retrieve your location");
+                }
+            );
+        }
+    };
     // Create a custom control for the current location button
     const createCurrentLocationButton = () => {
         // Function implementation remains the same, just change the type
@@ -196,10 +202,10 @@ const getCurrentLocation = () => {
                 zoom: 10,
                 center: initialPosition,
             });
-    
+
             // Store map instance in ref for later access
             mapInstanceRef.current = map;
-    
+
             // Add a marker for the selected location
             const marker = new google.maps.Marker({
                 position: initialPosition,
@@ -207,11 +213,11 @@ const getCurrentLocation = () => {
                 draggable: true,
             });
             markerRef.current = marker;
-    
+
             // Add the current location button to the map
             const locationButton = createCurrentLocationButton();
             map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
-    
+
             // Get device's current location if permission is granted
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -220,12 +226,12 @@ const getCurrentLocation = () => {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
                         };
-    
+
                         // Set map center to user's location
                         map.setCenter(userLocation);
                         marker.setPosition(userLocation);
                         setSelectedLocation(userLocation);
-    
+
                         // Try to get address details from coordinates
                         getAddressFromCoordinates(userLocation);
                     },
@@ -235,7 +241,7 @@ const getCurrentLocation = () => {
                     }
                 );
             }
-    
+
             // Update selected location when marker is dragged
             google.maps.event.addListener(marker, 'dragend', () => {
                 const position = marker.getPosition();
@@ -245,14 +251,14 @@ const getCurrentLocation = () => {
                         lng: position ? position.lng() : 0,
                     });
                 }
-    
+
                 // Update address details when marker position changes
                 getAddressFromCoordinates({
                     lat: position ? position.lat() : 0,
                     lng: position ? position.lng() : 0,
                 });
             });
-    
+
             // Update marker position when map is clicked
             google.maps.event.addListener(map, 'click', (event: google.maps.MapMouseEvent) => {
                 if (event.latLng) {
@@ -261,7 +267,7 @@ const getCurrentLocation = () => {
                         lat: event.latLng.lat(),
                         lng: event.latLng.lng(),
                     });
-    
+
                     // Update address details when map is clicked
                     getAddressFromCoordinates({
                         lat: event.latLng.lat(),
@@ -269,49 +275,99 @@ const getCurrentLocation = () => {
                     });
                 }
             });
-    
+
             setMapLoaded(true);
+
+            // Initialize autocomplete service
+            setAutocompleteService(new google.maps.places.AutocompleteService());
+
         }
     }, [currentTab]);
+
+    // NEW: useEffect to handle search suggestions
+    useEffect(() => {
+        if (searchTerm && autocompleteService) {
+            autocompleteService.getPlacePredictions({
+                input: searchTerm,
+                componentRestrictions: { country: 'ae' }, // Restrict to UAE
+                types: ['geocode'], // Only suggest geocodes
+            }, (predictions) => {
+                setSuggestions(predictions || []);
+            });
+        } else {
+            setSuggestions([]);
+        }
+    }, [searchTerm, autocompleteService]);
+
+    // NEW: Function to handle selecting a suggestion
+    const handleSuggestionClick = (suggestion: google.maps.places.AutocompletePrediction) => {
+        setSearchTerm(suggestion.description || ''); // Set the selected suggestion as the search term
+        setSuggestions([]); // Clear suggestions
+
+        // Use Geocoder to get the coordinates from the place ID
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ 'placeId': suggestion.place_id || '' }, (results, status) => {
+            if (status === 'OK' && results && results[0]) {
+                const location = results[0].geometry.location;
+                const lat = location.lat();
+                const lng = location.lng();
+
+                // Update the map and marker
+                if (mapInstanceRef.current && markerRef.current) {
+                    const newLocation = { lat, lng };
+                    mapInstanceRef.current.setCenter(newLocation);
+                    markerRef.current.setPosition(newLocation);
+                    setSelectedLocation(newLocation);
+
+                    // Update address details
+                    getAddressFromCoordinates(newLocation);
+                }
+            } else {
+                console.error('Geocode was not successful for the following reason: ' + status);
+            }
+        });
+    };
 
 
 
     const createBookingdata = () => {
-        items=[];
-if (offerTimeSlots  && offerTimeSlots.length > 3) {
-    console.log("offerTimeSlots is running" );
-        for (let i = 0; i < offerTimeSlots.length; i++) {
+        items = [];
+        if (offerTimeSlots && offerTimeSlots.length > 3) {
+            console.log("offerTimeSlots is running");
+            for (let i = 0; i < offerTimeSlots.length; i++) {
 
-            items.push(JSON.stringify({name: user?.name || '',  // Use name from user object
-                phone: user?.phone || '',  // Use phone from user object
-                city: selectedCity,
-                address: addressDetails + "\n " + locationNotes,
-                locationUrl: locationUrl,
-                serviceType:
-                    serviceType === 'oneTime'
-                        ? 'ONE_TIME'
-                        : selectedOffer === 'offer1'
-                            ? 'OFFER_4'
-                            : selectedOffer === 'offer2'
-                                ? 'OFFER_8'
-                                : selectedOffer === 'offer3'
-                                    ? 'OFFER_12'
-                                    : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
-                date:new Date( offerTimeSlots[i].date) , // Convert to DateTime, handle empty string
-                timePeriod:offerTimeSlots[i].timeSlot,
-                    
-                extraHours: selectedMorningTime && !selectedAfternoonTime? morningExtraHours: selectedAfternoonTime&& !selectedMorningTime ? afternoonExtraHours:0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
-        
-                workerCount: numberOfCleaners,
-                price: totalPrice,
-            } ));
-        
-        
-          }
-        return items;}
-          else{
-            console.log("one items.push  is running" );
-            
+                items.push(JSON.stringify({
+                    name: user?.name || '',  // Use name from user object
+                    phone: user?.phone || '',  // Use phone from user object
+                    city: selectedCity,
+                    address: addressDetails + "\n " + locationNotes,
+                    locationUrl: locationUrl,
+                    serviceType:
+                        serviceType === 'oneTime'
+                            ? 'ONE_TIME'
+                            : selectedOffer === 'offer1'
+                                ? 'OFFER_4'
+                                : selectedOffer === 'offer2'
+                                    ? 'OFFER_8'
+                                    : selectedOffer === 'offer3'
+                                        ? 'OFFER_12'
+                                        : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
+                    date: new Date(offerTimeSlots[i].date), // Convert to DateTime, handle empty string
+                    timePeriod: offerTimeSlots[i].timeSlot,
+
+                    extraHours: selectedMorningTime && !selectedAfternoonTime ? morningExtraHours : selectedAfternoonTime && !selectedMorningTime ? afternoonExtraHours : 0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
+
+                    workerCount: numberOfCleaners,
+                    price: totalPrice,
+                }));
+
+
+            }
+            return items;
+        }
+        else {
+            console.log("one items.push  is running");
+
             items.push(JSON.stringify({
                 name: user?.name || '',  // Use name from user object
                 phone: user?.phone || '',  // Use phone from user object
@@ -335,56 +391,56 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                         : !selectedMorningTime && selectedAfternoonTime
                             ? 'EVENING'
                             : 'MORNING', // Default to MORNING if neither or both are selected. Important
-                extraHours: selectedMorningTime && !selectedAfternoonTime? morningExtraHours: selectedAfternoonTime&& !selectedMorningTime ? afternoonExtraHours:0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
-        
+                extraHours: selectedMorningTime && !selectedAfternoonTime ? morningExtraHours : selectedAfternoonTime && !selectedMorningTime ? afternoonExtraHours : 0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
+
                 workerCount: numberOfCleaners,
                 price: totalPrice,
-            } ));
+            }));
             return [items[0]]
-          }
-
         }
+
+    }
     // Function to get address details from coordinates using Geocoding API
-   // Fix the getAddressFromCoordinates function
-const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location: location }, (results: google.maps.GeocoderResult[] | null, status: google.maps.GeocoderStatus) => {
-        if (status === "OK" && results && results[0]) {
-            const addressComponents = results[0].address_components;
+    // Fix the getAddressFromCoordinates function
+    const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
+        const geocoder = new google.maps.Geocoder();
+        geocoder.geocode({ location: location }, (results: google.maps.GeocoderResult[] | null, status: google.maps.GeocoderStatus) => {
+            if (status === "OK" && results && results[0]) {
+                const addressComponents = results[0].address_components;
 
-            // Try to find city from address components
-            const cityComponent = addressComponents.find(
-                component => component.types.includes("locality")
-            );
+                // Try to find city from address components
+                const cityComponent = addressComponents.find(
+                    component => component.types.includes("locality")
+                );
 
-            if (cityComponent) {
-                const cityName = cityComponent.long_name;
-                // Check if the city is one of the UAE emirates we're interested in
-                const normalizedCityName = cityName.toLowerCase();
-                if (normalizedCityName.includes("dubai") || normalizedCityName.includes("دبي")) {
-                    setSelectedCity("Dubai");
-                } else if (normalizedCityName.includes("sharjah") || normalizedCityName.includes("الشارقة")) {
-                    setSelectedCity("Sharjah");
-                } else if (normalizedCityName.includes("ajman") || normalizedCityName.includes("عجمان")) {
-                    setSelectedCity("Ajman");
-                } else if (normalizedCityName.includes("umm al quwain") || normalizedCityName.includes("أم القيوين")) {
-                    setSelectedCity("Umm Al Quwain");
+                if (cityComponent) {
+                    const cityName = cityComponent.long_name;
+                    // Check if the city is one of the UAE emirates we're interested in
+                    const normalizedCityName = cityName.toLowerCase();
+                    if (normalizedCityName.includes("dubai") || normalizedCityName.includes("دبي")) {
+                        setSelectedCity("Dubai");
+                    } else if (normalizedCityName.includes("sharjah") || normalizedCityName.includes("الشارقة")) {
+                        setSelectedCity("Sharjah");
+                    } else if (normalizedCityName.includes("ajman") || normalizedCityName.includes("عجمان")) {
+                        setSelectedCity("Ajman");
+                    } else if (normalizedCityName.includes("umm al quwain") || normalizedCityName.includes("أم القيوين")) {
+                        setSelectedCity("Umm Al Quwain");
+                    }
                 }
+
+                // Set the formatted address
+                setAddressDetails(results[0].formatted_address);
+
+                // Generate Google Maps URL for the location
+                const locationLink = `https://www.google.com/maps?q=${location.lat},${location.lng}`;
+                setLocationUrl(locationLink);
             }
-
-            // Set the formatted address
-            setAddressDetails(results[0].formatted_address);
-
-            // Generate Google Maps URL for the location
-            const locationLink = `https://www.google.com/maps?q=${location.lat},${location.lng}`;
-            setLocationUrl(locationLink);
-        }
-    });
-};
+        });
+    };
 
     const handleNext = () => {
         // Add validation for location tab
-       
+
         if (currentTab === 1 && !selectedLocation) {
             alert("الرجاء تحديد الموقع على الخريطة");
             return;
@@ -423,8 +479,8 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                 today.setHours(0, 0, 0, 0); // set the time to 00:00:00 to compare only the date
 
                 if (new Date(selectedDate) < new Date()) {
-                  alert("الرجاء اختيار  تاريخ مستقبلي.");
-                  return;
+                    alert("الرجاء اختيار  تاريخ مستقبلي.");
+                    return;
                 }
 
                 // Check if the selected date is a working day (Saturday to Thursday)
@@ -445,14 +501,14 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                 }
 
                 if (selectedMorningTime && selectedAfternoonTime) {
-                  setMorningExtraHours(0);
-                  setAfternoonExtraHours(0);
+                    setMorningExtraHours(0);
+                    setAfternoonExtraHours(0);
                 }
-            
-           
+
+
             }
 
-              if (serviceType === 'offer') {
+            if (serviceType === 'offer') {
                 if (!selectedOffer) {
                     alert("الرجاء اختيار عرضًا.");
                     return;
@@ -475,7 +531,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
             setCurrentTab(currentTab - 1);
         }
     };
-     
+
     // Function to calculate available cleaners
     const calculateAvailableCleaners = () => {
         // This is a placeholder.  You'll need to replace this with your actual logic
@@ -499,7 +555,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     };
     const handleMorningTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectedMorningTime(e.target.checked);
-          if (selectedAfternoonTime && e.target.checked) {
+        if (selectedAfternoonTime && e.target.checked) {
             setMorningExtraHours(0);
             setAfternoonExtraHours(0);
         }
@@ -512,16 +568,16 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
         setSelectedAfternoonTime(e.target.checked);
 
         if (selectedMorningTime && e.target.checked) {
-             setMorningExtraHours(0);
-             setAfternoonExtraHours(0);
+            setMorningExtraHours(0);
+            setAfternoonExtraHours(0);
         }
-       else if (!e.target.checked) {
+        else if (!e.target.checked) {
             setAfternoonExtraHours(0); // Reset extra hours if afternoon time is unchecked
         }
     };
 
     // Function to add time slot for offer
-   const handleAddTimeSlot = () => {
+    const handleAddTimeSlot = () => {
         if (selectedDate && selectedTimeSlot) {
             // Check if the selected date is in the illegalOfferDays array
             if (illegalOfferDays.includes(selectedDate)) {
@@ -546,36 +602,36 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
 
-                 if (new Date(selectedDate) < new Date()) {
-                  alert("الرجاء اختيار  تاريخ مستقبلي.");
-                  return;
+                if (new Date(selectedDate) < new Date()) {
+                    alert("الرجاء اختيار  تاريخ مستقبلي.");
+                    return;
                 }
-              
+
                 const newTimeSlot: OfferTimeSlot = { date: selectedDate, timeSlot: selectedTimeSlot };
                 setOfferTimeSlots([...offerTimeSlots, newTimeSlot]);
                 console.log("Offer time slots", offerTimeSlots);
-                
 
-                 // Add the selected date to the illegalOfferDays array
+
+                // Add the selected date to the illegalOfferDays array
                 setIllegalOfferDays([...illegalOfferDays, selectedDate]);
                 console.log("illegalOfferDays", illegalOfferDays);
                 console.log("Items", items);
-        
+
             } else {
                 alert(`لقد وصلت إلى الحد الأقصى لعدد المواعيد المتاحة لهذا العرض (${maxOfferTimes}).`);
             }
 
-           
+
 
         } else {
             alert("الرجاء تحديد التاريخ والوقت.");
         }
 
-     
+
     };
 
     // Function to remove time slot for offer
-   const handleRemoveTimeSlot = (index: number) => {
+    const handleRemoveTimeSlot = (index: number) => {
         const timeSlotToRemove = offerTimeSlots[index];
         const newTimeSlots = [...offerTimeSlots];
         newTimeSlots.splice(index, 1);
@@ -586,115 +642,114 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     };
 
     const calculateTotalPrice = (): number => {
-      let totalPrice = 0;
-  
-      if (selectedCity === "Dubai") {
-          totalPrice = 100;
-      } else {
-          totalPrice = 85;
-      }
-  
-      if (serviceType === 'oneTime') {
-          // Calculate price for one-time service
-          const baseRate = 20; // Example base rate per hour
-          let totalHours = 0;
-          if (selectedAfternoonTime && selectedMorningTime) {
-            totalHours = 4;
-        }
-          else if (selectedMorningTime) {
-              totalHours += (morningExtraHours || 0);
-          }
-          else if (selectedAfternoonTime) {
-              totalHours += (afternoonExtraHours || 0);
-          }
+        let totalPrice = 0;
 
-  
-          if (totalPrice > 0   && numberOfCleaners > 0) {
-              totalPrice =   totalPrice * numberOfCleaners + (totalHours * baseRate*numberOfCleaners);
-          }
-      } else if (serviceType === 'offer' && selectedOfferData?.price) {
-          // Use the offer price directly
-          totalPrice = selectedOfferData.price;
-      }
-  
-      return totalPrice;
-  };
-  
+        if (selectedCity === "Dubai") {
+            totalPrice = 100;
+        } else {
+            totalPrice = 85;
+        }
+
+        if (serviceType === 'oneTime') {
+            // Calculate price for one-time service
+            const baseRate = 20; // Example base rate per hour
+            let totalHours = 0;
+            if (selectedAfternoonTime && selectedMorningTime) {
+                totalHours = 4;
+            }
+            else if (selectedMorningTime) {
+                totalHours += (morningExtraHours || 0);
+            }
+            else if (selectedAfternoonTime) {
+                totalHours += (afternoonExtraHours || 0);
+            }
+
+
+            if (totalPrice > 0 && numberOfCleaners > 0) {
+                totalPrice = totalPrice * numberOfCleaners + (totalHours * baseRate * numberOfCleaners);
+            }
+        } else if (serviceType === 'offer' && selectedOfferData?.price) {
+            // Use the offer price directly
+            totalPrice = selectedOfferData.price;
+        }
+
+        return totalPrice;
+    };
+
 
     const totalPrice = calculateTotalPrice();
 
-  // Progress indicator component to show which step the user is on
-const ProgressIndicator = () => {
-  const steps = ['معلومات المستخدم', 'الموقع', 'التاريخ والوقت', 'الدفع'];
-  
-  return (
-      <div className="progress-container">
-          <div className="progress-steps">
-              {steps.map((step, index) => (
-                  <div 
-                      key={index} 
-                      className={`progress-step ${currentTab >= index ? 'active' : ''} ${currentTab === index ? 'current' : ''}`}
-                      onClick={() => index < currentTab && setCurrentTab(index)}
-                  >
-                      <div className="step-circle">
-                          {currentTab > index ? (
-                              <div className="step-check">✓</div>
-                          ) : (
-                              <div className="step-number">{index + 1}</div>
-                          )}
-                      </div>
-                      <div className="step-label">{step}</div>
-                      {index < steps.length - 1 && (
-                          <div className={`step-connector ${currentTab > index ? 'active' : ''}`}></div>
-                      )}
-                  </div>
-              ))}
-          </div>
-      </div>
-  );
-};
+    // Progress indicator component to show which step the user is on
+    const ProgressIndicator = () => {
+        const steps = ['معلومات المستخدم', 'الموقع', 'التاريخ والوقت', 'الدفع'];
+
+        return (
+            <div className="progress-container">
+                <div className="progress-steps">
+                    {steps.map((step, index) => (
+                        <div
+                            key={index}
+                            className={`progress-step ${currentTab >= index ? 'active' : ''} ${currentTab === index ? 'current' : ''}`}
+                            onClick={() => index < currentTab && setCurrentTab(index)}
+                        >
+                            <div className="step-circle">
+                                {currentTab > index ? (
+                                    <div className="step-check">✓</div>
+                                ) : (
+                                    <div className="step-number">{index + 1}</div>
+                                )}
+                            </div>
+                            <div className="step-label">{step}</div>
+                            {index < steps.length - 1 && (
+                                <div className={`step-connector ${currentTab > index ? 'active' : ''}`}></div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
     return (
         <>
 
-    {/* Header - Updated hover states and rings */}
-    <header className="bg-white/80 backdrop-blur-sm sticky top-0 z-40 border-b">
-          <div className="max-w-7xl mx-auto px-2 py-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <div className="absolute -inset-2 bg-blue-100 rounded-full blur-lg opacity-60"></div>
-                  <img onClick={() => showSection( )} src="/logo.png" alt="Next Graft" className="h-12 relative" />
+            {/* Header - Updated hover states and rings */}
+            <header className="bg-white/80 backdrop-blur-sm sticky top-0 z-40 border-b">
+                <div className="max-w-7xl mx-auto px-2 py-4">
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center gap-4">
+                            <div className="relative">
+                                <div className="absolute -inset-2 bg-blue-100 rounded-full blur-lg opacity-60"></div>
+                                <img onClick={() => showSection()} src="/logo.png" alt="Next Graft" className="h-12 relative" />
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <div className="flex gap-3">
+                                {['EN', 'AR'].map((langa) => {
+                                    const langKey = langa.toUpperCase() as keyof typeof langImages;
+                                    return (
+                                        <button
+                                            key={langa}
+                                            onClick={() => setlang(langa)}
+                                            className={`relative rounded-full overflow-hidden w-8 h-8 transition-transform ${lang === langa ? 'scale-110 ring-2 ring-blue-500' : 'hover:scale-105'
+                                                }`}
+                                        >
+                                            <img
+                                                src={langImages[langKey]}
+                                                alt={langKey}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors" onClick={handleClick2 as unknown as React.MouseEventHandler<HTMLButtonElement>}>
+                                <Menu className="w-8 h-8 text-gray-700" />
+                            </button>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <div className="flex gap-3">
-                  {['EN', 'AR'].map((langa) => {
-                    const langKey = langa.toUpperCase() as keyof typeof langImages;
-                    return (
-                      <button 
-                        key={langa}
-                        onClick={() => setlang(langa)}
-                        className={`relative rounded-full overflow-hidden w-8 h-8 transition-transform ${
-                          lang === langa ? 'scale-110 ring-2 ring-blue-500' : 'hover:scale-105'
-                        }`}
-                      >
-                        <img 
-                          src={langImages[langKey]}
-                          alt={langKey} 
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    );
-                  })}
-                </div>
-                <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors" onClick={handleClick2 as unknown as React.MouseEventHandler<HTMLButtonElement>}>
-                  <Menu className="w-8 h-8 text-gray-700" /> 
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+            </header>
 
 
             {/* Load Google Maps JavaScript API */}
@@ -703,9 +758,9 @@ const ProgressIndicator = () => {
                 strategy="afterInteractive"
             />
 
-            <div   className="container">
+            <div className="container">
                 <ProgressIndicator />
-                
+
                 <div className="tabs">
                     <div className={`tab ${currentTab === 0 ? 'active' : ''}`}>
                         <h2>معلومات المستخدم</h2>
@@ -723,6 +778,31 @@ const ProgressIndicator = () => {
                         <h2>اختيار الموقع</h2>
                         {currentTab === 1 && (
                             <div className="location-container">
+                                {/* Search input and suggestions */}
+                                <div className="search-container">
+                                    <input
+                                        type="text"
+                                        placeholder="ابحث عن موقع"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="search-input"
+                                    />
+                                    {suggestions.length > 0 && (
+                                        <ul className="suggestions-list">
+                                            {suggestions.map((suggestion) => (
+                                                <li
+                                                    key={suggestion.place_id}
+                                                    onClick={() => handleSuggestionClick(suggestion)}
+                                                    className="suggestion-item"
+                                                >
+                                                    {suggestion.description}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+
+
                                 {/* Map container */}
                                 <div className="map-container" ref={mapRef}></div>
 
@@ -741,14 +821,7 @@ const ProgressIndicator = () => {
                                         <option value="Umm Al Quwain">أم القيوين</option>
                                     </select>
 
-                                    <label>العنوان (للقراءة فقط):</label>
-                                    <textarea
-                                        value={addressDetails}
-                                        readOnly
-                                        placeholder="سيظهر العنوان تلقائياً عند تحديد الموقع"
-                                        rows={2}
-                                        className="readonly-field"
-                                    />
+
 
                                     <label>ملاحظات إضافية عن الموقع:</label>
                                     <textarea
@@ -758,33 +831,7 @@ const ProgressIndicator = () => {
                                         rows={3}
                                     />
 
-                                    {selectedLocation && (
-                                        <>
-                                            <div className="coordinates-info">
-                                                <p>الإحداثيات: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}</p>
-                                            </div>
 
-                                            <label>رابط الموقع:</label>
-                                            <div className="location-url-container">
-                                                <input
-                                                    type="text"
-                                                    value={locationUrl}
-                                                    readOnly
-                                                    className="readonly-field"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    className="copy-btn"
-                                                    onClick={() => {
-                                                        navigator.clipboard.writeText(locationUrl);
-                                                        alert("تم نسخ الرابط بنجاح");
-                                                    }}
-                                                >
-                                                    نسخ
-                                                </button>
-                                            </div>
-                                        </>
-                                    )}
                                 </div>
                             </div>
                         )}
@@ -792,336 +839,211 @@ const ProgressIndicator = () => {
 
                     <div className={`tab ${currentTab === 2 ? 'active' : ''}`}>
                         <h2>التاريخ والوقت</h2>
-                        {currentTab === 2 && (
-                            <div className="form-group">
-                                <label>اختر نوع الخدمة:</label>
-                                <div className="service-type-selector">
-                                    <div 
-                                        className={`service-option ${serviceType === 'oneTime' ? 'selected' : ''}`}
-                                        onClick={() => setServiceType('oneTime')}
-                                    >
-                                        مرة واحدة
+                         
+
+                            {serviceType === 'offer' && (
+                                <>
+                                    <label>اختر عرضًا:</label>
+                                    <div className="offers-container">
+                                        {offers.map(offer => (
+                                            <div
+                                                key={offer.id}
+                                                className={`offer-card ${selectedOffer === offer.id ? 'selected' : ''}`}
+                                                onClick={() => setSelectedOffer(offer.id)}
+                                            >
+                                                <div className="offer-details">
+                                                    <span className="offer-price">{offer.price} AED</span>
+                                                    <span className="offer-description">{offer.label}</span>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
-                                    <div 
-                                        className={`service-option ${serviceType === 'offer' ? 'selected' : ''}`}
-                                        onClick={() => setServiceType('offer')}
-                                    >
-                                        عرض
-                                    </div>
+
+                                    {selectedOffer && (
+                                        <>
+                                            <div className="offer-time-slots">
+                                                <h3>المواعيد ({offerTimeSlots.length}/{maxOfferTimes})</h3>
+
+                                                <div className="add-time-slot">
+                                                    <div className="date-time-inputs">
+                                                        <div className="input-group">
+                                                            <label>التاريخ:</label>
+                                                            <input
+                                                                type="date"
+                                                                value={selectedDate}
+                                                                onChange={(e) => setSelectedDate(e.target.value)}
+                                                                min={minDate}
+                                                                className="date-input"
+                                                            />
+                                                        </div>
+
+                                                        <div className="input-group">
+                                                            <label>الوقت:</label>
+                                                            <select
+                                                                value={selectedTimeSlot}
+                                                                onChange={(e) => setSelectedTimeSlot(e.target.value)}
+                                                                className="select-field"
+                                                            >
+                                                                <option value="">اختر الوقت</option>
+                                                                {availableTimeSlots.map((timeSlot) => (
+                                                                    <option key={timeSlot} value={timeSlot}>{timeSlot}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <button
+                                                        type="button"
+                                                        className="add-slot-btn"
+                                                        onClick={handleAddTimeSlot}
+                                                        disabled={offerTimeSlots.length >= maxOfferTimes}
+                                                    >
+                                                        إضافة موعد
+                                                    </button>
+                                                </div>
+
+                                                {selectedDate && new Date(selectedDate) < new Date() && (
+                                                    <p className="error-message">الرجاء اختيار   تاريخ مستقبلي.</p>
+                                                )}
+                                                {illegalOfferDays.includes(selectedDate) && (
+                                                    <p className="error-message">هذا اليوم محدد مسبقًا، الرجاء اختيار يوم آخر.</p>
+                                                )}
+
+                                                <div className="time-slots-list">
+                                                    {offerTimeSlots.length > 0 ? (
+                                                        <ul>
+                                                            {offerTimeSlots.map((timeSlot, index) => (
+                                                                <li key={index} className="time-slot-item">
+                                                                    <span className="time-slot-info">
+                                                                        <span className="time-slot-date">{timeSlot.date}</span>
+                                                                        <span className="time-slot-time">{timeSlot.timeSlot}</span>
+                                                                    </span>
+                                                                    <button
+                                                                        type="button"
+                                                                        className="remove-slot-btn"
+                                                                        onClick={() => handleRemoveTimeSlot(index)}
+                                                                    >
+                                                                        ×
+                                                                    </button>
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    ) : (
+                                                        <p className="no-slots">لم يتم تحديد أي مواعيد بعد.</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                   
+                </div>
+
+                <div className={`tab ${currentTab === 3 ? 'active' : ''}`}>
+                    <h2>الدفع</h2>
+                    {currentTab === 3 && (
+                        <>
+                            <div className="summary">
+                                <h3>ملخص الحجز</h3>
+                                <div className="summary-item">
+                                    <span className="summary-label">نوع الخدمة:</span>
+                                    <span className="summary-value">{serviceType === 'oneTime' ? 'مرة واحدة' : 'عرض'}</span>
                                 </div>
 
                                 {serviceType === 'oneTime' && (
                                     <>
-                                        <label>التاريخ:</label>
-                                        <input 
-                                            type="date" 
-                                            value={selectedDate} 
-                                            onChange={(e) => setSelectedDate(e.target.value)} 
-                                            min={minDate} 
-                                            className="date-input"
-                                        />
-
-                                        {selectedDate && !isWorkingDay(selectedDate) && (
-                                            <p className="error-message">الرجاء اختيار يوم من السبت إلى الخميس.</p>
-                                        )}
-                                        {selectedDate && new Date(selectedDate) < new Date() && (
-                                            <p className="error-message">الرجاء اختيار  تاريخ مستقبلي.</p>
-                                        )}
-
-                                        <label>الفترة:</label>
-                                        <div className="time-period-section">
-                                            <div className={`time-option ${selectedMorningTime ? 'selected' : ''}`}>
-                                                <label className="checkbox-container">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedMorningTime}
-                                                        onChange={handleMorningTimeChange}
-                                                    />
-                                                    <span className="checkmark"></span>
-                                                    <span className="label-text">الفترة الصباحية</span>
-                                                </label>
-                                                {selectedMorningTime && !selectedAfternoonTime && (
-                                                    <div className="extra-hours">
-                                                        <label>عدد الساعات الإضافية:</label>
-                                                        <select
-                                                            value={morningExtraHours !== null ? morningExtraHours : ''}
-                                                            onChange={(e) => setMorningExtraHours(parseInt(e.target.value))}
-                                                            disabled={selectedAfternoonTime}
-                                                            className="select-field small"
-                                                        >
-                                                            <option value="0">0</option>
-                                                            <option value="1">1</option>
-                                                            <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                        </select>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            
-                                            <div className={`time-option ${selectedAfternoonTime ? 'selected' : ''}`}>
-                                                <label className="checkbox-container">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedAfternoonTime}
-                                                        onChange={handleAfternoonTimeChange}
-                                                    />
-                                                    <span className="checkmark"></span>
-                                                    <span className="label-text">الفترة المسائية</span>
-                                                </label>
-                                                {selectedAfternoonTime && !selectedMorningTime && (
-                                                    <div className="extra-hours">
-                                                        <label>عدد الساعات الإضافية:</label>
-                                                        <select
-                                                            value={afternoonExtraHours !== null ? afternoonExtraHours : ''}
-                                                            onChange={(e) => setAfternoonExtraHours(parseInt(e.target.value))}
-                                                            disabled={selectedMorningTime}
-                                                            className="select-field small"
-                                                        >
-                                                            <option value="0">0</option>
-                                                            <option value="1">1</option>
-                                                            <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                        </select>
-                                                    </div>
-                                                )}
-                                            </div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">التاريخ:</span>
+                                            <span className="summary-value">{selectedDate}</span>
                                         </div>
-
-                                        <div className="cleaner-section flex flex-col space-y-2 p-4 border rounded-lg bg-gray-50 rtl"> 
-    <label className="font-medium text-gray-700">عدد عمال النظافة:</label> 
-    
-    <div className="counter-input flex items-center justify-center space-x-2 rtl:space-x-reverse"> 
-        <button  
-            type="button"  
-            className="w-12 h-12 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full font-bold text-lg transition-colors" 
-            onClick={() => { 
-                if (numberOfCleaners > 1) { 
-                    setNumberOfCleaners(numberOfCleaners - 1); 
-                } 
-            }} 
-        >-</button> 
-        <span className="  font-bold text-2xl   pr-8 pl-6 text-center">{numberOfCleaners}</span> 
-        <button  
-            type="button"  
-            className="w-12 h-12 flex items-center justify-center bg-green-500 hover:bg-green-600 text-white rounded-full font-bold text-2xl transition-colors" 
-            onClick={() => { 
-                if (numberOfCleaners < 4) { 
-                    setNumberOfCleaners(numberOfCleaners + 1); 
-                } 
-            }} 
-        >+</button> 
-    </div> 
-    <p className="available-cleaners text-sm text-gray-600 mt-2">عدد عمال النظافة المتاحين: {availableCleaners}</p> 
-</div>
+                                        <div className="summary-item">
+                                            <span className="summary-label">الفترة:</span>
+                                            <span className="summary-value">
+                                                {selectedMorningTime ? 'صباحية' : ''}
+                                                {selectedMorningTime && selectedAfternoonTime ? ' و ' : ''}
+                                                {selectedAfternoonTime ? 'مسائية' : ''}
+                                            </span>
+                                        </div>
+                                        {selectedMorningTime && !selectedAfternoonTime && (
+                                            <div className="summary-item">
+                                                <span className="summary-label">ساعات إضافية صباحية:</span>
+                                                <span className="summary-value">{morningExtraHours || 0}</span>
+                                            </div>
+                                        )}
+                                        {selectedAfternoonTime && !selectedMorningTime && (
+                                            <div className="summary-item">
+                                                <span className="summary-label">ساعات إضافية مسائية:</span>
+                                                <span className="summary-value">{afternoonExtraHours || 0}</span>
+                                            </div>
+                                        )}
+                                        <div className="summary-item">
+                                            <span className="summary-label">عدد عمال النظافة:</span>
+                                            <span className="summary-value">{numberOfCleaners}</span>
+                                        </div>
                                     </>
                                 )}
 
-                                {serviceType === 'offer' && (
+                                {serviceType === 'offer' && selectedOfferData && (
                                     <>
-                                        <label>اختر عرضًا:</label>
-                                        <div className="offers-container">
-                                            {offers.map(offer => (
-                                                <div 
-                                                    key={offer.id} 
-                                                    className={`offer-card ${selectedOffer === offer.id ? 'selected' : ''}`}
-                                                    onClick={() => setSelectedOffer(offer.id)}
-                                                >
-                                                    <div className="offer-details">
-                                                        <span className="offer-price">{offer.price} AED</span>
-                                                        <span className="offer-description">{offer.label}</span>
-                                                    </div>
-                                                </div>
-                                            ))}
+                                        <div className="summary-item">
+                                            <span className="summary-label">العرض المحدد:</span>
+                                            <span className="summary-value">{selectedOfferData.label}</span>
                                         </div>
-
-                                        {selectedOffer && (
-                                            <>
-                                                <div className="offer-time-slots">
-                                                    <h3>المواعيد ({offerTimeSlots.length}/{maxOfferTimes})</h3>
-                                                    
-                                                    <div className="add-time-slot">
-                                                        <div className="date-time-inputs">
-                                                            <div className="input-group">
-                                                                <label>التاريخ:</label>
-                                                                <input 
-                                                                    type="date" 
-                                                                    value={selectedDate} 
-                                                                    onChange={(e) => setSelectedDate(e.target.value)} 
-                                                                    min={minDate}
-                                                                    className="date-input"
-                                                                />
-                                                            </div>
-                                                            
-                                                            <div className="input-group">
-                                                                <label>الوقت:</label>
-                                                                <select 
-                                                                    value={selectedTimeSlot} 
-                                                                    onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                                                                    className="select-field"
-                                                                >
-                                                                    <option value="">اختر الوقت</option>
-                                                                    {availableTimeSlots.map((timeSlot) => (
-                                                                        <option key={timeSlot} value={timeSlot}>{timeSlot}</option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
+                                        {offerTimeSlots.length > 0 && (
+                                            <div className="summary-item slots-summary">
+                                                <span className="summary-label">المواعيد المحددة:</span>
+                                                <div className="summary-value slots-list">
+                                                    {offerTimeSlots.map((timeSlot, index) => (
+                                                        <div key={index} className="slot-item">
+                                                            {timeSlot.date} - {timeSlot.timeSlot}
                                                         </div>
-                                                        
-                                                        <button 
-                                                            type="button" 
-                                                            className="add-slot-btn" 
-                                                            onClick={handleAddTimeSlot} 
-                                                            disabled={offerTimeSlots.length >= maxOfferTimes}
-                                                        >
-                                                            إضافة موعد
-                                                        </button>
-                                                    </div>
-                                                    
-                                                    {selectedDate && new Date(selectedDate) < new Date() && (
-                                                        <p className="error-message">الرجاء اختيار   تاريخ مستقبلي.</p>
-                                                    )}
-                                                    {illegalOfferDays.includes(selectedDate) && (
-                                                        <p className="error-message">هذا اليوم محدد مسبقًا، الرجاء اختيار يوم آخر.</p>
-                                                    )}
-
-                                                    <div className="time-slots-list">
-                                                        {offerTimeSlots.length > 0 ? (
-                                                            <ul>
-                                                                {offerTimeSlots.map((timeSlot, index) => (
-                                                                    <li key={index} className="time-slot-item">
-                                                                        <span className="time-slot-info">
-                                                                            <span className="time-slot-date">{timeSlot.date}</span>
-                                                                            <span className="time-slot-time">{timeSlot.timeSlot}</span>
-                                                                        </span>
-                                                                        <button 
-                                                                            type="button" 
-                                                                            className="remove-slot-btn"
-                                                                            onClick={() => handleRemoveTimeSlot(index)}
-                                                                        >
-                                                                            ×
-                                                                        </button>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        ) : (
-                                                            <p className="no-slots">لم يتم تحديد أي مواعيد بعد.</p>
-                                                        )}
-                                                    </div>
+                                                    ))}
                                                 </div>
-                                            </>
+                                            </div>
                                         )}
                                     </>
                                 )}
+
+                                <div className="total-price">
+                                    <span className="total-label">المجموع الكلي:</span>
+                                    <span className="total-value">{totalPrice} AED</span>
+                                </div>
                             </div>
-                        )}
-                    </div>
 
-                    <div className={`tab ${currentTab === 3 ? 'active' : ''}`}>
-                        <h2>الدفع</h2>
-                        {currentTab === 3 && (
-                            <>
-                                <div className="summary">
-                                    <h3>ملخص الحجز</h3>
-                                    <div className="summary-item">
-                                        <span className="summary-label">نوع الخدمة:</span>
-                                        <span className="summary-value">{serviceType === 'oneTime' ? 'مرة واحدة' : 'عرض'}</span>
-                                    </div>
-                                    
-                                    {serviceType === 'oneTime' && (
-                                        <>
-                                            <div className="summary-item">
-                                                <span className="summary-label">التاريخ:</span>
-                                                <span className="summary-value">{selectedDate}</span>
-                                            </div>
-                                            <div className="summary-item">
-                                                <span className="summary-label">الفترة:</span>
-                                                <span className="summary-value">
-                                                    {selectedMorningTime ? 'صباحية' : ''} 
-                                                    {selectedMorningTime && selectedAfternoonTime ? ' و ' : ''}
-                                                    {selectedAfternoonTime ? 'مسائية' : ''}
-                                                </span>
-                                            </div>
-                                            {selectedMorningTime && !selectedAfternoonTime && (
-                                                <div className="summary-item">
-                                                    <span className="summary-label">ساعات إضافية صباحية:</span>
-                                                    <span className="summary-value">{morningExtraHours || 0}</span>
-                                                </div>
-                                            )}
-                                            {selectedAfternoonTime && !selectedMorningTime && (
-                                                <div className="summary-item">
-                                                    <span className="summary-label">ساعات إضافية مسائية:</span>
-                                                    <span className="summary-value">{afternoonExtraHours || 0}</span>
-                                                </div>
-                                            )}
-                                            <div className="summary-item">
-                                                <span className="summary-label">عدد عمال النظافة:</span>
-                                                <span className="summary-value">{numberOfCleaners}</span>
-                                            </div>
-                                        </>
-                                    )}
-                                    
-                                    {serviceType === 'offer' && selectedOfferData && (
-                                        <>
-                                            <div className="summary-item">
-                                                <span className="summary-label">العرض المحدد:</span>
-                                                <span className="summary-value">{selectedOfferData.label}</span>
-                                            </div>
-                                            {offerTimeSlots.length > 0 && (
-                                                <div className="summary-item slots-summary">
-                                                    <span className="summary-label">المواعيد المحددة:</span>
-                                                    <div className="summary-value slots-list">
-                                                        {offerTimeSlots.map((timeSlot, index) => (
-                                                            <div key={index} className="slot-item">
-                                                                {timeSlot.date} - {timeSlot.timeSlot}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-                                    
-                                    <div className="total-price">
-                                        <span className="total-label">المجموع الكلي:</span>
-                                        <span className="total-value">{totalPrice} AED</span>
-                                    </div>
-                                </div>
-           
-                                <div className="payment-info">
-                                    <h3>معلومات بطاقة الائتمان</h3>
-                                    <Elements
-        stripe={stripePromise}
-        options={{
-          mode: "payment",
-          amount: totalPrice*100,
-          currency: "aed",
-        }}
-      >
-        <CheckoutPage amount={totalPrice} language="ar" bookingData={createBookingdata()} />
-      </Elements>
-                                </div>
-                            </>
-                        )}
-                    </div>
+                            <div className="payment-info">
+                                <h3>معلومات بطاقة الائتمان</h3>
+                                <Elements
+                                    stripe={stripePromise}
+                                    options={{
+                                        mode: "payment",
+                                        amount: totalPrice * 100,
+                                        currency: "aed",
+                                    }}
+                                >
+                                    <CheckoutPage amount={totalPrice} language="ar" bookingData={createBookingdata()} />
+                                </Elements>
+                            </div>
+                        </>
+                    )}
                 </div>
+            </div>
 
-                <div className="navigation">
-                {currentTab == 0 &&  (
-                          <LogoutButton text="تسجيل الخروج" />
-                    )}
-                    {currentTab > 0 && (
-                        <button className="btn-prev" onClick={handlePrev}>
-                            <span className="btn-icon">→</span>
-                            <span className="btn-text">رجوع</span>
-                        </button>
-                    )}
-                    {currentTab < 3 && (
-                        <button className="btn-next" onClick={handleNext}>
-                            <span className="btn-text">التالي</span>
-                            <span className="btn-icon">←</span>
-                        </button>
-                    ) }
-                </div>
+            <div className="navigation">
+
+                {currentTab > 0 && (
+                    <button className="btn-prev" onClick={handlePrev}>
+                        <span className="btn-icon">→</span>
+                        <span className="btn-text">رجوع</span>
+                    </button>
+                )}
+                {currentTab < 3 && (
+                    <button className="btn-next" onClick={handleNext}>
+                        <span className="btn-text">التالي</span>
+                        <span className="btn-icon">←</span>
+                    </button>
+                )}
             </div>
             <style jsx>{`
                 /* Base Styles */
@@ -1902,8 +1824,8 @@ const ProgressIndicator = () => {
                     }
                 }
             `}</style>
-        </>
-    );
-};
+ 
+    </>
+);};
 
 export default TabsPage;

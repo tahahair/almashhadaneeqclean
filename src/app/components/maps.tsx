@@ -1,263 +1,210 @@
-// pages/location.js
-import { useState, useEffect, useRef } from 'react';
-import Head from 'next/head';
-import styles from '../styles.module.css';
-import 'leaflet/dist/leaflet.css';
+// components/Map.tsx
+import React, { useRef, useEffect, useState } from 'react';
+import { Loader } from '@googlemaps/js-api-loader';
 
-type Coordinates = {
-  lat: number;
-  lng: number;
-};
-
-export default function LocationPage() {
-  const [location, setLocation] = useState({ lat: 24.774265, lng: 46.738586 }); // الرياض كموقع افتراضي
-  const [address, setAddress] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [additionalInfo, setAdditionalInfo] = useState('');
-  const [mapUrl, setMapUrl] = useState('');
-  const mapRef = useRef(null);
-  const mapInstance = useRef<L.Map | null>(null);
-  const markerRef = useRef<L.Marker | null>(null);
-
-  // تحميل خريطة Leaflet
-  useEffect(() => {
-    // استيراد Leaflet بشكل ديناميكي لأنه يعتمد على window
-    if (typeof window !== 'undefined') {
-      import('leaflet').then(L => {
-        if (!mapRef.current || mapInstance.current) return;
-        
-        // تهيئة الخريطة
-        const map = L.map(mapRef.current).setView([location.lat, location.lng], 15);
-        
-        // إضافة طبقة الخريطة من OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
-        
-        // إضافة علامة
-        const marker = L.marker([location.lat, location.lng], {
-          draggable: true,
-          title: 'اسحب لتحديد الموقع'
-        }).addTo(map);
-        
-        // حفظ المراجع
-        mapInstance.current = map;
-        markerRef.current = marker;
-        
-        // الأحداث للخريطة والعلامة
-        map.on('click', (e) => {
-          const clickedLocation = e.latlng;
-          updateLocation(clickedLocation);
-        });
-        
-        marker.on('dragend', () => {
-          const newPosition = marker.getLatLng();
-          updateLocation(newPosition);
-        });
-        
-        // تحديث العنوان للموقع الافتراضي
-        updateAddressFromCoordinates(location);
-        setLoading(false);
-      }).catch(err => {
-        console.error('فشل في تحميل مكتبة Leaflet:', err);
-        setError('فشل في تحميل مكتبة الخرائط');
-        setLoading(false);
-      });
-    }
-    
-    return () => {
-      // تنظيف عند إلغاء تحميل المكون
-      if (mapInstance.current) {
-        mapInstance.current.remove();
-        mapInstance.current = null;
-        markerRef.current = null;
-      }
-    };
-  }, []);
-
-  // تحديث الموقع والعنوان
-interface Location {
+interface MapProps {
+  apiKey: string;
+  center: {
     lat: number;
     lng: number;
+  };
+  zoom?: number;
+  markerPosition?: {
+    lat: number;
+    lng: number;
+  };
+  searchPlaceholder?: string;
 }
 
-const updateLocation = (newLocation: Location) => {
-    setLocation(newLocation);
-    
-    // تحريك العلامة إلى الموقع الجديد
-    if (markerRef.current) {
-        markerRef.current.setLatLng(newLocation);
-    }
-    
-    // تحديث العنوان
-    updateAddressFromCoordinates(newLocation);
-    
-    // تحديث رابط الخريطة
-    const mapsUrl = `https://www.openstreetmap.org/?mlat=${newLocation.lat}&mlon=${newLocation.lng}#map=17/${newLocation.lat}/${newLocation.lng}`;
-    setMapUrl(mapsUrl);
-};
+const Map: React.FC<MapProps> = ({
+  apiKey,
+  center,
+  zoom = 15,
+  markerPosition,
+  searchPlaceholder = "Search for your building or area"
+}) => {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [searchBox, setSearchBox] = useState<google.maps.places.SearchBox | null>(null);
 
-  // الحصول على العنوان من الإحداثيات باستخدام OpenStreetMap Nominatim API
-  const updateAddressFromCoordinates = async (coords: Coordinates) => {
-    try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}&zoom=18&addressdetails=1`);
-      const data = await response.json();
+  useEffect(() => {
+    const initMap = async () => {
+      const loader = new Loader({
+        apiKey,
+        version: 'weekly',
+        libraries: ['places']
+      });
+
+      const google = await loader.load();
       
-      if (data && data.display_name) {
-        setAddress(data.display_name);
-      } else {
-        setAddress('لا يمكن تحديد العنوان');
-      }
-    } catch (err) {
-      console.error('خطأ في الحصول على العنوان:', err);
-      setAddress('حدث خطأ أثناء الحصول على العنوان');
-    }
-  };
+      if (mapRef.current) {
+        const mapInstance = new google.maps.Map(mapRef.current, {
+          center,
+          zoom,
+          disableDefaultUI: false,
+          zoomControl: true,
+          streetViewControl: false,
+          mapTypeControl: false,
+          fullscreenControl: false,
+          styles: [
+            {
+              featureType: 'poi',
+              elementType: 'labels',
+              stylers: [{ visibility: 'on' }]
+            }
+          ]
+        });
 
-  // الحصول على موقع المستخدم باستخدام GPS
-  const handleGetCurrentLocation = () => {
-    // مسح رسائل الخطأ السابقة
-    setError('');
-    
-    if (navigator.geolocation) {
-      setLoading(true);
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const userLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-          
-          // تحريك الخريطة إلى موقع المستخدم
-          if (mapInstance.current) {
-            mapInstance.current.setView([userLocation.lat, userLocation.lng], 15);
-          }
-          
-          updateLocation(userLocation);
-          setLoading(false);
-        },
-        (err) => {
-          console.error('خطأ في الحصول على الموقع:', err);
-          
-          // معالجة أنواع الأخطاء المختلفة
-          switch(err.code) {
-            case 1: // PERMISSION_DENIED
-              setError('تم رفض الوصول إلى الموقع. يرجى السماح للمتصفح بالوصول إلى موقعك والمحاولة مرة أخرى.');
-              break;
-            case 2: // POSITION_UNAVAILABLE
-              setError('معلومات الموقع غير متاحة حاليًا. يرجى المحاولة مرة أخرى لاحقًا.');
-              break;
-            case 3: // TIMEOUT
-              setError('انتهت مهلة تحديد الموقع. يرجى المحاولة مرة أخرى.');
-              break;
-            default:
-              setError('حدث خطأ أثناء تحديد موقعك. يمكنك تحديد الموقع يدويًا على الخريطة.');
-          }
-          
-          setLoading(false);
-        },
-        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-      );
-    } else {
-      setError('متصفحك لا يدعم تحديد الموقع');
-    }
-  };
+        setMap(mapInstance);
+
+        // Add marker if position is provided
+        if (markerPosition) {
+          new google.maps.Marker({
+            position: markerPosition,
+            map: mapInstance,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              fillColor: '#FF5722',
+              fillOpacity: 1,
+              strokeWeight: 0,
+              scale: 10
+            }
+          });
+        }
+
+        // Initialize search box
+        if (searchInputRef.current) {
+          const searchBoxInstance = new google.maps.places.SearchBox(searchInputRef.current);
+          setSearchBox(searchBoxInstance);
+
+          // Listen for the event fired when the user selects a prediction
+          searchBoxInstance.addListener('places_changed', () => {
+            const places = searchBoxInstance.getPlaces();
+            if (places && places.length > 0) {
+              const place = places[0];
+              if (place.geometry && place.geometry.location) {
+                mapInstance.setCenter(place.geometry.location);
+                mapInstance.setZoom(17);
+              }
+            }
+          });
+        }
+      }
+    };
+
+    initMap();
+  }, [apiKey, center, zoom, markerPosition]);
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>تحديد الموقع</title>
-        <meta name="description" content="صفحة تحديد الموقع" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>تحديد الموقع</h1>
-        
-        {error && <div className={styles.error}>{error}</div>}
-        
-        <div className={styles.mapContainer}>
-          <div ref={mapRef} className={styles.map}></div>
-          
-          <div className={styles.mapControls}>
-            <button 
-              className={styles.button} 
-              onClick={handleGetCurrentLocation}
-              disabled={loading}
-            >
-              {loading ? 'جاري التحميل...' : 'استخدام موقعي الحالي (GPS)'}
-            </button>
-            <p className={styles.hint}>
-              يمكنك أيضًا النقر على الخريطة أو سحب العلامة لتحديد الموقع يدويًا
-            </p>
-            {error && (
-              <div className={styles.errorTip}>
-                <p>{error}</p>
-                {error.includes('تم رفض الوصول') && (
-                  <div className={styles.permissionHelp}>
-                    <p>لتمكين الوصول إلى موقعك:</p>
-                    <ol>
-                      <li>انقر على أيقونة القفل في شريط العنوان</li>
-                   
-                    </ol>
-                  </div>
-                )}
-              </div>
-            )}
+    <div className="map-container" style={{ position: 'relative', width: '100%', height: '400px', borderRadius: '8px', overflow: 'hidden' }}>
+      <div className="search-bar" style={{ 
+        position: 'absolute', 
+        top: '10px', 
+        left: '50%', 
+        transform: 'translateX(-50%)', 
+        zIndex: 10, 
+        width: '90%', 
+        maxWidth: '500px'
+      }}>
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          backgroundColor: 'white', 
+          borderRadius: '24px', 
+          boxShadow: '0 2px 6px rgba(0,0,0,0.3)', 
+          padding: '0 16px' 
+        }}>
+          <div style={{ marginRight: '8px', color: '#5F6368' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
           </div>
-        </div>
-        
-        <div className={styles.detailsContainer}>
-          <div className={styles.formGroup}>
-            <label className={styles.label}>العنوان:</label>
-            <input 
-              type="text" 
-              className={styles.input} 
-              value={address} 
-              readOnly 
-              placeholder="سيظهر العنوان هنا تلقائيًا"
-            />
-          </div>
-          
-          <div className={styles.formGroup}>
-            <label className={styles.label}>رابط الموقع:</label>
-            <div className={styles.urlContainer}>
-              <input 
-                type="text" 
-                className={styles.input} 
-                value={mapUrl} 
-                readOnly 
-              />
-              {mapUrl && (
-                <a 
-                  href={mapUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className={styles.openLink}
-                >
-                  فتح في OpenStreetMap
-                </a>
-              )}
-            </div>
-          </div>
-          
-          <div className={styles.formGroup}>
-            <label className={styles.label}>معلومات إضافية:</label>
-            <textarea 
-              className={styles.textarea}
-              value={additionalInfo}
-              onChange={(e) => setAdditionalInfo(e.target.value)}
-              placeholder="أدخل أي معلومات إضافية هنا"
-              rows={4}
-            />
-          </div>
-          
-          <button className={styles.submitButton}>
-            حفظ المعلومات
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder={searchPlaceholder}
+            style={{ 
+              flex: 1, 
+              border: 'none', 
+              outline: 'none', 
+              padding: '12px 0', 
+              fontSize: '16px' 
+            }}
+          />
+          <button style={{ 
+            background: 'none', 
+            border: 'none', 
+            cursor: 'pointer', 
+            padding: '8px', 
+            color: '#5F6368' 
+          }}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="15" y1="9" x2="9" y2="15" />
+              <line x1="9" y1="9" x2="15" y2="15" />
+            </svg>
           </button>
         </div>
-      </main>
+      </div>
+
+      <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
+
+      <div className="map-controls" style={{ position: 'absolute', right: '10px', bottom: '100px', zIndex: 10 }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <button 
+            className="control-button" 
+            style={{ 
+              backgroundColor: 'white', 
+              border: 'none', 
+              borderRadius: '50%', 
+              width: '40px', 
+              height: '40px', 
+              boxShadow: '0 2px 6px rgba(0,0,0,0.3)', 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              marginBottom: '8px',
+              cursor: 'pointer'
+            }}
+            onClick={() => map?.setZoom((map.getZoom() || 15) + 1)}
+          >
+            <span style={{ fontSize: '24px', fontWeight: 'bold' }}>+</span>
+          </button>
+          <button 
+            className="control-button" 
+            style={{ 
+              backgroundColor: 'white', 
+              border: 'none', 
+              borderRadius: '50%', 
+              width: '40px', 
+              height: '40px', 
+              boxShadow: '0 2px 6px rgba(0,0,0,0.3)', 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              cursor: 'pointer'
+            }}
+            onClick={() => map?.setZoom((map.getZoom() || 15) - 1)}
+          >
+            <span style={{ fontSize: '24px', fontWeight: 'bold' }}>−</span>
+          </button>
+        </div>
+      </div>
+
+      <div style={{ 
+        position: 'absolute', 
+        bottom: '10px', 
+        left: '10px', 
+        zIndex: 5, 
+        color: '#70757a', 
+        fontSize: '11px' 
+      }}>
+        <span>© Google {new Date().getFullYear()} | Terms | Report a map error</span>
+      </div>
     </div>
   );
-}
+};
+
+export default Map;
