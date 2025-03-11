@@ -142,7 +142,7 @@ useEffect(() => {
 
 
     const handleserviceTypeSelect = (type: string) => {
-calculateTotalPrice
+ 
         setServiceType(type);
         
             setHours(4);
@@ -339,10 +339,9 @@ calculateTotalPrice
     const [selectedDate, setSelectedDate] = useState<string>('');
  
  
-    const [numberOfCleaners, setNumberOfCleaners] = useState<number>(1);
-    const [availableCleaners, setAvailableCleaners] = useState<number>(15);
+     const [availableCleaners, setAvailableCleaners] = useState<number>(15);
     const totalCleaners = 15;
-    setNumberOfCleaners(1);
+    
     // States for offer times remain the same
     const [offerTimeSlots, setOfferTimeSlots] = useState<OfferTimeSlot[]>([]);
     let items: string[] = [];
@@ -621,7 +620,7 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                     
                 extraHours:hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
         
-                workerCount: numberOfCleaners,
+                workerCount: workers,
                 price: totalPrice,
             } ));
         
@@ -651,7 +650,7 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                 timePeriod:selectedTime, // Default to MORNING if neither or both are selected. Important
                 extraHours: hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
         
-                workerCount: numberOfCleaners,
+                workerCount: workers,
                 price: totalPrice,
             } ));
             return [items[0]]
@@ -757,7 +756,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                
  
 
-                if (numberOfCleaners > availableCleaners) {
+                if (workers > availableCleaners) {
                     alert(`لا يوجد عدد كاف من عمال النظافة متاحين. متاح حاليا: ${availableCleaners}`);
                     return;
                 }
@@ -798,20 +797,33 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
         // You might need to fetch this data from an API or a database.
 
         //For simplicity I am hardcoding the value
-        return totalCleaners - numberOfCleaners;
+        return totalCleaners - workers;
 
     };
 
     useEffect(() => {
         // Update available cleaners when date or time changes
         setAvailableCleaners(calculateAvailableCleaners());
-    }, [selectedDate,   numberOfCleaners]);
+    }, [selectedDate,   workers]);
 
     // Function to check if a date is a working day (Saturday to Thursday)
     
  
 
     
+    const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
+    interface DisplayDay {
+      date: Date;
+      day: number;
+      month: number;
+      year: number;
+      dayName: string;
+      isToday: boolean;
+      isDisabled: boolean;
+    }
+    
+    const [displayDays, setDisplayDays] = useState<DisplayDay[]>([]);
+    const [currentMonth, setCurrentMonth] = useState('');
 
 
  
@@ -820,19 +832,6 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     const renderDateTimeSelection = () => {
         
        
-        const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
-        interface DisplayDay {
-          date: Date;
-          day: number;
-          month: number;
-          year: number;
-          dayName: string;
-          isToday: boolean;
-          isDisabled: boolean;
-        }
-        
-        const [displayDays, setDisplayDays] = useState<DisplayDay[]>([]);
-        const [currentMonth, setCurrentMonth] = useState('');
       
         // مصفوفة الأوقات المتاحة
         const times = [
@@ -915,6 +914,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
           year: number;
           dayName: string;
           isToday: boolean;
+          isDisabled: boolean;
         }
 
         const isToday = (date: Date): boolean => {
