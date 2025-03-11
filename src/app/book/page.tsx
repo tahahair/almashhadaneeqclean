@@ -809,6 +809,27 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     // Function to check if a date is a working day (Saturday to Thursday)
     
  
+      
+        // مصفوفة الأوقات المتاحة
+        const times = [
+            { time: '8:00 AM - 8:30 AM', disabled: true },
+            { time: '9:00 AM - 9:30 AM', disabled: true },
+            { time: '10:00 AM - 10:30 AM', disabled: true },
+            { time: '11:00 AM - 11:30 AM', disabled: false },
+            { time: '12:00 PM - 12:30 PM', disabled: true },
+            { time: '1:00 PM - 1:30 PM', disabled: true },
+            { time: '2:00 PM - 2:30 PM', disabled: true },
+            { time: '3:00 PM - 3:30 PM', disabled: true },
+            { time: '4:00 PM - 4:30 PM', disabled: false },
+          ];
+        
+          // أسماء الأيام والشهور بالعربية - نبدأ بالأحد لتتوافق مع ترتيب الأيام في التقويم
+          const dayNames = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+          const monthNames = [
+            'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+            'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+          ];
+        
 
     
     const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
@@ -825,54 +846,12 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     const [displayDays, setDisplayDays] = useState<DisplayDay[]>([]);
     const [currentMonth, setCurrentMonth] = useState('');
 
-
- 
-
-
-    const renderDateTimeSelection = () => {
-        
-       
-      
-        // مصفوفة الأوقات المتاحة
-        const times = [
-          { time: '8:00 AM - 8:30 AM', disabled: true },
-          { time: '9:00 AM - 9:30 AM', disabled: true },
-          { time: '10:00 AM - 10:30 AM', disabled: true },
-          { time: '11:00 AM - 11:30 AM', disabled: false },
-          { time: '12:00 PM - 12:30 PM', disabled: true },
-          { time: '1:00 PM - 1:30 PM', disabled: true },
-          { time: '2:00 PM - 2:30 PM', disabled: true },
-          { time: '3:00 PM - 3:30 PM', disabled: true },
-          { time: '4:00 PM - 4:30 PM', disabled: false },
-        ];
-      
-        // أسماء الأيام والشهور بالعربية - نبدأ بالأحد لتتوافق مع ترتيب الأيام في التقويم
-        const dayNames = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
-        const monthNames = [
-          'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-          'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
-        ];
-      
-        // تهيئة التقويم عند التحميل
-        useEffect(() => {
-          // نبدأ من اليوم الحالي
-          const today = new Date();
-          
-          const firstDayOfWeek = new Date(today);
-          const dayOfWeek = today.getDay(); // 0 للأحد، 6 للسبت
-          const daysFromSaturday = (dayOfWeek + 1) % 7; // حساب الفرق من السبت
-          firstDayOfWeek.setDate(today.getDate() - daysFromSaturday);
-          
-          
-          
-          setCurrentWeekStart(firstDayOfWeek);
-        }, []);
-      
-        // تحديث عرض الأيام عند تغيير بداية الأسبوع
-        useEffect(() => {
-          updateDisplayDays();
-        }, [currentWeekStart]);
-      
+    const isToday = (date: Date): boolean => {
+        const today = new Date();
+        return date.getDate() === today.getDate() &&
+           date.getMonth() === today.getMonth() &&
+           date.getFullYear() === today.getFullYear();
+      };
         // دالة لتحديث الأيام المعروضة
         const updateDisplayDays = () => {
             const days = [];
@@ -905,6 +884,33 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
             setDisplayDays(days);
         };
         
+
+ 
+ // تهيئة التقويم عند التحميل
+ useEffect(() => {
+    // نبدأ من اليوم الحالي
+    const today = new Date();
+    
+    const firstDayOfWeek = new Date(today);
+    const dayOfWeek = today.getDay(); // 0 للأحد، 6 للسبت
+    const daysFromSaturday = (dayOfWeek + 1) % 7; // حساب الفرق من السبت
+    firstDayOfWeek.setDate(today.getDate() - daysFromSaturday);
+    
+    
+    
+    setCurrentWeekStart(firstDayOfWeek);
+  }, []);
+
+  // تحديث عرض الأيام عند تغيير بداية الأسبوع
+  useEffect(() => {
+    updateDisplayDays();
+  }, [currentWeekStart]);
+
+    const renderDateTimeSelection = () => {
+        
+       
+       
+      
       
         // دالة للتحقق مما إذا كان التاريخ هو اليوم
         interface DisplayDay {
@@ -917,12 +923,6 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
           isDisabled: boolean;
         }
 
-        const isToday = (date: Date): boolean => {
-          const today = new Date();
-          return date.getDate() === today.getDate() &&
-             date.getMonth() === today.getMonth() &&
-             date.getFullYear() === today.getFullYear();
-        };
       
         // دالة للانتقال إلى الأسبوع السابق
         const goToPreviousWeek = () => {
@@ -1261,7 +1261,7 @@ const ProgressIndicator = () => {
                             </div>
                      
 
-                        <h2>التاريخ والوقت</h2>
+                      
                         
                     </div>
 
