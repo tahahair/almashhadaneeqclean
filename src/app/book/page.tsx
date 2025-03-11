@@ -344,7 +344,7 @@ calculateTotalPrice
     const [numberOfCleaners, setNumberOfCleaners] = useState<number>(1);
     const [availableCleaners, setAvailableCleaners] = useState<number>(15);
     const totalCleaners = 15;
- 
+    setNumberOfCleaners(1);
     // States for offer times remain the same
     const [offerTimeSlots, setOfferTimeSlots] = useState<OfferTimeSlot[]>([]);
     let items: string[] = [];
@@ -354,8 +354,7 @@ calculateTotalPrice
     // Available time slots
     //const availableTimeSlots = [
        // "الفترة الصباحية من 11:00-11:30 الى 15:00-15:30","الفترة المسائية من 16:00-16:30 الى 20:00-20:30"  ];
-    const availableTimeSlots = [
-            "MORNING","EVENING"  ];
+ 
     
     // Offers
     const offers = [
@@ -368,7 +367,7 @@ calculateTotalPrice
     const maxOfferTimes = selectedOfferData ? selectedOfferData.times : 12;
 
     const [minDate, setMinDate] = useState<string>('');
-    
+    console.log("minDate", minDate);
     // Set min date effect - remains the same
     useEffect(() => {
         const today = new Date();
@@ -761,7 +760,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                 }
 
                 // Check if the selected date is a working day (Saturday to Thursday)
-                const selectedDay = selectedDateObj.getDay();
+            
                
 
                 if (!selectedMorningTime && !selectedAfternoonTime) {
@@ -823,32 +822,10 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     }, [selectedDate, selectedMorningTime, selectedAfternoonTime, numberOfCleaners]);
 
     // Function to check if a date is a working day (Saturday to Thursday)
-    const isWorkingDay = (dateString: string): boolean => {
-        const day = new Date(dateString).getDay();
-        return day >= 0 && day <= 4; // 0: Sunday, 1: Monday, ..., 4: Thursday
-    };
-    const handleMorningTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedMorningTime(e.target.checked);
-          if (selectedAfternoonTime && e.target.checked) {
-            setMorningExtraHours(0);
-            setAfternoonExtraHours(0);
-        }
-        else if (!e.target.checked) {
-            setMorningExtraHours(0); // Reset extra hours if morning time is unchecked
-        }
-    };
+    
+ 
 
-    const handleAfternoonTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSelectedAfternoonTime(e.target.checked);
-
-        if (selectedMorningTime && e.target.checked) {
-             setMorningExtraHours(0);
-             setAfternoonExtraHours(0);
-        }
-       else if (!e.target.checked) {
-            setAfternoonExtraHours(0); // Reset extra hours if afternoon time is unchecked
-        }
-    };
+    
 
 
  
@@ -985,12 +962,7 @@ const handleDateSelection = (day: DisplayDay) => {
     }
   };
   
-        // دالة لتنسيق عرض التاريخ المحدد
-        const formatSelectedDate = () => {
-          if (!selectedDate) return '';
-          const date = new Date(selectedDate);
-          return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
-        };
+    
       
         return (
           <div dir="ltr" className="rtl-direction">
@@ -1020,7 +992,7 @@ const handleDateSelection = (day: DisplayDay) => {
               </div>
               
               <div className="grid grid-cols-7 gap-2 text-center mb-2">
-                {dayNames.map((dayName, index) => (
+                {dayNames.map((dayName) => (
                   <div key={dayName} className="text-xs py-1">{dayName}</div>
                 ))}
               </div>
@@ -1391,7 +1363,7 @@ const ProgressIndicator = () => {
                                     <h3>معلومات بطاقة الائتمان</h3>
 
 
-                                    
+
                                     <Elements
         stripe={stripePromise}
         options={{
