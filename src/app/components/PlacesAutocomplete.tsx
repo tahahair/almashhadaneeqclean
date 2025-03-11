@@ -34,7 +34,9 @@ export const PlacesAutocomplete = ({
           onClick={() => {
             setValue(description, false);
             clearSuggestions();
-            onAddressSelect && onAddressSelect(description);
+            if (onAddressSelect) {
+              onAddressSelect(description); // Now it's properly wrapped in an if statement
+            }
           }}
           className="focus:bg-orange-300 py-1 px-2 hover:bg-gray-300 border-b border-gray-500"
           role="option"
