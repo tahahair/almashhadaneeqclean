@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import CheckoutPage from "../components/CheckoutPage";
-import { Menu    } from 'lucide-react';
+ import {  Menu, Shield, Award, Clock, Star } from 'lucide-react';
 
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
@@ -32,6 +32,280 @@ interface OfferTimeSlot {
   
 const TabsPage = () => {
     // const router = useRouter(); // Duplicate declaration removed
+    const [hours, setHours] = useState(4);
+  const [selectedTime, setSelectedTime] = useState('');
+  const [date, setDate] = useState('');
+  const [basePrice, setBasePrice] = useState(0);
+  const [workers, setWorkers] = useState(1);
+  const [serviceType, setServiceType] = useState< string>('package-12');
+const [totalPrice, setTotalPrice] = useState(100);
+const [selectedCity, setSelectedCity] = useState("");
+
+const calculateTotalPrice = ({hours, workers}: {hours: number; workers: number}) => {
+    
+    if (selectedCity === 'Dubai') {
+        setBasePrice(100);
+    } else if (selectedCity === 'Sharjah' || selectedCity === 'Ajman' || selectedCity === 'Umm Al Quwain') {
+        setBasePrice(85);
+    }
+    if (serviceType === 'one-time') {
+        // Calculate price for one-time service
+        // Example base rate per hour
+        const extra = (hours - 4) * 20;
+        if (workers > 0) {
+            
+            setTotalPrice((basePrice * workers) + (extra * workers));
+        }
+    } else if (serviceType === 'package-4') {
+        setTotalPrice(340);
+    } else if (serviceType === 'package-8') {
+        setTotalPrice(680);
+    } else if (serviceType === 'package-12') {
+        setTotalPrice(1000);
+    }
+};
+
+useEffect(() => {
+    console.log("totalPrice useeffect", totalPrice);
+
+    calculateTotalPrice({ hours, workers });
+}, [ serviceType, basePrice, workers, hours, selectedCity]);
+
+ 
+ 
+  const renderBookingSummary = () => {
+   
+  console.log("totalPrice", totalPrice);
+    return (
+        <div dir="ltr" className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 shadow-lg border border-gray-100 max-w-md mx-auto">
+        <h3 className="text-xl font-bold text-center mb-4 text-gray-800 border-b pb-2">ملخص الحجز</h3>
+        
+        <div className="space-y-3 text-right w-full mx-auto">
+          {serviceType && (
+            <div className="flex justify-between items-center py-1 border-b border-gray-100">
+              <span className="font-medium text-gray-800">
+                {serviceType === 'one-time' ? 'حجز لمرة واحدة' : 
+                 serviceType === 'package-4' ? 'عرض 4 مرات' : 
+                 serviceType === 'package-8' ? 'عرض 8 مرات' : 'عرض 12 مرة'}
+              </span>
+              <span className="text-gray-800 font-bold ">نوع الحجز</span>
+            </div>
+          )}
+          
+          {workers > 0 && (
+            <div className="flex justify-between items-center py-1 border-b border-gray-100">
+              <span className="text-gray-800">{workers} </span>
+              <span className="text-gray-800 font-bold ">عدد العمال</span>
+            </div>
+          )}
+          
+          {hours > 0 && (
+            <div className="flex justify-between items-center py-1 border-b border-gray-100">
+              <span className="text-gray-600">{hours} </span>
+              <span className="text-gray-800 font-bold  ">عدد الساعات</span>
+            </div>
+          )}
+          
+{
+    selectedCity && (
+        <div className="flex justify-between items-left py-1 border-b border-gray-100">
+            <span className="text-gray-600 w-[40%] text-left ">{addressDetails + "\n " + locationUrl}</span>
+            <span className="text-gray-800 font-bold ">الموقع</span>
+        </div>
+    )
+}
+
+          {selectedTime && (
+            <div className="flex justify-between items-center py-1 border-b border-gray-100">
+              <span className="text-gray-800">{selectedTime}</span>
+              <span className="text-gray-800 font-bold ">وقت الوصول</span>
+            </div>
+          )}
+          
+          {date && (
+            <div className="flex justify-between items-center py-1 border-b border-gray-100">
+              <span className="text-gray-800">{date}</span>
+              <span className="text-gray-800 font-bold ">التاريخ</span>
+            </div>
+          )}
+          
+          {totalPrice > 0 && (
+            <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-200">
+              <span className="text-lg font-bold text-blue-600">{totalPrice} درهم</span>
+              <span className="  text-gray-800 font-bold ">السعر الإجمالي</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+
+    const handleserviceTypeSelect = (type: string) => {
+calculateTotalPrice
+        setServiceType(type);
+        
+            setHours(4);
+            setWorkers(1);
+            
+        
+        
+        // Set base price based on booking type
+        switch(type) {
+            case 'one-time':
+             
+                setTotalPrice(100);
+                setBasePrice(100);
+                break;
+            case 'package-4':
+                setSelectedOffer(offers[0].id);
+                setTotalPrice(340);
+                break;
+            case 'package-8':
+                setSelectedOffer(offers[1].id);
+                setTotalPrice(680);
+                break;
+            case 'package-12':
+                setSelectedOffer(offers[2].id);
+                setTotalPrice(1000);
+                break;
+      
+        }
+    };
+ 
+    const renderBookingDetails = () => {
+     
+   
+        return (
+          <div>
+            <h2 className="text-xl font-bold text-center mb-4">اختر نوع الحجز</h2>
+            
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              <div 
+                className={`rounded-lg border-2 p-3 text-right cursor-pointer ${serviceType === 'one-time' ? 'border-blue-600 bg-blue-50' : 'border-gray-300'}`}
+                onClick={() => handleserviceTypeSelect('one-time')}
+              >
+                <h3 className="font-semibold">مرة واحدة</h3>
+                <p className="text-sm text-gray-600">100 درهم </p>
+                 
+              </div>
+              
+              <div 
+                className={`rounded-lg border-2 p-3 text-right cursor-pointer ${serviceType === 'package-4' ? 'border-blue-600 bg-blue-50' : 'border-gray-300'}`}
+                onClick={() => handleserviceTypeSelect('package-4')}
+              >
+                <h3 className="font-semibold">عرض 4</h3>
+                <p className="text-sm text-gray-600">360 ريال</p>
+                <p className="text-xs text-green-600">خصم 15%</p>
+              </div>
+              
+              <div 
+                className={`rounded-lg border-2 p-3 text-right cursor-pointer ${serviceType === 'package-8' ? 'border-blue-600 bg-blue-50' : 'border-gray-300'}`}
+                onClick={() => handleserviceTypeSelect('package-8')}
+              >
+                <h3 className="font-semibold">عرض 8</h3>
+                <p className="text-sm text-gray-600">680 درهم</p>
+                <p className="text-xs text-green-600">خصم 16%</p>
+              </div>
+              
+              <div 
+                className={`rounded-lg border-2 p-3 text-right cursor-pointer ${serviceType === 'package-12' ? 'border-blue-600 bg-blue-50' : 'border-gray-300'}`}
+                onClick={() => handleserviceTypeSelect('package-12')}
+              >
+                <h3 className="font-semibold">عرض 12</h3>
+                <p className="text-sm text-gray-600">1000 درهم</p>
+                <p className="text-xs text-green-600">خصم 17%</p>
+              </div>
+            </div>
+            
+            {serviceType && (
+              <>
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-right mb-3">عدد الساعات</h3>
+                  <div className="flex justify-between gap-2 flex-wrap">
+                    {[4, 5, 6, 7, 8].map((h) => (
+                      <button
+                        key={h}
+                        className={`py-1 px-4 rounded-md ${
+                          serviceType !== 'one-time' && h !== 4 
+                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
+                            : hours === h 
+                              ? 'bg-blue-600 text-white' 
+                              : 'bg-gray-100'
+                        }`}
+                        onClick={() => { if (serviceType === 'one-time') setHours(h); calculateTotalPrice({ hours: h, workers }); }}
+                        disabled={serviceType !== 'one-time' && h !== 4}
+                      >
+                        {h} ساعات
+                        <br />
+                        {h !== 4 &&
+                           <span className="text-xs text-green-500"> + {(h-4)*20 } درهم  </span>
+                        }
+                     
+                      </button>
+                    
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold text-right mb-3">عدد العمال</h3>
+                  <div className="flex justify-between gap-2">
+                    {[1, 2, 3, 4].map((w) => (
+                      <button
+                        key={w}
+                        className={`py-2 px-4 rounded-md ${
+                          serviceType !== 'one-time' && w !== 1
+                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                            : workers === w 
+                              ? 'bg-blue-600 text-white' 
+                              : 'bg-gray-100'
+                        }`}
+                        onClick={() => {
+                          if (serviceType === 'one-time' || w === 1) {
+                            setWorkers(w);
+                          }
+                          calculateTotalPrice({ hours, workers: w });
+                        }}
+                        disabled={serviceType !== 'one-time' && w !== 1}
+                      >
+                        {w} {w === 1 ? 'عامل' : 'عمال'}
+                        <br />
+                        {w !== 1 &&
+                           <span className="text-xs text-green-500"> + {(w-1) *100 } درهم  </span>
+                        }
+                     
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+         
+         <div className="bg-blue-50 p-4 rounded-lg mb-6">
+           <h3 className="text-lg font-semibold text-right mb-2">لماذا تختار خدماتنا؟</h3>
+           <ul className="space-y-2 text-right">
+             <li className="flex justify-end items-center gap-2">
+               <span>ضمان الجودة 100%</span>
+               <Shield className="text-blue-600" size={18} />
+             </li>
+             <li className="flex justify-end items-center gap-2">
+               <span>فريق محترف ومؤهل</span>
+               <Award className="text-blue-600" size={18} />
+             </li>
+             <li className="flex justify-end items-center gap-2">
+               <span>التزام بالمواعيد</span>
+               <Clock className="text-blue-600" size={18} />
+             </li>
+             <li className="flex justify-end items-center gap-2">
+               <span>تقييم 4.9/5 من العملاء</span>
+               <Star className="text-yellow-500" size={18} />
+             </li>
+           </ul>
+         </div>
+       </div>
+     );
+   };
 
 
     const showSection = () => {
@@ -44,7 +318,6 @@ const TabsPage = () => {
     const [mapLoaded, setMapLoaded] = useState(false);
     console.log("mapLoaded", mapLoaded);
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
-    const [selectedCity, setSelectedCity] = useState("");
     const [addressDetails, setAddressDetails] = useState("");
     const [locationNotes, setLocationNotes] = useState("");
     const [locationUrl, setLocationUrl] = useState("");
@@ -62,7 +335,6 @@ const TabsPage = () => {
   
 
     // States for Time and Offer Selection remain the same
-    const [serviceType, setServiceType] = useState<'oneTime' | 'offer'>('oneTime');
     const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
     const [selectedDate, setSelectedDate] = useState<string>('');
     const [selectedMorningTime, setSelectedMorningTime] = useState<boolean>(false);
@@ -93,7 +365,7 @@ const TabsPage = () => {
     ];
 
     const selectedOfferData = offers.find(offer => offer.id === selectedOffer);
-    const maxOfferTimes = selectedOfferData ? selectedOfferData.times : 0;
+    const maxOfferTimes = selectedOfferData ? selectedOfferData.times : 12;
 
     const [minDate, setMinDate] = useState<string>('');
     
@@ -189,90 +461,141 @@ const getCurrentLocation = () => {
     useEffect(() => {
         // Check if the Google Maps script is loaded and the map container exists
         if (typeof window !== 'undefined' && window.google && mapRef.current && currentTab === 1) {
-            // Initialize the map centered on UAE
-            const initialPosition = { lat: 25.276987, lng: 55.296249 }; // Dubai coordinates as default
-            const map = new google.maps.Map(mapRef.current, {
-                zoom: 10,
-                center: initialPosition,
-            });
-    
-            // Store map instance in ref for later access
-            mapInstanceRef.current = map;
-    
-            // Add a marker for the selected location
-            const marker = new google.maps.Marker({
-                position: initialPosition,
-                map: map,
-                draggable: true,
-            });
-            markerRef.current = marker;
-    
-            // Add the current location button to the map
-            const locationButton = createCurrentLocationButton();
-            map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
-    
-            // Get device's current location if permission is granted
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const userLocation = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
-                        };
-    
-                        // Set map center to user's location
-                        map.setCenter(userLocation);
-                        marker.setPosition(userLocation);
-                        setSelectedLocation(userLocation);
-    
-                        // Try to get address details from coordinates
-                        getAddressFromCoordinates(userLocation);
-                    },
-                    () => {
-                        // Handle geolocation error or permission denied
-                        console.log("Unable to retrieve your location");
-                    }
-                );
-            }
-    
-            // Update selected location when marker is dragged
-            google.maps.event.addListener(marker, 'dragend', () => {
-                const position = marker.getPosition();
-                if (position) {
-                    setSelectedLocation({
-                        lat: position ? position.lat() : 0,
-                        lng: position ? position.lng() : 0,
-                    });
-                }
-    
-                // Update address details when marker position changes
-                getAddressFromCoordinates({
-                    lat: position ? position.lat() : 0,
-                    lng: position ? position.lng() : 0,
-                });
-            });
-    
-            // Update marker position when map is clicked
-            google.maps.event.addListener(map, 'click', (event: google.maps.MapMouseEvent) => {
-                if (event.latLng) {
-                    marker.setPosition(event.latLng);
-                    setSelectedLocation({
-                        lat: event.latLng.lat(),
-                        lng: event.latLng.lng(),
-                    });
-    
-                    // Update address details when map is clicked
-                    getAddressFromCoordinates({
-                        lat: event.latLng.lat(),
-                        lng: event.latLng.lng(),
-                    });
-                }
-            });
-    
-            setMapLoaded(true);
-        }
-    }, [currentTab]);
+          // Initialize the map centered on UAE
+          const initialPosition = { lat: 25.276987, lng: 55.296249 }; // Dubai coordinates as default
+          const map = new google.maps.Map(mapRef.current, {
+            zoom: 10,
+            center: initialPosition,
+            mapTypeControl: false,
+            streetViewControl: false, 
+            fullscreenControl: false,
+            zoomControl: true,
+            
 
+
+          });
+          // Store map instance in ref for later access
+          mapInstanceRef.current = map;
+      
+          // Add a marker for the selected location
+          const marker = new google.maps.Marker({
+            position: initialPosition,
+            map: map,
+            draggable: true,
+          });
+          markerRef.current = marker;
+      
+          // Add the current location button to the map
+          const locationButton = createCurrentLocationButton();
+          map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
+      
+          // ----------------------------
+          // Create and add the Autocomplete input element
+          // ----------------------------
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = ' ابحث عن موقع على الخريطة...';
+          input.style.cssText = 'width: 300px; margin: 10px; padding: 5px; height: 50px; font-size: 18px;  border-radius: 5px;  margin-left: 10px; margin-top: 10px;  ';
+          // You can add the input to the map controls (e.g., TOP_LEFT)
+          map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
+      
+          // Initialize the autocomplete widget with the input element
+          const autocomplete = new google.maps.places.Autocomplete(input);
+          autocomplete.bindTo('bounds', map);
+      
+          // Listen for place changes and update the map and marker accordingly
+          autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+            if (!place.geometry || !place.geometry.location) {
+              console.log("No details available for input: '" + place.name + "'");
+              return;
+            }
+            // Adjust the map view based on the place's geometry
+            if (place.geometry.viewport) {
+              map.fitBounds(place.geometry.viewport);
+            } else {
+              map.setCenter(place.geometry.location);
+              map.setZoom(17);
+            }
+            // Update the marker position
+            marker.setPosition(place.geometry.location);
+            setSelectedLocation({
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng(),
+            });
+            // Optionally, update the address details using your function
+            getAddressFromCoordinates({
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng(),
+            });
+          });
+      
+          // ----------------------------
+          // Geolocation: Get device's current location if permission is granted
+          // ----------------------------
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                const userLocation = {
+                  lat: position.coords.latitude,
+                  lng: position.coords.longitude,
+                };
+                // Set map center to user's location
+                map.setCenter(userLocation);
+                marker.setPosition(userLocation);
+                setSelectedLocation(userLocation);
+                // Get address details from coordinates
+                getAddressFromCoordinates(userLocation);
+              },
+              () => {
+                // Handle geolocation error or permission denied
+                console.log("Unable to retrieve your location");
+              }
+            );
+          }
+      
+          // ----------------------------
+          // Update selected location when marker is dragged
+          // ----------------------------
+          google.maps.event.addListener(marker, 'dragend', () => {
+            
+            const position = marker.getPosition();
+            if (position) {
+              setSelectedLocation({
+                lat: position.lat(),
+                lng: position.lng(),
+              });
+              // Update address details when marker position changes
+              getAddressFromCoordinates({
+                lat: position.lat(),
+                lng: position.lng(),
+              });
+            }
+          });
+      
+          // ----------------------------
+          // Update marker position when map is clicked
+          // ----------------------------
+          google.maps.event.addListener(map, 'click', (event: google.maps.MapMouseEvent) => {
+            if (event.latLng) {
+              marker.setPosition(event.latLng);
+              setSelectedLocation({
+                lat: event.latLng.lat(),
+                lng: event.latLng.lng(),
+              });
+              // Update address details when map is clicked
+              getAddressFromCoordinates({
+                lat: event.latLng.lat(),
+                lng: event.latLng.lng(),
+              });
+            }
+          });
+      
+          setMapLoaded(true);
+         
+        }
+      }, [currentTab]);
+      
 
 
     const createBookingdata = () => {
@@ -287,7 +610,7 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                 address: addressDetails + "\n " + locationNotes,
                 locationUrl: locationUrl,
                 serviceType:
-                    serviceType === 'oneTime'
+                    serviceType === 'one-time'
                         ? 'ONE_TIME'
                         : selectedOffer === 'offer1'
                             ? 'OFFER_4'
@@ -318,7 +641,7 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                 address: addressDetails + "\n " + locationNotes,
                 locationUrl: locationUrl,
                 serviceType:
-                    serviceType === 'oneTime'
+                    serviceType === 'one-time'
                         ? 'ONE_TIME'
                         : selectedOffer === 'offer1'
                             ? 'OFFER_4'
@@ -350,7 +673,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     geocoder.geocode({ location: location }, (results: google.maps.GeocoderResult[] | null, status: google.maps.GeocoderStatus) => {
         if (status === "OK" && results && results[0]) {
             const addressComponents = results[0].address_components;
-
+            setSelectedCity("");
             // Try to find city from address components
             const cityComponent = addressComponents.find(
                 component => component.types.includes("locality")
@@ -362,12 +685,22 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                 const normalizedCityName = cityName.toLowerCase();
                 if (normalizedCityName.includes("dubai") || normalizedCityName.includes("دبي")) {
                     setSelectedCity("Dubai");
+                    setBasePrice(100);
+                    calculateTotalPrice({ hours, workers });
                 } else if (normalizedCityName.includes("sharjah") || normalizedCityName.includes("الشارقة")) {
                     setSelectedCity("Sharjah");
+                    setBasePrice(85);
+                    calculateTotalPrice({ hours, workers });
                 } else if (normalizedCityName.includes("ajman") || normalizedCityName.includes("عجمان")) {
                     setSelectedCity("Ajman");
+                    setBasePrice(85);
+                    calculateTotalPrice({ hours, workers });
                 } else if (normalizedCityName.includes("umm al quwain") || normalizedCityName.includes("أم القيوين")) {
                     setSelectedCity("Umm Al Quwain");
+                    setBasePrice(85);
+                    calculateTotalPrice({ hours, workers });
+                }else{
+                    setSelectedCity("");
                 }
             }
 
@@ -377,6 +710,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
             // Generate Google Maps URL for the location
             const locationLink = `https://www.google.com/maps?q=${location.lat},${location.lng}`;
             setLocationUrl(locationLink);
+            
         }
     });
 };
@@ -390,7 +724,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
         }
 
         if (currentTab === 1 && !selectedCity) {
-            alert("الرجاء اختيار المدينة");
+            alert("الرجاء اختيار مدينة ضمن الخدمة دبي عجمان الشارقة ام القيوين");
             return;
         }
 
@@ -428,10 +762,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
 
                 // Check if the selected date is a working day (Saturday to Thursday)
                 const selectedDay = selectedDateObj.getDay();
-                if (selectedDay === 5 || selectedDay === 6) { // 5: Friday, 6: Saturday
-                    alert("الرجاء اختيار يوم من السبت إلى الخميس.");
-                    return;
-                }
+               
 
                 if (!selectedMorningTime && !selectedAfternoonTime) {
                     alert("الرجاء اختيار الفترة الصباحية أو المسائية.");
@@ -519,6 +850,248 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
         }
     };
 
+
+ 
+
+
+    const renderDateTimeSelection = () => {
+        
+       
+        const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
+        interface DisplayDay {
+          date: Date;
+          day: number;
+          month: number;
+          year: number;
+          dayName: string;
+          isToday: boolean;
+          isDisabled: boolean;
+        }
+        
+        const [displayDays, setDisplayDays] = useState<DisplayDay[]>([]);
+        const [currentMonth, setCurrentMonth] = useState('');
+      
+        // مصفوفة الأوقات المتاحة
+        const times = [
+          { time: '8:00 AM - 8:30 AM', disabled: true },
+          { time: '9:00 AM - 9:30 AM', disabled: true },
+          { time: '10:00 AM - 10:30 AM', disabled: true },
+          { time: '11:00 AM - 11:30 AM', disabled: false },
+          { time: '12:00 PM - 12:30 PM', disabled: true },
+          { time: '1:00 PM - 1:30 PM', disabled: true },
+          { time: '2:00 PM - 2:30 PM', disabled: true },
+          { time: '3:00 PM - 3:30 PM', disabled: true },
+          { time: '4:00 PM - 4:30 PM', disabled: false },
+        ];
+      
+        // أسماء الأيام والشهور بالعربية - نبدأ بالأحد لتتوافق مع ترتيب الأيام في التقويم
+        const dayNames = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+        const monthNames = [
+          'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+          'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+        ];
+      
+        // تهيئة التقويم عند التحميل
+        useEffect(() => {
+          // نبدأ من اليوم الحالي
+          const today = new Date();
+          
+          const firstDayOfWeek = new Date(today);
+          const dayOfWeek = today.getDay(); // 0 للأحد، 6 للسبت
+          const daysFromSaturday = (dayOfWeek + 1) % 7; // حساب الفرق من السبت
+          firstDayOfWeek.setDate(today.getDate() - daysFromSaturday);
+          
+          
+          
+          setCurrentWeekStart(firstDayOfWeek);
+        }, []);
+      
+        // تحديث عرض الأيام عند تغيير بداية الأسبوع
+        useEffect(() => {
+          updateDisplayDays();
+        }, [currentWeekStart]);
+      
+        // دالة لتحديث الأيام المعروضة
+        const updateDisplayDays = () => {
+            const days = [];
+            const startDate = new Date(currentWeekStart);
+            const today = new Date();
+            const tomorrow = new Date();
+            tomorrow.setDate(today.getDate() + 1);
+        
+            setCurrentMonth(monthNames[startDate.getMonth()]);
+        
+            for (let i = 0; i < 7; i++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + i);
+        
+                const dayIndex = currentDate.getDay(); // 0 للأحد، 1 للإثنين، ..., 6 للسبت
+                const isBeforeTomorrow = currentDate < today;
+                const isThursdayOrFriday = dayIndex ===4 || dayIndex === 5; // الخميس = 4، الجمعة = 5
+        
+                days.push({
+                    date: currentDate,
+                    day: currentDate.getDate(),
+                    month: currentDate.getMonth(),
+                    year: currentDate.getFullYear(),
+                    dayName: dayNames[dayIndex],
+                    isToday: isToday(currentDate),
+                    isDisabled: isBeforeTomorrow || isThursdayOrFriday, // تعطيل الأيام قبل الغد والخميس والجمعة
+                });
+            }
+        
+            setDisplayDays(days);
+        };
+        
+      
+        // دالة للتحقق مما إذا كان التاريخ هو اليوم
+        interface DisplayDay {
+          date: Date;
+          day: number;
+          month: number;
+          year: number;
+          dayName: string;
+          isToday: boolean;
+        }
+
+        const isToday = (date: Date): boolean => {
+          const today = new Date();
+          return date.getDate() === today.getDate() &&
+             date.getMonth() === today.getMonth() &&
+             date.getFullYear() === today.getFullYear();
+        };
+      
+        // دالة للانتقال إلى الأسبوع السابق
+        const goToPreviousWeek = () => {
+          const prevWeek = new Date(currentWeekStart);
+          prevWeek.setDate(prevWeek.getDate() - 7);
+          setCurrentWeekStart(prevWeek);
+        };
+      
+        // دالة للانتقال إلى الأسبوع التالي
+        const goToNextWeek = () => {
+          const nextWeek = new Date(currentWeekStart);
+          nextWeek.setDate(nextWeek.getDate() + 7);
+          setCurrentWeekStart(nextWeek);
+        };
+      
+        // دالة لتحديد التاريخ عند النقر
+      
+const handleDateSelection = (day: DisplayDay) => {
+    if (!day.isDisabled) {
+      const dateString = `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
+      setSelectedDate(dateString);
+      setDate(dateString);
+    }
+  };
+  
+        // دالة لتنسيق عرض التاريخ المحدد
+        const formatSelectedDate = () => {
+          if (!selectedDate) return '';
+          const date = new Date(selectedDate);
+          return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+        };
+      
+        return (
+          <div dir="ltr" className="rtl-direction">
+            <h2 className="text-xl font-bold text-right mb-4">اختر وقت الوصول</h2>
+            
+            <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+              <div className="flex justify-between items-center mb-2">
+                <button 
+                  className="bg-gray-100 hover:bg-gray-200 p-2 rounded-md"
+                  onClick={goToPreviousWeek}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+                
+                <h3 className="text-right font-medium">{currentMonth}</h3>
+                
+                <button 
+                  className="bg-gray-100 hover:bg-gray-200 p-2 rounded-md"
+                  onClick={goToNextWeek}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-7 gap-2 text-center mb-2">
+                {dayNames.map((dayName, index) => (
+                  <div key={dayName} className="text-xs py-1">{dayName}</div>
+                ))}
+              </div>
+              
+              <div className="grid grid-cols-7 gap-2 text-center">
+              {displayDays.map((day) => (
+    <div
+      key={`${day.day}-${day.month}`}
+      className={`text-sm p-2 rounded-md cursor-pointer ${
+        day.isDisabled
+          ? 'bg-gray-300 text-gray-600 cursor-not-allowed' // للأيام المعطلة
+          : selectedDate && new Date(selectedDate).getDate() === day.day &&
+            new Date(selectedDate).getMonth() === day.month &&
+            new Date(selectedDate).getFullYear() === day.year
+          ? 'bg-blue-600 text-white' // اليوم المحدد
+          : day.isToday
+          ? 'bg-blue-100' // اليوم الحالي
+         
+          : 'hover:bg-gray-100' // الأيام العادية
+      }`}
+      onClick={() => handleDateSelection(day)}
+    >
+      {day.day}
+    </div>
+                ))}
+              </div>
+              
+              
+            </div>
+            
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-right mb-3">وقت الوصول المفضل</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {times.map((item) => (
+                  <button
+                    key={item.time}
+                    className={`p-3 text-center rounded-lg border ${
+                      item.disabled 
+                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
+                        : selectedTime === item.time
+                          ? 'bg-blue-600 text-white border-blue-600'
+                          : 'border-gray-300 hover:border-blue-300'
+                    }`}
+                    onClick={() => {
+                        if (!item.disabled) {
+                            
+                                setSelectedTime(item.time);
+                                if (item.time=== '11:00 AM - 11:30 AM' ){
+
+                            setSelectedTimeSlot("MORNING");}
+                            
+                            else if (item.time=== '4:00 PM - 4:30 PM' ){    
+                                setSelectedTimeSlot("EVENING");
+                            }
+
+                         
+                        }
+                    }}
+                    disabled={item.disabled}
+                  >
+                    {item.time}
+                    {item.disabled && <span className="block text-xs">غير متاح</span>}
+                  </button>
+                ))}
+              </div>
+              
+            </div>
+          </div>
+        );
+      };
+
     // Function to add time slot for offer
    const handleAddTimeSlot = () => {
         if (selectedDate && selectedTimeSlot) {
@@ -536,10 +1109,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
 
             if (offerTimeSlots.length < maxOfferTimes) {
                 // Check if the selected date is a working day (Saturday to Thursday)
-                if (!isWorkingDay(selectedDate)) {
-                    alert("الرجاء اختيار يوم من السبت إلى الخميس.");
-                    return;
-                }
+                 
 
 
                 const today = new Date();
@@ -584,43 +1154,9 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
         setIllegalOfferDays(illegalOfferDays.filter(date => date !== timeSlotToRemove.date));
     };
 
-    const calculateTotalPrice = (): number => {
-      let totalPrice = 0;
-  
-      if (selectedCity === "Dubai") {
-          totalPrice = 100;
-      } else {
-          totalPrice = 85;
-      }
-  
-      if (serviceType === 'oneTime') {
-          // Calculate price for one-time service
-          const baseRate = 20; // Example base rate per hour
-          let totalHours = 0;
-          if (selectedAfternoonTime && selectedMorningTime) {
-            totalHours = 4;
-        }
-          else if (selectedMorningTime) {
-              totalHours += (morningExtraHours || 0);
-          }
-          else if (selectedAfternoonTime) {
-              totalHours += (afternoonExtraHours || 0);
-          }
-
-  
-          if (totalPrice > 0   && numberOfCleaners > 0) {
-              totalPrice =   totalPrice * numberOfCleaners + (totalHours * baseRate*numberOfCleaners);
-          }
-      } else if (serviceType === 'offer' && selectedOfferData?.price) {
-          // Use the offer price directly
-          totalPrice = selectedOfferData.price;
-      }
-  
-      return totalPrice;
-  };
+   
   
 
-    const totalPrice = calculateTotalPrice();
 
   // Progress indicator component to show which step the user is on
 const ProgressIndicator = () => {
@@ -704,18 +1240,16 @@ const ProgressIndicator = () => {
 
             <div   className="container">
                 <ProgressIndicator />
-                
+                {renderBookingSummary()}
+                <br />
                 <div className="tabs">
                     <div className={`tab ${currentTab === 0 ? 'active' : ''}`}>
-                        <h2>معلومات المستخدم</h2>
-                        {currentTab === 0 && (
-                            <div className="form-group">
-                                <label>الاسم:</label>
-                                <input type="text" value={user?.name || ''} readOnly />
-                                <label>رقم الهاتف:</label>
-                                <input type="text" value={user?.phone || ''} readOnly />
-                            </div>
-                        )}
+
+                   
+                       {  renderBookingDetails()}
+
+
+
                     </div>
 
                     <div className={`tab ${currentTab === 1 ? 'active' : ''}`}>
@@ -725,20 +1259,18 @@ const ProgressIndicator = () => {
                                 {/* Map container */}
                                 <div className="map-container" ref={mapRef}></div>
 
+                                <label>الموقع المختار:</label>
+                                    <textarea
+                                        value={addressDetails + "\n " + locationUrl}
+                                         rows={1}
+                                        readOnly
+                                    />
+
                                 <div className="form-group">
                                     <label>المدينة:</label>
-                                    <select
-                                        value={selectedCity}
-                                        onChange={(e) => setSelectedCity(e.target.value)}
-                                        required
-                                        className="select-field"
-                                    >
-                                        <option value="">اختر المدينة</option>
-                                        <option value="Dubai">دبي</option>
-                                        <option value="Sharjah">الشارقة</option>
-                                        <option value="Ajman">عجمان</option>
-                                        <option value="Umm Al Quwain">أم القيوين</option>
-                                    </select>
+                                    <input type="text" value={selectedCity} readOnly />
+                                     
+                                    
 
                             
 
@@ -758,181 +1290,46 @@ const ProgressIndicator = () => {
                     </div>
 
                     <div className={`tab ${currentTab === 2 ? 'active' : ''}`}>
-                        <h2>التاريخ والوقت</h2>
-                        {currentTab === 2 && (
+
+
+                    <h2>معلومات المستخدم</h2>
+                         
                             <div className="form-group">
-                                <label>اختر نوع الخدمة:</label>
-                                <div className="service-type-selector">
-                                    <div 
-                                        className={`service-option ${serviceType === 'oneTime' ? 'selected' : ''}`}
-                                        onClick={() => setServiceType('oneTime')}
-                                    >
-                                        مرة واحدة
-                                    </div>
-                                    <div 
-                                        className={`service-option ${serviceType === 'offer' ? 'selected' : ''}`}
-                                        onClick={() => setServiceType('offer')}
-                                    >
-                                        عرض
-                                    </div>
-                                </div>
+                                <label>الاسم:</label>
+                                <textarea value={user?.name || ''}   />
+                                <label>رقم الهاتف:</label>
+                                <textarea  value={user?.phone || ''}    />
+                               
+                            </div>
+                     
 
-                                {serviceType === 'oneTime' && (
+                        <h2>التاريخ والوقت</h2>
+                        
+                    </div>
+
+                    <div className={`tab ${currentTab === 3 ? 'active' : ''}`}>
+                        <h2>الدفع</h2>
+                        {renderDateTimeSelection()}
+
+
+
+                        {currentTab === 3 && (
+                            <div className="form-group">
+                                
+                               
+
+                                
+
+                                {serviceType != 'one-time' && (
                                     <>
-                                        <label>التاريخ:</label>
-                                        <input 
-                                            type="date" 
-                                            value={selectedDate} 
-                                            onChange={(e) => setSelectedDate(e.target.value)} 
-                                            min={minDate} 
-                                            className="date-input"
-                                        />
-
-                                        {selectedDate && !isWorkingDay(selectedDate) && (
-                                            <p className="error-message">الرجاء اختيار يوم من السبت إلى الخميس.</p>
-                                        )}
-                                        {selectedDate && new Date(selectedDate) < new Date() && (
-                                            <p className="error-message">الرجاء اختيار  تاريخ مستقبلي.</p>
-                                        )}
-
-                                        <label>الفترة:</label>
-                                        <div className="time-period-section">
-                                            <div className={`time-option ${selectedMorningTime ? 'selected' : ''}`}>
-                                                <label className="checkbox-container">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedMorningTime}
-                                                        onChange={handleMorningTimeChange}
-                                                    />
-                                                    <span className="checkmark"></span>
-                                                    <span className="label-text">الفترة الصباحية</span>
-                                                </label>
-                                                {selectedMorningTime && !selectedAfternoonTime && (
-                                                    <div className="extra-hours">
-                                                        <label>عدد الساعات الإضافية:</label>
-                                                        <select
-                                                            value={morningExtraHours !== null ? morningExtraHours : ''}
-                                                            onChange={(e) => setMorningExtraHours(parseInt(e.target.value))}
-                                                            disabled={selectedAfternoonTime}
-                                                            className="select-field small"
-                                                        >
-                                                            <option value="0">0</option>
-                                                            <option value="1">1</option>
-                                                            <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                        </select>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            
-                                            <div className={`time-option ${selectedAfternoonTime ? 'selected' : ''}`}>
-                                                <label className="checkbox-container">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={selectedAfternoonTime}
-                                                        onChange={handleAfternoonTimeChange}
-                                                    />
-                                                    <span className="checkmark"></span>
-                                                    <span className="label-text">الفترة المسائية</span>
-                                                </label>
-                                                {selectedAfternoonTime && !selectedMorningTime && (
-                                                    <div className="extra-hours">
-                                                        <label>عدد الساعات الإضافية:</label>
-                                                        <select
-                                                            value={afternoonExtraHours !== null ? afternoonExtraHours : ''}
-                                                            onChange={(e) => setAfternoonExtraHours(parseInt(e.target.value))}
-                                                            disabled={selectedMorningTime}
-                                                            className="select-field small"
-                                                        >
-                                                            <option value="0">0</option>
-                                                            <option value="1">1</option>
-                                                            <option value="2">2</option>
-                                                            <option value="3">3</option>
-                                                        </select>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <div className="cleaner-section flex flex-col space-y-2 p-4 border rounded-lg bg-gray-50 rtl"> 
-    <label className="font-medium text-gray-700">عدد عمال النظافة:</label> 
-    
-    <div className="counter-input flex items-center justify-center space-x-2 rtl:space-x-reverse"> 
-        <button  
-            type="button"  
-            className="w-12 h-12 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full font-bold text-lg transition-colors" 
-            onClick={() => { 
-                if (numberOfCleaners > 1) { 
-                    setNumberOfCleaners(numberOfCleaners - 1); 
-                } 
-            }} 
-        >-</button> 
-        <span className="  font-bold text-2xl   pr-8 pl-6 text-center">{numberOfCleaners}</span> 
-        <button  
-            type="button"  
-            className="w-12 h-12 flex items-center justify-center bg-green-500 hover:bg-green-600 text-white rounded-full font-bold text-2xl transition-colors" 
-            onClick={() => { 
-                if (numberOfCleaners < 4) { 
-                    setNumberOfCleaners(numberOfCleaners + 1); 
-                } 
-            }} 
-        >+</button> 
-    </div> 
-    <p className="available-cleaners text-sm text-gray-600 mt-2">عدد عمال النظافة المتاحين: {availableCleaners}</p> 
-</div>
-                                    </>
-                                )}
-
-                                {serviceType === 'offer' && (
-                                    <>
-                                        <label>اختر عرضًا:</label>
-                                        <div className="offers-container">
-                                            {offers.map(offer => (
-                                                <div 
-                                                    key={offer.id} 
-                                                    className={`offer-card ${selectedOffer === offer.id ? 'selected' : ''}`}
-                                                    onClick={() => setSelectedOffer(offer.id)}
-                                                >
-                                                    <div className="offer-details">
-                                                        <span className="offer-price">{offer.price} AED</span>
-                                                        <span className="offer-description">{offer.label}</span>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        {selectedOffer && (
-                                            <>
+                                        
+                                      
+                                         
                                                 <div className="offer-time-slots">
                                                     <h3>المواعيد ({offerTimeSlots.length}/{maxOfferTimes})</h3>
                                                     
                                                     <div className="add-time-slot">
-                                                        <div className="date-time-inputs">
-                                                            <div className="input-group">
-                                                                <label>التاريخ:</label>
-                                                                <input 
-                                                                    type="date" 
-                                                                    value={selectedDate} 
-                                                                    onChange={(e) => setSelectedDate(e.target.value)} 
-                                                                    min={minDate}
-                                                                    className="date-input"
-                                                                />
-                                                            </div>
-                                                            
-                                                            <div className="input-group">
-                                                                <label>الوقت:</label>
-                                                                <select 
-                                                                    value={selectedTimeSlot} 
-                                                                    onChange={(e) => setSelectedTimeSlot(e.target.value)}
-                                                                    className="select-field"
-                                                                >
-                                                                    <option value="">اختر الوقت</option>
-                                                                    {availableTimeSlots.map((timeSlot) => (
-                                                                        <option key={timeSlot} value={timeSlot}>{timeSlot}</option>
-                                                                    ))}
-                                                                </select>
-                                                            </div>
-                                                        </div>
+ 
                                                         
                                                         <button 
                                                             type="button" 
@@ -976,86 +1373,25 @@ const ProgressIndicator = () => {
                                                     </div>
                                                 </div>
                                             </>
-                                        )}
-                                    </>
+                                
+                               
                                 )}
                             </div>
                         )}
-                    </div>
 
-                    <div className={`tab ${currentTab === 3 ? 'active' : ''}`}>
-                        <h2>الدفع</h2>
+
+
+
+
+
+
+
                         {currentTab === 3 && (
-                            <>
-                                <div className="summary">
-                                    <h3>ملخص الحجز</h3>
-                                    <div className="summary-item">
-                                        <span className="summary-label">نوع الخدمة:</span>
-                                        <span className="summary-value">{serviceType === 'oneTime' ? 'مرة واحدة' : 'عرض'}</span>
-                                    </div>
-                                    
-                                    {serviceType === 'oneTime' && (
-                                        <>
-                                            <div className="summary-item">
-                                                <span className="summary-label">التاريخ:</span>
-                                                <span className="summary-value">{selectedDate}</span>
-                                            </div>
-                                            <div className="summary-item">
-                                                <span className="summary-label">الفترة:</span>
-                                                <span className="summary-value">
-                                                    {selectedMorningTime ? 'صباحية' : ''} 
-                                                    {selectedMorningTime && selectedAfternoonTime ? ' و ' : ''}
-                                                    {selectedAfternoonTime ? 'مسائية' : ''}
-                                                </span>
-                                            </div>
-                                            {selectedMorningTime && !selectedAfternoonTime && (
-                                                <div className="summary-item">
-                                                    <span className="summary-label">ساعات إضافية صباحية:</span>
-                                                    <span className="summary-value">{morningExtraHours || 0}</span>
-                                                </div>
-                                            )}
-                                            {selectedAfternoonTime && !selectedMorningTime && (
-                                                <div className="summary-item">
-                                                    <span className="summary-label">ساعات إضافية مسائية:</span>
-                                                    <span className="summary-value">{afternoonExtraHours || 0}</span>
-                                                </div>
-                                            )}
-                                            <div className="summary-item">
-                                                <span className="summary-label">عدد عمال النظافة:</span>
-                                                <span className="summary-value">{numberOfCleaners}</span>
-                                            </div>
-                                        </>
-                                    )}
-                                    
-                                    {serviceType === 'offer' && selectedOfferData && (
-                                        <>
-                                            <div className="summary-item">
-                                                <span className="summary-label">العرض المحدد:</span>
-                                                <span className="summary-value">{selectedOfferData.label}</span>
-                                            </div>
-                                            {offerTimeSlots.length > 0 && (
-                                                <div className="summary-item slots-summary">
-                                                    <span className="summary-label">المواعيد المحددة:</span>
-                                                    <div className="summary-value slots-list">
-                                                        {offerTimeSlots.map((timeSlot, index) => (
-                                                            <div key={index} className="slot-item">
-                                                                {timeSlot.date} - {timeSlot.timeSlot}
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </>
-                                    )}
-                                    
-                                    <div className="total-price">
-                                        <span className="total-label">المجموع الكلي:</span>
-                                        <span className="total-value">{totalPrice} AED</span>
-                                    </div>
-                                </div>
-           
                                 <div className="payment-info">
                                     <h3>معلومات بطاقة الائتمان</h3>
+
+
+                                    
                                     <Elements
         stripe={stripePromise}
         options={{
@@ -1067,7 +1403,7 @@ const ProgressIndicator = () => {
         <CheckoutPage amount={totalPrice} language="ar" bookingData={createBookingdata()} />
       </Elements>
                                 </div>
-                            </>
+                            
                         )}
                     </div>
                 </div>
