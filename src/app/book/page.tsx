@@ -337,8 +337,7 @@ calculateTotalPrice
     // States for Time and Offer Selection remain the same
     const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
     const [selectedDate, setSelectedDate] = useState<string>('');
-    const [selectedMorningTime, setSelectedMorningTime] = useState<boolean>(false);
-    const [selectedAfternoonTime, setSelectedAfternoonTime] = useState<boolean>(false);
+ 
     const [morningExtraHours, setMorningExtraHours] = useState<number>(0);
     const [afternoonExtraHours, setAfternoonExtraHours] = useState<number  >(0);
     const [numberOfCleaners, setNumberOfCleaners] = useState<number>(1);
@@ -621,7 +620,7 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                 date:new Date( offerTimeSlots[i].date) , // Convert to DateTime, handle empty string
                 timePeriod:offerTimeSlots[i].timeSlot,
                     
-                extraHours: selectedMorningTime && !selectedAfternoonTime? morningExtraHours: selectedAfternoonTime&& !selectedMorningTime ? afternoonExtraHours:0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
+                extraHours:hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
         
                 workerCount: numberOfCleaners,
                 price: totalPrice,
@@ -650,13 +649,8 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
-                timePeriod:
-                    selectedMorningTime && !selectedAfternoonTime
-                        ? 'MORNING'
-                        : !selectedMorningTime && selectedAfternoonTime
-                            ? 'EVENING'
-                            : 'MORNING', // Default to MORNING if neither or both are selected. Important
-                extraHours: selectedMorningTime && !selectedAfternoonTime? morningExtraHours: selectedAfternoonTime&& !selectedMorningTime ? afternoonExtraHours:0,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
+                timePeriod:selectedTime, // Default to MORNING if neither or both are selected. Important
+                extraHours: hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
         
                 workerCount: numberOfCleaners,
                 price: totalPrice,
@@ -762,21 +756,14 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                 // Check if the selected date is a working day (Saturday to Thursday)
             
                
-
-                if (!selectedMorningTime && !selectedAfternoonTime) {
-                    alert("الرجاء اختيار الفترة الصباحية أو المسائية.");
-                    return;
-                }
+ 
 
                 if (numberOfCleaners > availableCleaners) {
                     alert(`لا يوجد عدد كاف من عمال النظافة متاحين. متاح حاليا: ${availableCleaners}`);
                     return;
                 }
 
-                if (selectedMorningTime && selectedAfternoonTime) {
-                  setMorningExtraHours(0);
-                  setAfternoonExtraHours(0);
-                }
+                
             
            
             }
@@ -819,7 +806,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     useEffect(() => {
         // Update available cleaners when date or time changes
         setAvailableCleaners(calculateAvailableCleaners());
-    }, [selectedDate, selectedMorningTime, selectedAfternoonTime, numberOfCleaners]);
+    }, [selectedDate,   numberOfCleaners]);
 
     // Function to check if a date is a working day (Saturday to Thursday)
     
