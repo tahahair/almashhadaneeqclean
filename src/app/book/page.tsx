@@ -338,8 +338,7 @@ calculateTotalPrice
     const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
     const [selectedDate, setSelectedDate] = useState<string>('');
  
-    const [morningExtraHours, setMorningExtraHours] = useState<number>(0);
-    const [afternoonExtraHours, setAfternoonExtraHours] = useState<number  >(0);
+ 
     const [numberOfCleaners, setNumberOfCleaners] = useState<number>(1);
     const [availableCleaners, setAvailableCleaners] = useState<number>(15);
     const totalCleaners = 15;
@@ -744,7 +743,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                     return;
                 }
 
-                const selectedDateObj = new Date(selectedDate);
+              
                 const today = new Date();
                 today.setHours(0, 0, 0, 0); // set the time to 00:00:00 to compare only the date
 
