@@ -71,11 +71,13 @@ try {
       const errorData = await response.json();
       alert(`حدث خطأ أثناء تأكيد الحجز: ${errorData.error || 'Unknown error'}`);
       console.error('API Error:', errorData);
+      return;
   }
 }}
  catch (error) {
   alert('حدث خطأ أثناء الاتصال بالخادم.');
   console.error('Fetch Error:', error);
+  return;
 }
 
     const { error } = await stripe.confirmPayment({

@@ -332,7 +332,7 @@ useEffect(() => {
       setshowMinue((prevState) => !prevState);
     };
   const [lang, setlang] = useState("");
-  
+
 
     // States for Time and Offer Selection remain the same
     const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
@@ -592,7 +592,13 @@ const getCurrentLocation = () => {
         }
       }, [currentTab]);
       
-
+const converttime = (i: number) => {
+  if (offerTimeSlots[i].timeSlot==='11:00 AM - 11:30 AM') {
+    return "MORNING";
+  } else if (offerTimeSlots[i].timeSlot==='4:00 PM - 4:30 PM') {
+    return "EVENING";
+  }
+}
 
     const createBookingdata = () => {
         items=[];
@@ -616,7 +622,7 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date:new Date( offerTimeSlots[i].date) , // Convert to DateTime, handle empty string
-                timePeriod:offerTimeSlots[i].timeSlot,
+                timePeriod:converttime(i),
                     
                 extraHours:hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
         
@@ -939,7 +945,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
         };
       
         // دالة لتحديد التاريخ عند النقر
-      
+    
 const handleDateSelection = (day: DisplayDay) => {
     if (!day.isDisabled) {
       const dateString = `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
@@ -1026,6 +1032,7 @@ const handleDateSelection = (day: DisplayDay) => {
                         if (!item.disabled) {
                             
                                 setSelectedTime(item.time);
+                               
                                 if (item.time=== '11:00 AM - 11:30 AM' ){
 
                             setSelectedTimeSlot("MORNING");}
@@ -1078,7 +1085,7 @@ const handleDateSelection = (day: DisplayDay) => {
                   return;
                 }
               
-                const newTimeSlot: OfferTimeSlot = { date: selectedDate, timeSlot: selectedTimeSlot };
+                const newTimeSlot: OfferTimeSlot = { date: selectedDate, timeSlot: selectedTime };
                 setOfferTimeSlots([...offerTimeSlots, newTimeSlot]);
                 console.log("Offer time slots", offerTimeSlots);
                 
@@ -1114,7 +1121,20 @@ const handleDateSelection = (day: DisplayDay) => {
 
    
   
-
+    const testfunc = (): boolean => {
+      console.log("tester value", selectedTime);
+      if (serviceType === 'one-time') {
+      if (selectedTime && selectedDate) {
+        return true;
+      }
+      return false;}
+      else{
+        if (offerTimeSlots.length===maxOfferTimes){
+          return true;
+        }
+        return false;
+      }
+    };
 
   // Progress indicator component to show which step the user is on
 const ProgressIndicator = () => {
@@ -1288,7 +1308,8 @@ const ProgressIndicator = () => {
                                                     
                                                     <div className="add-time-slot">
  
-                                                        
+                                                  
+
                                                         <button 
                                                             type="button" 
                                                             className="add-slot-btn" 
@@ -1322,6 +1343,7 @@ const ProgressIndicator = () => {
                                                                         >
                                                                             ×
                                                                         </button>
+                                                                        
                                                                     </li>
                                                                 ))}
                                                             </ul>
@@ -1341,11 +1363,12 @@ const ProgressIndicator = () => {
 
 
 
+ 
 
 
-
-                        {currentTab === 3 && (
+                        {testfunc() && (
                                 <div className="payment-info">
+                                  
                                     <h3>معلومات بطاقة الائتمان</h3>
 
 
