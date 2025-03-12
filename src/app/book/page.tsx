@@ -1543,7 +1543,7 @@ const ProgressIndicator = () => {
           currency: "aed",
         }}
       >
-        <CheckoutPage amount={totalPrice} language="ar" bookingData={createBookingdata()} />
+        <CheckoutPage amount={totalPrice}  id={uncompletedId} language="ar" bookingData={createBookingdata()} />
       </Elements>
                                 </div>
                             
