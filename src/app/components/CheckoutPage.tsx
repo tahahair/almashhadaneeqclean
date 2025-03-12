@@ -10,7 +10,7 @@ import {
 
 import convertToSubcurrency from "../../../lib/convertToSubcurrency";
  
-const CheckoutPage = ({ amount, language, bookingData }: { amount: number; language: "ar" | "en"; bookingData: string[] }) => {
+const CheckoutPage = ({ amount,id, language, bookingData }: { amount: number; id:string;language: "ar" | "en"; bookingData: string[] }) => {
  
   const stripe = useStripe();
   const elements = useElements();
@@ -66,17 +66,31 @@ try {
       const responseData = await response.json();
       bookingId.push(responseData.id); // Store the returned id
 
+      const response2 = await fetch('/api/uncompleted', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: id }), // Pass the id of the booking to delete
+    });
+    if (response2.ok) {
+      console.log('Booking deleted:', responseData.message);
+    }
+
+
  
   } else {
       const errorData = await response.json();
       alert(`حدث خطأ أثناء تأكيد الحجز: ${errorData.error || 'Unknown error'}`);
       console.error('API Error:', errorData);
+      setLoading(false);
       return;
   }
 }}
  catch (error) {
   alert('حدث خطأ أثناء الاتصال بالخادم.');
   console.error('Fetch Error:', error);
+  setLoading(false);
   return;
 }
 
@@ -104,19 +118,27 @@ try {
             const responseData = await response.json();
             alert('تم حذف الحجز بنجاح!');
             console.log('Booking deleted:', responseData.message);
+            setLoading(false);
+            return;
             // Optionally, you can redirect the user to another page or update the UI
         } else {
             const errorData = await response.json();
             alert(`حدث خطأ أثناء حذف الحجز: ${errorData.error || 'Unknown error'}`);
             console.error('API Error:', errorData);
+            setLoading(false);
+            return;
         }
     } }
     catch (error) {
         alert('حدث خطأ أثناء الاتصال بالخادم.');
         console.error('Fetch Error:', error);
+        setLoading(false);
+        return;
     }
 
     } else {
+      setLoading(false);
+      return;
      
     }
 

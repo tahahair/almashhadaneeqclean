@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL") 
+  url      = "postgresql://postgres.orfgmlvsefwjqwqrnakd:BH5krwSd0GqFHfMV@aws-0-eu-central-1.pooler.supabase.com:5432/postgres" 
 }
 
 enum UserType {
@@ -39,6 +39,7 @@ model Booking {
   id        String @id @default(uuid())
   name      String
   phone     String
+  email     String?
   city      String
   address   String
   locationUrl String?
@@ -48,5 +49,19 @@ model Booking {
   extraHours Int @default(0)
   workerCount Int @default(1)
   price     Float
+  createdAt DateTime @default(now())
+}
+
+model Uncompleted {
+  id        String @id @default(uuid())
+  name      String @unique
+  phone     String @unique
+  email     String @unique
+  city      String
+  address   String
+  locationUrl String?
+  serviceType ServiceType
+  extraHours Int @default(0)
+  workerCount Int @default(1)
   createdAt DateTime @default(now())
 }

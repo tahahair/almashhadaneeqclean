@@ -1,6 +1,6 @@
 "use client"
 // pages/index.tsx
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, use } from 'react';
 import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import CheckoutPage from "../components/CheckoutPage";
@@ -40,7 +40,7 @@ const TabsPage = () => {
   const [serviceType, setServiceType] = useState< string>('package-12');
 const [totalPrice, setTotalPrice] = useState(100);
 const [selectedCity, setSelectedCity] = useState("");
-
+let uncompletedId = "";
 const calculateTotalPrice = ({hours, workers}: {hours: number; workers: number}) => {
     
     if (selectedCity === 'Dubai') {
@@ -314,7 +314,7 @@ useEffect(() => {
       };
     // All state declarations remain the same
     const [currentTab, setCurrentTab] = useState(0);
-    const [user, setUser] = useState<{ name: string; phone: string; phoneVerified: boolean } | null>(null);
+    const [user, setUser] = useState<{ name: string; phone: string;mail: string; phoneVerified: boolean } | null>(null);
     const [mapLoaded, setMapLoaded] = useState(false);
     console.log("mapLoaded", mapLoaded);
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -362,7 +362,9 @@ useEffect(() => {
 
     const selectedOfferData = offers.find(offer => offer.id === selectedOffer);
     const maxOfferTimes = selectedOfferData ? selectedOfferData.times : 12;
-
+    const [name, setName] = useState(user?.name || '');
+    const [phone, setPhone] = useState(user?.phone || '');
+    const [mail, setMail] = useState(user?.mail || '');
     const [minDate, setMinDate] = useState<string>('');
     console.log("minDate", minDate);
     // Set min date effect - remains the same
@@ -382,16 +384,26 @@ useEffect(() => {
     // Note that we're keeping all the business logic and just modifying the UI
 
     // Load user data from localStorage on component mount
-    useEffect(() => {
+    const loadinfo = () => {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
 
-        if (userData && userData.phoneVerified && userData.logedin) {
+       
             setUser(userData);
-        } else {
-            router.push('/login');
-        }
-    }, []);
+     
+    };
 
+    const handleSave = () => {
+     
+   // Save user info in localStorage
+   const userdata = {
+    name: user?.name || name, // Use the name from response or input
+    phone: user?.phone || phone,
+    mail: user?.mail || mail,
+    logedin: true,
+  };
+  localStorage.setItem("user", JSON.stringify(userdata));
+
+} ;
     // Function to get the user's current location
     // Fix the getCurrentLocation function
 const getCurrentLocation = () => {
@@ -608,6 +620,7 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
 
             items.push(JSON.stringify({name: user?.name || '',  // Use name from user object
                 phone: user?.phone || '',  // Use phone from user object
+                email: user?.mail || '',  // Use email from user object
                 city: selectedCity,
                 address: addressDetails + "\n " + locationNotes,
                 locationUrl: locationUrl,
@@ -639,6 +652,7 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
             items.push(JSON.stringify({
                 name: user?.name || '',  // Use name from user object
                 phone: user?.phone || '',  // Use phone from user object
+                email: user?.mail || '',  // Use email from user object
                 city: selectedCity,
                 address: addressDetails + "\n " + locationNotes,
                 locationUrl: locationUrl,
@@ -653,7 +667,11 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
-                timePeriod:selectedTime, // Default to MORNING if neither or both are selected. Important
+                timePeriod:selectedTime=== '11:00 AM - 11:30 AM'
+                ? "MORNING" 
+                : selectedTime === '4:00 PM - 4:30 PM'
+                ? "EVENING" 
+                : "MORNING" , // Default to MORNING if neither or both are selected. Important
                 extraHours: hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
         
                 workerCount: workers,
@@ -712,9 +730,135 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     });
 };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         // Add validation for location tab
-       
+        if (currentTab === 1 ){
+
+          loadinfo();
+
+        }
+        if (currentTab === 2 ){
+          if(!user){
+            alert("   الرجاء إدخال معلوماتك الشخصية");
+            return;
+          }
+          if (user?.name===null || user?.phone===null || user?.mail===null) {
+            alert("   الرجاء إدخال معلوماتك الشخصية");
+            return;
+          }
+          if (user?.name.trim()==="" || user?.phone.trim()==="" || user?.mail.trim()==="") {
+            alert("   الرجاء إدخال معلوماتك الشخصية");
+            return;
+          } 
+if (user?.phone.substring(0, 2) !== "05") {
+  alert("الرجاء إدخال رقم هاتف صحيح");
+  return;
+} 
+          if (user?.phone.length !== 10) {
+            alert("الرجاء إدخال رقم هاتف صحيح");
+            return;
+          }
+          if (user?.mail.length < 6) {
+            alert("الرجاء إدخال بريد إلكتروني صحيح");
+            return;
+          }
+          if (user?.mail.indexOf("@") === -1) {
+            alert("الرجاء إدخال بريد إلكتروني صحيح");
+            return;
+          }
+          if (user?.mail.indexOf(".") === -1) {
+            alert("الرجاء إدخال بريد إلكتروني صحيح");
+            return;
+          }
+          if (user?.name.length < 3) {
+            alert("الرجاء إدخال اسم صحيح");
+            return;
+          }
+          if (user?.name.length > 50) {
+            alert("الرجاء إدخال اسم صحيح");
+            return;
+          }
+          if (user?.name.indexOf(" ") === -1) {
+            alert("الرجاء إدخال اسم صحيح");
+            return;
+          }
+          if (user?.name.indexOf("  ") !== -1) {
+            alert("الرجاء إدخال اسم صحيح");
+            return;
+          }
+          if (user?.name.split(" ").length < 2)  {
+            alert("الرجاء إدخال اسم صحيح");
+            return;
+          }
+          
+        handleSave();
+
+
+
+        try {
+          // Send the booking data to the API endpoint
+           
+          const response = await fetch('/api/uncompleted', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({name: user?.name || '',  // Use name from user object
+                phone: user?.phone || '',  // Use phone from user object
+                email: user?.mail || '',  // Use email from user object
+                city: selectedCity,
+                address: addressDetails + "\n " + locationNotes,
+                locationUrl: locationUrl,
+                serviceType:
+                    serviceType === 'one-time'
+                        ? 'ONE_TIME'
+                        : selectedOffer === 'offer1'
+                            ? 'OFFER_4'
+                            : selectedOffer === 'offer2'
+                                ? 'OFFER_8'
+                                : selectedOffer === 'offer3'
+                                    ? 'OFFER_12'
+                                    : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
+              
+                    
+                extraHours:hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
+        
+                workerCount: workers,
+                 
+            } ) ,
+          });
+        
+          if (response.ok) {
+         
+              // Optionally, redirect to a confirmation page or reset the form
+              const responseData = await response.json();
+                uncompletedId  =responseData.id; // Store the returned id
+        
+         
+          }          
+          else {
+              const errorData = await response.json();
+              if (errorData.error?.includes("Unique")) {
+                console.log("Unique");
+              }
+              else {
+                alert(`حدث خطأ أثناء تأكيد الحجز: ${errorData.error || 'Unknown error'}`);
+                console.error('API Error:', errorData);
+               
+                return;
+              }
+             
+          }
+        }
+         catch (error) {
+          alert('حدث خطأ أثناء الاتصال بالخادم.');
+          console.error('Fetch Error:', error);
+          
+          return;
+        }
+
+
+        }
         if (currentTab === 1 && !selectedLocation) {
             alert("الرجاء تحديد الموقع على الخريطة");
             return;
@@ -914,10 +1058,6 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
 
     const renderDateTimeSelection = () => {
         
-       
-       
-      
-      
         // دالة للتحقق مما إذا كان التاريخ هو اليوم
         interface DisplayDay {
           date: Date;
@@ -1031,14 +1171,15 @@ const handleDateSelection = (day: DisplayDay) => {
                     onClick={() => {
                         if (!item.disabled) {
                             
-                                setSelectedTime(item.time);
+                                
                                
                                 if (item.time=== '11:00 AM - 11:30 AM' ){
-
+                                  setSelectedTime(item.time);
                             setSelectedTimeSlot("MORNING");}
                             
                             else if (item.time=== '4:00 PM - 4:30 PM' ){    
                                 setSelectedTimeSlot("EVENING");
+                                setSelectedTime(item.time);
                             }
 
                          
@@ -1274,10 +1415,31 @@ const ProgressIndicator = () => {
                          
                             <div className="form-group">
                                 <label>الاسم:</label>
-                                <textarea value={user?.name || ''}   />
+                                <input  placeholder="First Name Last Name"  value={ user?.name || name}  onChange={(e) => {
+                                    if (user) {
+                                        user.name = e.target.value;
+                                    }
+                                    setName(e.target.value);
+                                    handleSave();
+                                }} />
                                 <label>رقم الهاتف:</label>
-                                <textarea  value={user?.phone || ''}    />
-                               
+                                <input type="tel" placeholder="+971 50 123 4567"  value={user?.phone || phone}   onChange={(e) => {
+                                    if (user) {
+                                        user.phone = e.target.value;
+                                    }
+                                    
+                                    setPhone(e.target.value);
+                                    handleSave();
+                                }}     />
+                                <label>البريد الإلكتروني:</label>
+                                <input  type="email" value={user?.mail || mail}  onChange={(e) => {
+                                    if (user) {
+                                        user.mail = e.target.value;
+                                    }
+                                    setMail(e.target.value);
+                                    handleSave();
+                                }}  placeholder="example@domain.com" />
+                                
                             </div>
                      
 
@@ -1403,6 +1565,7 @@ const ProgressIndicator = () => {
                             <span className="btn-icon">←</span>
                         </button>
                     ) }
+                    
                 </div>
             </div>
             <style jsx>{`
