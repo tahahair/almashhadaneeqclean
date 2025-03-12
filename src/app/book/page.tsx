@@ -1,6 +1,6 @@
 "use client"
 // pages/index.tsx
-import { useState, useEffect, useRef, use } from 'react';
+import { useState, useEffect, useRef  } from 'react';
 import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import CheckoutPage from "../components/CheckoutPage";
