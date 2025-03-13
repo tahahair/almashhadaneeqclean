@@ -1,23 +1,32 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
 import {
   useStripe,
   useElements,
   PaymentElement,
+  PaymentRequestButtonElement,
 } from "@stripe/react-stripe-js";
-
 import convertToSubcurrency from "../../../lib/convertToSubcurrency";
- 
-const CheckoutPage = ({ amount,  language, bookingData }: { amount: number;  language: "ar" | "en"; bookingData: string[] }) => {
- 
+import { PaymentRequest } from "@stripe/stripe-js";
+
+const CheckoutPage = ({
+  amount,
+  language,
+  bookingData,
+}: {
+  amount: number;
+  language: "ar" | "en";
+  bookingData: string[];
+}) => {
   const stripe = useStripe();
   const elements = useElements();
   const [errorMessage, setErrorMessage] = useState<string>();
   const [clientSecret, setClientSecret] = useState("");
   const [loading, setLoading] = useState(false);
+  const [paymentRequest, setPaymentRequest] = useState<PaymentRequest | null>(null);
 
+  // Create PaymentIntent and set the client secret.
   useEffect(() => {
     fetch("/api/create-payment-intent", {
       method: "POST",
@@ -30,11 +39,107 @@ const CheckoutPage = ({ amount,  language, bookingData }: { amount: number;  lan
       .then((data) => setClientSecret(data.clientSecret));
   }, [amount]);
 
+  // Set up the Payment Request for Apple Pay and other supported wallets.
+  useEffect(() => {
+    if (stripe && clientSecret) {
+      const pr = stripe.paymentRequest({
+        country: "AE", // Adjust based on your business location
+        currency: "aed",
+        total: {
+          label: language === "ar" ? "المبلغ الكلي" : "Total",
+          amount: convertToSubcurrency(amount),
+        },
+        requestPayerName: true,
+        requestPayerEmail: true,
+      });
+
+      // Check if the browser supports Payment Request (Apple Pay, etc.)
+      pr.canMakePayment().then((result) => {
+        if (result) {
+          setPaymentRequest(pr);
+        }
+      });
+
+      // Handle the payment method event when the user uses the Payment Request Button.
+      pr.on("paymentmethod", async (ev) => {
+        setLoading(true);
+        const bookingId: string[] = [];
+        try {
+          // Process the booking API calls
+          for (let i = 0; i < bookingData.length; i++) {
+            const response = await fetch("/api/booking", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: bookingData[i],
+            });
+            if (response.ok) {
+              const responseData = await response.json();
+              bookingId.push(responseData.id);
+            } else {
+              const errorData = await response.json();
+              alert(
+                `${
+                  language === "ar"
+                    ? "حدث خطأ أثناء تأكيد الحجز: "
+                    : "Error while confirming booking: "
+                } ${errorData.error || "Unknown error"}`
+              );
+              ev.complete("fail");
+              setLoading(false);
+              return;
+            }
+          }
+        } catch {
+          alert(
+            language === "ar"
+              ? "حدث خطأ أثناء الاتصال بالخادم."
+              : "Server error during booking."
+          );
+          ev.complete("fail");
+          setLoading(false);
+          return;
+        }
+
+        // Confirm the PaymentIntent using the payment method from the Payment Request.
+        const { error: confirmError } = await stripe.confirmCardPayment(
+          clientSecret,
+          {
+            payment_method: ev.paymentMethod.id,
+          },
+          { handleActions: false }
+        );
+
+        if (confirmError) {
+          ev.complete("fail");
+          setErrorMessage(confirmError.message);
+          // Delete the bookings on failure
+          for (let i = 0; i < bookingId.length; i++) {
+            await fetch("/api/booking", {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ id: bookingId[i] }),
+            });
+          }
+          setLoading(false);
+        } else {
+          ev.complete("success");
+          setLoading(false);
+          window.location.href = `https://almashhadaneeq.vercel.app/submit-booking`;
+        }
+      });
+    }
+  }, [stripe, clientSecret, amount, language, bookingData]);
+
+  // Traditional form submission for PaymentElement (e.g. card payments)
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
 
-const bookingId = [];
+    const bookingId: string[] = [];
 
     if (!stripe || !elements) {
       return;
@@ -47,43 +152,41 @@ const bookingId = [];
       setLoading(false);
       return;
     }
-console.log(bookingData);
-try {
-  // Send the booking data to the API endpoint
-  for (let i = 0; i < bookingData.length;
-    i++) {
-  const response = await fetch('/api/booking', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-      },
-      body: bookingData[i],
-  });
 
-  if (response.ok) {
- 
-      // Optionally, redirect to a confirmation page or reset the form
-      const responseData = await response.json();
-      bookingId.push(responseData.id); // Store the returned id
+    try {
+      // Process the booking API calls
+      for (let i = 0; i < bookingData.length; i++) {
+        const response = await fetch("/api/booking", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: bookingData[i],
+        });
 
-    
-
-
- 
-  } else {
-      const errorData = await response.json();
-      alert(`حدث خطأ أثناء تأكيد الحجز: ${errorData.error || 'Unknown error'}`);
-      console.error('API Error:', errorData);
+        if (response.ok) {
+          const responseData = await response.json();
+          bookingId.push(responseData.id);
+        } else {
+          const errorData = await response.json();
+          alert(
+            language === "ar"
+              ? `حدث خطأ أثناء تأكيد الحجز: ${errorData.error || "Unknown error"}`
+              : `Error while confirming booking: ${errorData.error || "Unknown error"}`
+          );
+          setLoading(false);
+          return;
+        }
+      }
+    } catch {
+      alert(
+        language === "ar"
+          ? "حدث خطأ أثناء الاتصال بالخادم."
+          : "Server error during booking."
+      );
       setLoading(false);
       return;
-  }
-}}
- catch (error) {
-  alert('حدث خطأ أثناء الاتصال بالخادم.');
-  console.error('Fetch Error:', error);
-  setLoading(false);
-  return;
-}
+    }
 
     const { error } = await stripe.confirmPayment({
       elements,
@@ -96,44 +199,40 @@ try {
     if (error) {
       setErrorMessage(error.message);
       try {
+        // Delete the bookings if payment confirmation fails
         for (let i = 0; i < bookingId.length; i++) {
-        const response = await fetch('/api/booking', {
-            method: 'DELETE',
+          const response = await fetch("/api/booking", {
+            method: "DELETE",
             headers: {
-                'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ id: bookingId[i] }), // Pass the id of the booking to delete
-        });
-
-        if (response.ok) {
+            body: JSON.stringify({ id: bookingId[i] }),
+          });
+          if (response.ok) {
             const responseData = await response.json();
-            alert('تم حذف الحجز بنجاح!');
-            console.log('Booking deleted:', responseData.message);
-            setLoading(false);
-            return;
-            // Optionally, you can redirect the user to another page or update the UI
-        } else {
+            console.log("Booking deleted:", responseData.message);
+          } else {
             const errorData = await response.json();
-            alert(`حدث خطأ أثناء حذف الحجز: ${errorData.error || 'Unknown error'}`);
-            console.error('API Error:', errorData);
-            setLoading(false);
-            return;
+            alert(
+              language === "ar"
+                ? `حدث خطأ أثناء حذف الحجز: ${errorData.error || "Unknown error"}`
+                : `Error while deleting booking: ${errorData.error || "Unknown error"}`
+            );
+          }
         }
-    } }
-    catch (error) {
-        alert('حدث خطأ أثناء الاتصال بالخادم.');
-        console.error('Fetch Error:', error);
-        setLoading(false);
-        return;
-    }
-
+      } catch {
+        alert(
+          language === "ar"
+            ? "حدث خطأ أثناء الاتصال بالخادم."
+            : "Server error during booking deletion."
+        );
+      }
+      setLoading(false);
+      return;
     } else {
       setLoading(false);
       return;
-     
     }
-
-    setLoading(false);
   };
 
   if (!clientSecret || !stripe || !elements) {
@@ -153,7 +252,18 @@ try {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-2 rounded-md">
-      {clientSecret && <PaymentElement />}
+      {/* Render the Apple Pay / Payment Request Button if available */}
+      {paymentRequest && (
+        <div className="mb-4">
+          <PaymentRequestButtonElement
+            options={{ paymentRequest }}
+            className="payment-request-button"
+          />
+        </div>
+      )}
+
+      {/* Render the traditional PaymentElement as an alternative */}
+      <div className="mb-4">{clientSecret && <PaymentElement />}</div>
 
       {errorMessage && <div>{errorMessage}</div>}
 
