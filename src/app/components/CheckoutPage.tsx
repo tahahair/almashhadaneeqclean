@@ -128,7 +128,7 @@ const CheckoutPage = ({
         } else {
           ev.complete("success");
           setLoading(false);
-          return;
+          window.location.href = `https://almashhadaneeq.vercel.app/submit-booking?redirect_status=succeeded`;
         }
       });
     }
