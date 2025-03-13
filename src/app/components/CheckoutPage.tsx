@@ -10,7 +10,7 @@ import {
 
 import convertToSubcurrency from "../../../lib/convertToSubcurrency";
  
-const CheckoutPage = ({ amount,id, language, bookingData }: { amount: number; id:string;language: "ar" | "en"; bookingData: string[] }) => {
+const CheckoutPage = ({ amount,  language, bookingData }: { amount: number;  language: "ar" | "en"; bookingData: string[] }) => {
  
   const stripe = useStripe();
   const elements = useElements();
@@ -66,16 +66,7 @@ try {
       const responseData = await response.json();
       bookingId.push(responseData.id); // Store the returned id
 
-      const response2 = await fetch('/api/uncompleted', {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id: id }), // Pass the id of the booking to delete
-    });
-    if (response2.ok) {
-      console.log('Booking deleted:', responseData.message);
-    }
+    
 
 
  

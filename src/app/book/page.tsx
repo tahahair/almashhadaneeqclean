@@ -40,8 +40,7 @@ const TabsPage = () => {
   const [serviceType, setServiceType] = useState< string>('package-12');
 const [totalPrice, setTotalPrice] = useState(100);
 const [selectedCity, setSelectedCity] = useState("");
-let uncompletedId = "";
-const calculateTotalPrice = ({hours, workers}: {hours: number; workers: number}) => {
+ const calculateTotalPrice = ({hours, workers}: {hours: number; workers: number}) => {
     
     if (selectedCity === 'Dubai') {
         setBasePrice(100);
@@ -830,11 +829,7 @@ if (user?.phone.substring(0, 2) !== "05") {
         
           if (response.ok) {
          
-              // Optionally, redirect to a confirmation page or reset the form
-              const responseData = await response.json();
-                uncompletedId  =responseData.id; // Store the returned id
-        
-         
+         console.log("response.ok", response.ok);
           }          
           else {
               const errorData = await response.json();
@@ -1279,10 +1274,10 @@ const handleDateSelection = (day: DisplayDay) => {
 
   // Progress indicator component to show which step the user is on
 const ProgressIndicator = () => {
-  const steps = ['معلومات المستخدم', 'الموقع', 'التاريخ والوقت', 'الدفع'];
+  const steps = ['تفاصيل الحجز', 'الموقع', 'معلومات المستخدم', ' التاريخ و الدفع'];
   
   return (
-      <div className="progress-container">
+      <div className="progress-container ">
           <div className="progress-steps">
               {steps.map((step, index) => (
                   <div 
@@ -1297,9 +1292,9 @@ const ProgressIndicator = () => {
                               <div className="step-number">{index + 1}</div>
                           )}
                       </div>
-                      <div className="step-label">{step}</div>
+                      <div className="step-label ">{step}</div>
                       {index < steps.length - 1 && (
-                          <div className={`step-connector ${currentTab > index ? 'active' : ''}`}></div>
+                          <div className={`step-connector  ${currentTab > index ? 'active' : ''}`}></div>
                       )}
                   </div>
               ))}
@@ -1423,7 +1418,7 @@ const ProgressIndicator = () => {
                                     handleSave();
                                 }} />
                                 <label>رقم الهاتف:</label>
-                                <input type="tel" placeholder="+971 50 123 4567"  value={user?.phone || phone}   onChange={(e) => {
+                                <input type="tel" placeholder="050 123 4567"  value={user?.phone || phone}   onChange={(e) => {
                                     if (user) {
                                         user.phone = e.target.value;
                                     }
@@ -1528,7 +1523,7 @@ const ProgressIndicator = () => {
  
 
 
-                        {testfunc() && (
+                        {testfunc() ? (
                                 <div className="payment-info">
                                   
                                     <h3>معلومات بطاقة الائتمان</h3>
@@ -1543,10 +1538,12 @@ const ProgressIndicator = () => {
           currency: "aed",
         }}
       >
-        <CheckoutPage amount={totalPrice}  id={uncompletedId} language="ar" bookingData={createBookingdata()} />
+        <CheckoutPage amount={totalPrice}   language="ar" bookingData={createBookingdata()} />
       </Elements>
                                 </div>
                             
+                        ) : (
+                            <div className="error-message">الرجاء تحديد التاريخ والوقت.</div>
                         )}
                     </div>
                 </div>
@@ -1617,6 +1614,7 @@ const ProgressIndicator = () => {
                     align-items: center;
                     z-index: 2;
                     flex: 1;
+                     
                     transition: all 0.3s;
                     position: relative;
                     cursor: pointer;
