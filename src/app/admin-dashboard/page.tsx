@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, ChevronLeft, Calendar, Clock, MapPin, Phone, Mail,  DollarSign, Users, X, Edit, ChevronDown, ChevronUp, Plus, Save } from 'lucide-react';
 
 // أنواع الخدمات
-const ServiceType = {
+const ServiceType: { [key: string]: string } = {
   OFFER_4: 'عرض 4 مرات',
   OFFER_8: 'عرض 8 مرات',
   OFFER_12: 'عرض 12 مرة',
@@ -36,13 +36,13 @@ const ReservationManager = () => {
   const [currentDate, setCurrentDate] = useState(initialDate);
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [weekDates, setWeekDates] = useState<Date[]>([]);
-  const [reservations, setReservations] = useState([]);
-  const [uncompletedReservations, setUncompletedReservations] = useState([]); // حالة جديدة للحجوزات غير المكتملة
-  const [expandedRows, setExpandedRows] = useState({});
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [uncompletedReservations, setUncompletedReservations] = useState<UncompletedReservation[]>([]); // حالة جديدة للحجوزات غير المكتملة
+  const [expandedRows, setExpandedRows] = useState<{ [key: number]: boolean }>({});
   const [loading, setLoading] = useState(false);
   const [showNewReservationForm, setShowNewReservationForm] = useState(false);
-  const [editingReservationId, setEditingReservationId] = useState(null);
-  const [newReservation, setNewReservation] = useState({
+  const [editingReservationId, setEditingReservationId] = useState<number | null>(null);
+  const [newReservation, setNewReservation] = useState<NewReservation>({
     name: '',
     phone: '',
     email: '',
@@ -120,13 +120,20 @@ const ReservationManager = () => {
     return weekDays;
   };
 
-  const getArabicDayName = (date) => {
+ 
+
+
+  const getArabicDayName = (date: Date): string => {
     const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
     return days[date.getDay()];
   };
 
-  const getArabicMonthName = (date) => {
-    const months = [
+  interface DateWithMonth {
+    getMonth: () => number;
+  }
+
+  const getArabicMonthName = (date: DateWithMonth): string => {
+    const months: string[] = [
       'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
       'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
     ];
@@ -152,14 +159,62 @@ const ReservationManager = () => {
     setCurrentDate(newDate);
   };
 
-  const selectDate = (date) => {
+  interface Reservation {
+    id: number;
+    name: string;
+    phone: string;
+    email?: string;
+    city: string;
+    address: string;
+    locationUrl?: string;
+    serviceType: string;
+    dates: { date: Date; timePeriod: string }[];
+    extraHours: number;
+    workerCount: number;
+    price: number;
+    timePeriod?: string;
+  }
+
+  // Removed unused ExpandedRows interface
+
+  interface NewReservation {
+    name: string;
+    phone: string;
+    email: string;
+    city: string;
+    address: string;
+    locationUrl: string;
+    serviceType: string;
+    dates: { date: Date; timePeriod: keyof typeof TimePeriod }[];
+    extraHours: number;
+    workerCount: number;
+    price: number;
+  }
+
+  const selectDate = (date: Date) => {
     setSelectedDate(date);
     fetchReservations(date);
     fetchUncompletedReservations(date);
   };
 
   // دالة جلب الحجوزات
-  const fetchReservations = async (date) => {
+  interface Reservation {
+    id: number;
+    name: string;
+    phone: string;
+    email?: string;
+    city: string;
+    address: string;
+    locationUrl?: string;
+    serviceType: string;
+    dates: { date: Date; timePeriod: string }[];
+    extraHours: number;
+    workerCount: number;
+    price: number;
+    timePeriod?: string;
+  }
+
+  const fetchReservations = async (date: Date): Promise<void> => {
     if (!date) return;
 
     setLoading(true);
@@ -175,7 +230,7 @@ const ReservationManager = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: Reservation[] = await response.json();
       console.log('Fetched reservations:', data);
       setReservations(data);
       setExpandedRows({});
@@ -189,17 +244,33 @@ const ReservationManager = () => {
   };
 
   // دالة جلب الحجوزات الغير مكتملة
-  const fetchUncompletedReservations = async (date) => {
+  interface UncompletedReservation {
+    id: number;
+    name: string;
+    phone: string;
+    email?: string;
+    city: string;
+    address: string;
+    locationUrl?: string;
+    serviceType: string;
+    dates: { date: Date; timePeriod: string }[];
+    extraHours: number;
+    workerCount: number;
+    price: number;
+    timePeriod?: string;
+  }
+
+  const fetchUncompletedReservations = async (date: Date): Promise<void> => {
     setLoading(true);
-    const currentDateString =  date.toISOString().split('T')[0];
-console.log('currentDateString:', currentDateString);
-const link= '/api/uncompleted?date='+currentDateString;
+    const currentDateString = date.toISOString().split('T')[0];
+    console.log('currentDateString:', currentDateString);
+    const link = '/api/uncompleted?date=' + currentDateString;
     try {
       const response = await fetch(link); // استدعاء الاي بي اي الخاص بالحجوزات الغير مكتملة
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
+      const data: UncompletedReservation[] = await response.json();
       console.log('Fetched uncompleted reservations:', data);
       setUncompletedReservations(data);
     } catch (error) {
@@ -212,50 +283,59 @@ const link= '/api/uncompleted?date='+currentDateString;
   };
 
   // دالة تحديث حالة الاتصال في الحجوزات الغير مكتملة
-  const markAsCalled = async (id) => {
+
+  const markAsCalled = async (id: number): Promise<void> => {
     setLoading(true);
     try {
-        const response = await fetch(`/api/uncompleted`, { // استخدام API الـ PUT الحالية
-            method: 'PUT', 
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ id, called: true }), // إرسال id مع البيانات
-        });
+      const response = await fetch(`/api/uncompleted`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, called: true }),
+      });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-             
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        setUncompletedReservations(prev =>
-            prev.map(res => res.id === id ? { ...res, called: true } : res)
-        );
-        alert('تم تحديث حالة الحجز إلى "تم الاتصال" بنجاح');
-        fetchUncompletedReservations(selectedDateRef.current);
+      setUncompletedReservations(prev =>
+        prev.map(res => res.id === id ? { ...res, called: true } : res)
+      );
+      alert('تم تحديث حالة الحجز إلى "تم الاتصال" بنجاح');
+      fetchUncompletedReservations(selectedDateRef.current);
     } catch (error) {
-        console.error("Failed to update called status:", error);
-        alert("فشل في تحديث حالة الاتصال. يرجى المحاولة مرة أخرى لاحقًا.");
+      console.error("Failed to update called status:", error);
+      alert("فشل في تحديث حالة الاتصال. يرجى المحاولة مرة أخرى لاحقًا.");
     } finally {
-        setLoading(false);
-        fetchUncompletedReservations(selectedDateRef.current);
+      setLoading(false);
+      fetchUncompletedReservations(selectedDateRef.current);
     }
-};
+  };
 
 
   // دوال إدارة الحجوزات
-  const toggleRowExpansion = (id) => {
-    setExpandedRows(prev => ({
+  interface ExpandedRowsState {
+    [key: number]: boolean;
+  }
+
+  const toggleRowExpansion = (id: number): void => {
+    setExpandedRows((prev: ExpandedRowsState) => ({
       ...prev,
       [id]: !prev[id]
     }));
   };
 
-  const deleteReservation = async (id) => {
+  interface DeleteReservationResponse {
+    ok: boolean;
+    status: number;
+  }
+
+  const deleteReservation = async (id: number): Promise<void> => {
     if (window.confirm('هل أنت متأكد من حذف هذا الحجز؟')) {
       setLoading(true);
       try {
-        const response = await fetch('/api/booking', {
+        const response: DeleteReservationResponse = await fetch('/api/booking', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -278,7 +358,7 @@ const link= '/api/uncompleted?date='+currentDateString;
     }
   };
 
-  const editReservation = (reservation) => {
+  const editReservation = (reservation: Reservation) => {
     setEditingReservationId(reservation.id);
     setNewReservation({
       name: reservation.name,
@@ -288,7 +368,7 @@ const link= '/api/uncompleted?date='+currentDateString;
       address: reservation.address,
       locationUrl: reservation.locationUrl || '',
       serviceType: reservation.serviceType,
-      dates: reservation.dates ? reservation.dates.map(d => ({date: new Date(d.date), timePeriod: d.timePeriod})) : [],
+      dates: reservation.dates ? reservation.dates.map((d: { date: string | number | Date; timePeriod: string; }) => ({date: new Date(d.date), timePeriod: d.timePeriod as keyof typeof TimePeriod})) : [],
       extraHours: reservation.extraHours,
       workerCount: reservation.workerCount,
       price: reservation.price
@@ -389,9 +469,9 @@ const link= '/api/uncompleted?date='+currentDateString;
   };
 
   // دوال معالجة تغييرات النموذج
-  const handleFormChange = (e) => {
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
-    let processedValue = value;
+    let processedValue: string | number = value;
     if (name === 'extraHours' || name === 'workerCount' || name === 'price') {
       processedValue = parseFloat(value) || 0;
     }
@@ -403,11 +483,11 @@ const link= '/api/uncompleted?date='+currentDateString;
 
  
 
-  const handleTempDateChange = (e) => {
+  const handleTempDateChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTempDate(e.target.value);
   };
 
-  const handleTempTimePeriodChange = (e) => {
+  const handleTempTimePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     setTempTimePeriod(e.target.value);
   };
 
@@ -448,7 +528,7 @@ if (editingReservationId && newReservation.dates.length > 0) {
     if (newReservation.dates.length < availableDatesCount) {
       setNewReservation(prev => ({
         ...prev,
-        dates: [...prev.dates, { date: selectedDate, timePeriod: tempTimePeriod }]
+        dates: [...prev.dates, { date: selectedDate, timePeriod: tempTimePeriod as keyof typeof TimePeriod }]
       }));
     } else {
       alert(`لا يمكنك إضافة أكثر من ${availableDatesCount} تواريخ لهذا العرض.`);
@@ -457,7 +537,7 @@ if (editingReservationId && newReservation.dates.length > 0) {
 
 
   // دالة حذف تاريخ وفترة زمنية من قائمة الحجوزات
-  const removeDatePeriod = (index) => {
+  const removeDatePeriod = (index: number): void => {
     const newDates = newReservation.dates.filter((_, i) => i !== index);
     setNewReservation(prev => ({ ...prev, dates: newDates }));
   };
@@ -1076,7 +1156,7 @@ if (editingReservationId && newReservation.dates.length > 0) {
                 disabled={!!editingReservationId}
               >
                 {Object.keys(ServiceType).map((key) => (
-                  <option key={key} value={key}>{ServiceType[key]}</option>
+                  <option key={key} value={key}>{ServiceType[key as keyof typeof ServiceType]}</option>
                 ))}
               </select>
             </div>
@@ -1098,7 +1178,7 @@ if (editingReservationId && newReservation.dates.length > 0) {
                   onChange={handleTempTimePeriodChange}
                 >
                   {Object.keys(TimePeriod).map((key) => (
-                    <option key={key} value={key}>{TimePeriod[key]}</option>
+                    <option key={key} value={key}>{TimePeriod[key as keyof typeof TimePeriod]}</option>
                   ))}
                 </select>
                 <button
@@ -1126,8 +1206,8 @@ if (editingReservationId && newReservation.dates.length > 0) {
                     <tbody>
                       {newReservation.dates.map((datePeriod, index) => (
                         <tr key={index}>
-                          <td className="border px-4 py-2">{datePeriod.date ? datePeriod.date.toLocaleDateString('ar-SA', { calendar: 'gregory' }) : 'غير محدد'}</td>
-                          <td className="border px-4 py-2">{TimePeriod[datePeriod.timePeriod]}</td>
+                          <td className="border px-4 py-2">{datePeriod.date ? new Date(datePeriod.date).toLocaleDateString('ar-SA', { calendar: 'gregory' }) : 'غير محدد'}</td>
+                          <td className="border px-4 py-2">{TimePeriod[datePeriod.timePeriod as keyof typeof TimePeriod]}</td>
                           <td className="border px-4 py-2">
                             <button
                               onClick={() => removeDatePeriod(index)}
