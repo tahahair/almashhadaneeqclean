@@ -103,12 +103,15 @@ const ReservationManager = () => {
   }, [newReservation.serviceType]);
 
   // دوال التقويم الأسبوعي
-  const getWeekDates = (date) => {
+
+
+
+  const getWeekDates = (date: Date): Date[] => {
     const day = date.getDay();
     const diff = day === 0 ? -1 : 6 - day;
     const saturdayDate = new Date(date);
     saturdayDate.setDate(date.getDate() + diff);
-    const weekDays = [];
+    const weekDays: Date[] = [];
     for (let i = 0; i < 5; i++) {
       const currentDate = new Date(saturdayDate);
       currentDate.setDate(saturdayDate.getDate() + i);
