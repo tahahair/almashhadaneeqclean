@@ -35,7 +35,7 @@ const ReservationManager = () => {
   // حالات التطبيق
   const [currentDate, setCurrentDate] = useState(initialDate);
   const [selectedDate, setSelectedDate] = useState(initialDate);
-  const [weekDates, setWeekDates] = useState([]);
+  const [weekDates, setWeekDates] = useState<Date[]>([]);
   const [reservations, setReservations] = useState([]);
   const [uncompletedReservations, setUncompletedReservations] = useState([]); // حالة جديدة للحجوزات غير المكتملة
   const [expandedRows, setExpandedRows] = useState({});
