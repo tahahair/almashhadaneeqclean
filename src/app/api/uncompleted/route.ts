@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient  } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -31,6 +31,36 @@ export async function DELETE(req: Request) {
         const { id } = await req.json();
         await prisma.uncompleted.delete({ where: { id } });
         return NextResponse.json({ message: "uncompleted deleted successfully" }, { status: 200 });
+    } catch (error) {
+        return NextResponse.json({ error: (error as Error).message }, { status: 400 });
+    }
+}
+
+// Get uncompleted records before or equal to a specific date where called is false
+export async function GET(req: Request) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const date = searchParams.get("date");
+
+        if (!date) {
+            return NextResponse.json({ error: "التاريخ مطلوب" }, { status: 400 });
+        }
+
+        // تحويل التاريخ إلى نهاية اليوم (23:59:59.999) لجلب جميع السجلات حتى هذا اليوم
+        const targetDate = new Date(date);
+        targetDate.setHours(23, 59, 59, 999);
+
+        const uncompleted = await prisma.uncompleted.findMany({
+            where: {
+                createdAt: {
+                    lte: targetDate, // جلب جميع السجلات التي تم إنشاؤها قبل أو تساوي هذا التاريخ
+                },
+                called: false, // فقط السجلات التي لم يتم الاتصال بها
+            },
+            orderBy: { createdAt: "asc" }, // ترتيب تصاعدي حسب الوقت
+        });
+
+        return NextResponse.json(uncompleted, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: (error as Error).message }, { status: 400 });
     }

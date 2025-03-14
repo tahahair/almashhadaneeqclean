@@ -63,5 +63,6 @@ model Uncompleted {
   serviceType ServiceType
   extraHours Int @default(0)
   workerCount Int @default(1)
+  called    Boolean @default(false)
   createdAt DateTime @default(now())
 }
