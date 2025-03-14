@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, ChevronLeft, Calendar, Clock, MapPin, Phone, Mail, User, DollarSign, Users, X, Edit, ChevronDown, ChevronUp, Plus, Save } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Calendar, Clock, MapPin, Phone, Mail,  DollarSign, Users, X, Edit, ChevronDown, ChevronUp, Plus, Save } from 'lucide-react';
 
 // أنواع الخدمات
 const ServiceType = {
@@ -305,8 +305,7 @@ const link= '/api/uncompleted?date='+currentDateString;
 
     setLoading(true);
     try {
-      let mainReservationResponse; // لتخزين استجابة أول طلب (إذا كان الخادم يعيد ID للحجز الرئيسي)
-
+ 
 
  // حلقة تكرارية على كل تاريخ وفترة زمنية في newReservation.dates
  for (const datePeriod of newReservation.dates) {
@@ -399,17 +398,7 @@ const link= '/api/uncompleted?date='+currentDateString;
     });
   };
 
-  const handleDateChange = (index, date) => {
-    const newDates = [...newReservation.dates];
-    newDates[index] = {...newDates[index], date: date};
-    setNewReservation(prev => ({ ...prev, dates: newDates }));
-  };
-
-  const handleTimePeriodChange = (index, timePeriod) => {
-    const newDates = [...newReservation.dates];
-    newDates[index] = {...newDates[index], timePeriod: timePeriod};
-    setNewReservation(prev => ({ ...prev, dates: newDates }));
-  };
+ 
 
   const handleTempDateChange = (e) => {
     setTempDate(e.target.value);
