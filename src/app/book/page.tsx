@@ -4,8 +4,7 @@ import { useState, useEffect, useRef   } from 'react';
 import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import CheckoutPage from "../components/CheckoutPage";
- import {  Menu, Shield, Award, Clock, Star, ChevronDown, Check } from 'lucide-react';
-
+ import {  Menu, Shield, Award, Clock, Star, ChevronDown, ChevronLeft , ChevronRight, Check } from 'lucide-react';
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
  
@@ -40,6 +39,267 @@ const TabsPage = () => {
   const [serviceType, setServiceType] = useState< string>('package-12');
 const [totalPrice, setTotalPrice] = useState(100);
 const [selectedCity, setSelectedCity] = useState("");
+const [selectedDay, setSelectedDay] = useState("sun");
+ 
+
+
+ 
+ 
+const [savedAddresses, setSavedAddresses] = useState<{ id: number; label: string; title: string; city: string; link: string; buildingName: string; }[]>([]);
+const [showSaveDialog, setShowSaveDialog] = useState(false);
+const [addressLabel, setAddressLabel] = useState('');
+const [showAddForm, setShowAddForm] = useState(true);
+const [selectedAddress, setSelectedAddress] = useState<number | null>(null);
+
+
+  // استرجاع العناوين المحفوظة عند تحميل الصفحة
+  useEffect(() => {
+    const addresses = JSON.parse(localStorage.getItem('savedAddresses') || '[]');
+    setSavedAddresses(addresses);
+    
+    // إذا كان هناك عناوين محفوظة وكانت هذه أول مرة يُفتح فيها التطبيق، اعرض قائمة العناوين
+    if (addresses.length > 0) {
+      setShowAddForm(false);
+    }
+  }, []);
+const AddressManager = () => {
+  // تعريف حالات البيانات
+
+
+
+  // حفظ العنوان الحالي
+  const handleSave = () => {
+    console.log("locationUrl", locationUrl,"selectedAddress", selectedAddress,"selectedCity"  ,selectedCity,"addressDetails" , addressDetails, "locationNotes",locationNotes);
+    if (!locationUrl  || !selectedCity || !addressDetails|| !locationNotes) {
+      alert('الرجاء إدخال البيانات المطلوبة: العنوان، المدينة، واسم البناء');
+      return;
+    }
+    setShowSaveDialog(true);
+  };
+
+  // تأكيد حفظ العنوان
+  const confirmSave = () => {
+    if (!addressLabel) {
+      alert('الرجاء إدخال اسم للعنوان');
+      return;
+    }
+
+    const newAddress = {
+      id: Date.now(),
+      label: addressLabel,
+      title: addressDetails,
+      city: selectedCity,
+      link: locationUrl,
+      buildingName: locationNotes
+    };
+
+    const updatedAddresses = [...savedAddresses, newAddress];
+    setSavedAddresses(updatedAddresses);
+    localStorage.setItem('savedAddresses', JSON.stringify(updatedAddresses));
+    
+    // إعادة تعيين الحقول
+    setSelectedAddress(newAddress.id);
+    setShowSaveDialog(false);
+    setShowAddForm(false);
+  };
+
+  // إعادة تعيين حقول النموذج
+ 
+  // تحميل عنوان محفوظ
+interface Address {
+    id: number;
+    label: string;
+    title: string;
+    city: string;
+    link: string;
+    buildingName: string;
+}
+
+const loadAddress = (address: Address) => {
+    setAddressDetails(address.title);
+    setSelectedCity(address.city);
+    setLocationUrl(address.link);
+    setLocationNotes(address.buildingName);
+    setSelectedAddress(address.id);
+    setShowAddForm(true);
+};
+
+  // حذف عنوان محفوظ
+const deleteAddress = (id: number) => {
+    const confirmed = confirm('هل أنت متأكد من حذف هذا العنوان؟');
+    if (confirmed) {
+        const updatedAddresses = savedAddresses.filter((address: Address) => address.id !== id);
+        setSavedAddresses(updatedAddresses);
+        localStorage.setItem('savedAddresses', JSON.stringify(updatedAddresses));
+         setSelectedAddress(null);
+        if (updatedAddresses.length === 0) {
+            setShowAddForm(true);
+        }
+    }
+};
+
+  return (
+    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg" dir="rtl">
+    
+      
+      {/* عرض قائمة العناوين المحفوظة */}
+      {!showAddForm && savedAddresses.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4 text-gray-800 border-r-4 border-teal-500 pr-3">العناوين المحفوظة</h2>
+          <div className="space-y-3">
+            {savedAddresses.map(address => (
+              <div 
+                key={address.id} 
+                className={`p-4 border-2 rounded-lg transition-all ${
+                  selectedAddress === address.id 
+                    ? 'border-teal-500 bg-teal-50' 
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    <div 
+                      className={`w-5 h-5 flex items-center justify-center rounded-full border mr-2 ${
+                        selectedAddress === address.id 
+                          ? 'border-teal-500 bg-teal-500' 
+                          : 'border-gray-400'
+                      }`}
+                      onClick={() => {
+                        setSelectedAddress(address.id);
+                        setAddressDetails(address.title);
+                        setSelectedCity(address.city);
+                        setLocationUrl(address.link);
+                        setLocationNotes(address.buildingName);
+                      }}
+                    >
+                      {selectedAddress === address.id && (
+                        <span className="text-white text-xs">✓</span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-800">{address.label}</div>
+                      <div className="text-sm text-gray-500">{address.city} - {address.buildingName}</div>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <button 
+                      onClick={() => loadAddress(address)}
+                      className="bg-teal-500 hover:bg-teal-600 text-white px-3 py-1 rounded-lg text-sm transition-colors ml-2"
+                    >
+                      تعديل
+                    </button>
+                    <button 
+                      onClick={() => deleteAddress(address.id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-sm transition-colors"
+                    >
+                      حذف
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button 
+            onClick={() => {
+              
+              setSelectedAddress(null);
+              setShowAddForm(true);
+            }}
+            className="mt-6 bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg shadow transition-colors w-full flex items-center justify-center"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+            </svg>
+            إضافة عنوان جديد
+          </button>
+        </div>
+      )}
+      
+      {/* نموذج إدخال العنوان */}
+
+     
+      
+      {showAddForm && (
+
+
+ 
+        <div className="bg-white rounded-lg">
+
+
+
+         
+          
+          <div className=" flex gap-3">
+            <button 
+              onClick={handleSave}
+              className="bg-teal-500 hover:bg-teal-600 text-white font-bold px-6 rounded-lg shadow-md transition-all flex-1"
+            >
+              حفظ العنوان
+            </button>
+            {savedAddresses.length > 0 && (
+              <button 
+                onClick={() => setShowAddForm(false)}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-6 rounded-lg shadow-md transition-all flex-1"
+              >
+                العودة للقائمة
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+      
+      {/* نافذة حفظ العنوان */}
+      {showSaveDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full shadow-xl">
+            <h2 className="text-xl font-bold mb-4 text-teal-600">تسمية العنوان</h2>
+            <p className="text-gray-600 mb-4">قم بإعطاء اسم مميز لهذا العنوان لتتمكن من تمييزه بسهولة</p>
+            <div className="mb-6">
+              <label className="block text-gray-700 font-bold mb-2">اسم العنوان:</label>
+              <input
+                type="text"
+                value={addressLabel}
+                onChange={(e) => setAddressLabel(e.target.value)}
+                className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50 transition-all"
+                placeholder="مثال: المنزل، العمل، بيت العائلة"
+                autoFocus
+              />
+            </div>
+            <div className="flex justify-end gap-3">
+              <button 
+                onClick={() => setShowSaveDialog(false)}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded-lg transition-all"
+              >
+                إلغاء
+              </button>
+              <button 
+                onClick={confirmSave}
+                className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all"
+              >
+                حفظ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+    </div>
+    
+  );
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
  const calculateTotalPrice = ({hours, workers}: {hours: number; workers: number}) => {
     
     if (selectedCity === 'Dubai') {
@@ -109,7 +369,16 @@ const renderBookingSummary = () => {
     </div>
   );
 };
+interface Day {
+  id: string;
+  label: string;
+  available: boolean;
+}
+const [savedAddress, setSavedAddress] = useState<string | null>(null);
 
+const handleDaySelection = (day: Day['id']) => {
+  setSelectedDay(day);
+};
     const handleserviceTypeSelect = (type: string) => {
  
         setServiceType(type);
@@ -242,12 +511,11 @@ const renderBookingSummary = () => {
             }`}
             onClick={() => handleserviceTypeSelect('package-4')}
           >
-            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform rotate-12">
-              خصم 10% لكل زيارة
-            </div>
+            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform  ">
+الأكثر مبيعاً            </div>
             <div className="flex justify-between">
               <div className="font-semibold text-gray-800">4 زيارات اسبوعية</div>
-              {serviceType === 'weekly' && <Check className="w-5 h-5 text-teal-600" />}
+              {serviceType === 'package-4' && <Check className="w-5 h-5 text-teal-600" />}
             </div>
             <div className="text-sm text-gray-600 mt-1">• زيارات في نفس اليوم والتوقيت من كل اسبوع ولمدة شهر</div>
 
@@ -260,12 +528,12 @@ const renderBookingSummary = () => {
             }`}
             onClick={() => handleserviceTypeSelect('package-12')}
           >
-            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform rotate-12">
-              خصم 10% لكل زيارة
+            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform " >
+              خصم 17% لكل زيارة
             </div>
             <div className="flex justify-between">
               <div className="font-semibold text-gray-800">12 زيارة اسبوعية</div>
-              {serviceType === 'weekly' && <Check className="w-5 h-5 text-teal-600" />}
+              {serviceType === 'package-12' && <Check className="w-5 h-5 text-teal-600" />}
             </div>
             <div className="text-sm text-gray-600 mt-1">• زيارات في نفس اليوم والتوقيت من كل اسبوع ولمدة 3 أشهر</div>
 
@@ -279,12 +547,12 @@ const renderBookingSummary = () => {
             }`}
             onClick={() => handleserviceTypeSelect('package-8')}
           >
-            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform rotate-12">
+            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform  ">
               خصم 15% لكل زيارة
             </div>
             <div className="flex justify-between">
               <div className="font-semibold text-gray-800">عدة زيارات في الشهر</div>
-              {serviceType === 'multiple' && <Check className="w-5 h-5 text-teal-600" />}
+              {serviceType === 'package-8' && <Check className="w-5 h-5 text-teal-600" />}
             </div>
             <div className="text-sm text-gray-600 mt-1">• أختر الايام والتوقيت المفضل بسهولة </div>
             <div className="text-sm text-gray-600 mt-1">• 8 زيارات مع خصم يصل الى 16 بالمئة </div>
@@ -294,9 +562,46 @@ const renderBookingSummary = () => {
           </div>
         </div>
       </div>
-
+       
              
-          
+          {/* Day selection - only visible for weekly and multiple services */}
+          {(serviceType === 'package-12' || serviceType === 'package-4') && (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-right mb-2">في أي أيام الأسبوع تريد الخدمة؟</h2>
+          <div className="grid grid-cols-4 gap-3">
+            {[
+                            { id: 'sat', label: 'السبت', available: true },
+
+              { id: 'sun', label: 'الأحد', available: true },
+              { id: 'mon', label: 'الإثنين', available: true },
+              { id: 'tue', label: 'الثلاثاء', available: true },
+              { id: 'wed', label: 'الأربعاء', available: true },
+              { id: 'thu', label: 'الخميس', available: true },
+              { id: 'fri', label: 'الجمعة', available: false },
+            ].map((day) => (
+              <div key={day.id} className={`flex items-center ${!day.available ? 'opacity-50' : ''}`}>
+                <input
+                  type="radio"
+                  id={day.id}
+                  name="day-selection"
+                  checked={selectedDay === day.id}
+                  onChange={() => day.available && handleDaySelection(day.id)}
+                  disabled={!day.available}
+                  className="h-4 w-4 text-teal-600 border-gray-300 rounded-full focus:ring-teal-500"
+                />
+                <label 
+                  htmlFor={day.id} 
+                  className={`mr-2 text-sm ${!day.available ? 'text-gray-400 line-through' : 'text-gray-700'}`}
+                >
+                  {day.label}
+                  {!day.available && <span className="mr-1 text-xs text-red-500">(غير متاح)</span>}
+                </label>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
          
          <div dir='ltr' className="bg-blue-50 p-4 rounded-lg mb-6">
            <h3 className="text-lg font-semibold text-right mb-2">لماذا تختار خدماتنا؟</h3>
@@ -421,33 +726,7 @@ const renderBookingSummary = () => {
   localStorage.setItem("user", JSON.stringify(userdata));
 
 } ;
-    // Function to get the user's current location
-    // Fix the getCurrentLocation function
-const getCurrentLocation = () => {
-    if (navigator.geolocation && mapInstanceRef.current && markerRef.current) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const userLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude,
-                };
-
-                // Set map center to user's location
-                mapInstanceRef.current?.setCenter(userLocation);
-                markerRef.current?.setPosition(userLocation);
-                setSelectedLocation(userLocation);
-
-                // Try to get address details from coordinates
-                getAddressFromCoordinates(userLocation);
-            },
-            () => {
-                // Handle geolocation error or permission denied
-                alert("تعذر الوصول إلى موقعك الحالي");
-                console.log("Unable to retrieve your location");
-            }
-        );
-    }
-};
+    
     // Create a custom control for the current location button
     const createCurrentLocationButton = () => {
         // Function implementation remains the same, just change the type
@@ -477,8 +756,7 @@ const getCurrentLocation = () => {
         controlText.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994.994 0 0 0 13 3.06V1h-2v2.06A8.994.994 0 0 0 3.06 11H1v2h2.06A8.994.994 0 0 0 11 20.94V23h2v-2.06A8.994.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
         controlUI.appendChild(controlText);
 
-        // Setup the click event listener
-        controlUI.addEventListener('click', getCurrentLocation);
+        
 
         return controlDiv;
     };
@@ -558,26 +836,7 @@ const getCurrentLocation = () => {
           // ----------------------------
           // Geolocation: Get device's current location if permission is granted
           // ----------------------------
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-              (position) => {
-                const userLocation = {
-                  lat: position.coords.latitude,
-                  lng: position.coords.longitude,
-                };
-                // Set map center to user's location
-                map.setCenter(userLocation);
-                marker.setPosition(userLocation);
-                setSelectedLocation(userLocation);
-                // Get address details from coordinates
-                getAddressFromCoordinates(userLocation);
-              },
-              () => {
-                // Handle geolocation error or permission denied
-                console.log("Unable to retrieve your location");
-              }
-            );
-          }
+         
       
           // ----------------------------
           // Update selected location when marker is dragged
@@ -619,7 +878,7 @@ const getCurrentLocation = () => {
           setMapLoaded(true);
          
         }
-      }, [currentTab]);
+      }, [currentTab,showAddForm]);
       
 const converttime = (i: number) => {
   if (offerTimeSlots[i].timeSlot==='11:00 AM - 11:30 AM') {
@@ -644,11 +903,11 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                 serviceType:
                     serviceType === 'one-time'
                         ? 'ONE_TIME'
-                        : selectedOffer === 'offer1'
+                        : selectedOffer === 'package-4'
                             ? 'OFFER_4'
-                            : selectedOffer === 'offer2'
+                            : selectedOffer === 'package-8'
                                 ? 'OFFER_8'
-                                : selectedOffer === 'offer3'
+                                : selectedOffer === 'package-12'
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date:new Date( offerTimeSlots[i].date) , // Convert to DateTime, handle empty string
@@ -676,11 +935,11 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                 serviceType:
                     serviceType === 'one-time'
                         ? 'ONE_TIME'
-                        : selectedOffer === 'offer1'
+                        : selectedOffer === 'package-4'
                             ? 'OFFER_4'
-                            : selectedOffer === 'offer2'
+                            : selectedOffer === 'package-8'
                                 ? 'OFFER_8'
-                                : selectedOffer === 'offer3'
+                                : selectedOffer === 'package-12'
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
@@ -746,6 +1005,14 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
         }
     });
 };
+
+  // تحميل العنوان من التخزين المحلي عند تحميل الصفحة
+  useEffect(() => {
+    const storedAddress = localStorage.getItem("userAddress");
+    if (storedAddress) {
+      setSavedAddress(storedAddress);
+    }
+  }, []);
  useEffect(() => {
   if (serviceType !== 'one-time' ) {
             
@@ -757,15 +1024,34 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
   }
 
  }, [workers,hours]);
+
+ const handleSaveAddress = () => {
+const opject = {
+    "addressDetails": addressDetails,
+    "locationNotes": locationNotes,
+    "selectedCity": selectedCity,
+    "locationUrl": locationUrl,
+  }
+
+
+  if (locationNotes.trim() !== "") {
+    localStorage.setItem("userAddress", JSON.stringify(opject));
+    setSavedAddress(JSON.stringify(opject));
+  }
+};
     const handleNext = async () => {
         // Add validation for location tab
+   
         if (currentTab === 1 ){
 
           loadinfo();
 
-         
+          handleSaveAddress();
 
         }
+
+         
+        
         if (currentTab === 2 ){
           if(!user){
             alert("   الرجاء إدخال معلوماتك الشخصية");
@@ -841,11 +1127,11 @@ if (user?.phone.substring(0, 2) !== "05") {
                 serviceType:
                     serviceType === 'one-time'
                         ? 'ONE_TIME'
-                        : selectedOffer === 'offer1'
+                        : selectedOffer === 'package-4'
                             ? 'OFFER_4'
-                            : selectedOffer === 'offer2'
+                            : selectedOffer === 'package-8'
                                 ? 'OFFER_8'
-                                : selectedOffer === 'offer3'
+                                : selectedOffer === 'package-12'
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
               
@@ -884,8 +1170,8 @@ if (user?.phone.substring(0, 2) !== "05") {
 
 
         }
-        if (currentTab === 1 && !selectedLocation) {
-            alert("الرجاء تحديد الموقع على الخريطة");
+        if (currentTab === 1 && !selectedAddress) {
+            alert("الرجاء تحديد الموقع");
             return;
         }
 
@@ -911,7 +1197,7 @@ if (user?.phone.substring(0, 2) !== "05") {
 
         //Validation for time and date
         if (currentTab === 2) {
-            if (serviceType === 'oneTime') {
+            if (serviceType === 'one-time') {
                 if (!selectedDate) {
                     alert("الرجاء اختيار التاريخ");
                     return;
@@ -976,6 +1262,15 @@ if (user?.phone.substring(0, 2) !== "05") {
 
     };
 
+
+
+
+
+
+
+
+
+    
     useEffect(() => {
         // Update available cleaners when date or time changes
         setAvailableCleaners(calculateAvailableCleaners());
@@ -1033,8 +1328,9 @@ if (user?.phone.substring(0, 2) !== "05") {
             const startDate = new Date(currentWeekStart);
             const today = new Date();
             const tomorrow = new Date();
+            const yesterday = new Date();
             tomorrow.setDate(today.getDate() + 1);
-        
+            yesterday.setDate(today.getDate() - 1);
             setCurrentMonth(monthNames[startDate.getMonth()]);
         
             for (let i = 0; i < 7; i++) {
@@ -1042,8 +1338,8 @@ if (user?.phone.substring(0, 2) !== "05") {
                 currentDate.setDate(startDate.getDate() + i);
         
                 const dayIndex = currentDate.getDay(); // 0 للأحد، 1 للإثنين، ..., 6 للسبت
-                const isBeforeTomorrow = currentDate < today;
-                const isThursdayOrFriday = dayIndex ===4 || dayIndex === 5; // الخميس = 4، الجمعة = 5
+                const isBeforeTomorrow = currentDate < yesterday;
+                const isThursdayOrFriday =  dayIndex === 5; // الخميس = 4، الجمعة = 5
         
                 days.push({
                     date: currentDate,
@@ -1110,7 +1406,9 @@ if (user?.phone.substring(0, 2) !== "05") {
         };
       
         // دالة لتحديد التاريخ عند النقر
-    
+      
+
+
 const handleDateSelection = (day: DisplayDay) => {
     if (!day.isDisabled) {
       const dateString = `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
@@ -1122,7 +1420,7 @@ const handleDateSelection = (day: DisplayDay) => {
     
       
         return (
-          <div dir="ltr" className="rtl-direction">
+          <div className="rtl-direction">
             <h2 className="text-xl font-bold text-right mb-4">اختر وقت الوصول</h2>
             
             <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
@@ -1131,8 +1429,8 @@ const handleDateSelection = (day: DisplayDay) => {
                   className="bg-gray-100 hover:bg-gray-200 p-2 rounded-md"
                   onClick={goToPreviousWeek}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
                   </svg>
                 </button>
                 
@@ -1142,9 +1440,11 @@ const handleDateSelection = (day: DisplayDay) => {
                   className="bg-gray-100 hover:bg-gray-200 p-2 rounded-md"
                   onClick={goToNextWeek}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                  </svg> 
+
+                 
                 </button>
               </div>
               
@@ -1223,56 +1523,57 @@ const handleDateSelection = (day: DisplayDay) => {
         );
       };
 
-    // Function to add time slot for offer
-   const handleAddTimeSlot = () => {
+      const handleAddTimeSlot = (repeatCount: number = 1) => {
         if (selectedDate && selectedTimeSlot) {
-            // Check if the selected date is in the illegalOfferDays array
+            // التحقق مما إذا كان اليوم موجودًا في الأيام المحظورة
             if (illegalOfferDays.includes(selectedDate)) {
                 alert("هذا اليوم محدد مسبقًا، الرجاء اختيار يوم آخر.");
-                return; // Prevent adding the time slot
+                return;
             }
-
-            // Check if the selected date already exists in offerTimeSlots
+    
+            // التحقق مما إذا كان التاريخ مكررًا بالفعل
             if (offerTimeSlots.some(slot => slot.date === selectedDate)) {
                 alert("لا يمكنك تحديد نفس التاريخ لمرات عديدة.");
                 return;
             }
-
-            if (offerTimeSlots.length < maxOfferTimes) {
-                // Check if the selected date is a working day (Saturday to Thursday)
-                 
-
-
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-
-                 if (new Date(selectedDate) < new Date()) {
-                  alert("الرجاء اختيار  تاريخ مستقبلي.");
-                  return;
-                }
-              
-                const newTimeSlot: OfferTimeSlot = { date: selectedDate, timeSlot: selectedTime };
-                setOfferTimeSlots([...offerTimeSlots, newTimeSlot]);
-                console.log("Offer time slots", offerTimeSlots);
-                
-
-                 // Add the selected date to the illegalOfferDays array
-                setIllegalOfferDays([...illegalOfferDays, selectedDate]);
-                console.log("illegalOfferDays", illegalOfferDays);
-                console.log("Items", items);
-        
-            } else {
-                alert(`لقد وصلت إلى الحد الأقصى لعدد المواعيد المتاحة لهذا العرض (${maxOfferTimes}).`);
+    
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+    
+            if (new Date(selectedDate) < today) {
+                alert("الرجاء اختيار تاريخ مستقبلي.");
+                return;
             }
-
-           
-
+    
+            const newSlots: OfferTimeSlot[] = [];
+            const newIllegalDays: string[] = [];
+    
+            for (let i = 0; i < repeatCount; i++) {
+                const nextDate = new Date(selectedDate);
+                nextDate.setDate(nextDate.getDate() + i * 7); // كل مرة بفارق أسبوع
+    
+                const formattedDate = nextDate.toISOString().split("T")[0];
+    
+                if (!offerTimeSlots.some(slot => slot.date === formattedDate) && !illegalOfferDays.includes(formattedDate)) {
+                    newSlots.push({ date: formattedDate, timeSlot: selectedTime });
+                    newIllegalDays.push(formattedDate);
+                }
+            }
+    
+            if (offerTimeSlots.length + newSlots.length <= maxOfferTimes) {
+                setOfferTimeSlots([...offerTimeSlots, ...newSlots]);
+                setIllegalOfferDays([...illegalOfferDays, ...newIllegalDays]);
+    
+                console.log("Offer time slots", offerTimeSlots);
+                console.log("Illegal offer days", illegalOfferDays);
+            } else {
+                alert(`لقد وصلت إلى الحد الأقصى لعدد المواعيد المتاحة (${maxOfferTimes}).`);
+            }
         } else {
             alert("الرجاء تحديد التاريخ والوقت.");
         }
-
-     
     };
+    
 
     // Function to remove time slot for offer
    const handleRemoveTimeSlot = (index: number) => {
@@ -1398,39 +1699,56 @@ const ProgressIndicator = () => {
 
                     <div className={`tab ${currentTab === 1 ? 'active' : ''}`}>
                         <h2>اختيار الموقع</h2>
-                        {currentTab === 1 && (
-                            <div className="location-container">
-                                {/* Map container */}
-                                <div className="map-container" ref={mapRef}></div>
-
-                                <label>الموقع المختار:</label>
-                                    <textarea
-                                        value={addressDetails + "\n " + locationUrl}
-                                         rows={1}
-                                        readOnly
-                                    />
-
-                                <div className="form-group">
-                                    <label>المدينة:</label>
-                                    <input type="text" value={selectedCity} readOnly />
-                                     
-                                    
-
-                            
-
-                                    <label>ملاحظات إضافية عن الموقع:</label>
-                                    <textarea
-                                        value={locationNotes}
-                                        onChange={(e) => setLocationNotes(e.target.value)}
-                                        placeholder="أدخل أي تفاصيل إضافية عن الموقع مثل: رقم المبنى، الطابق، علامات مميزة، إلخ"
-                                        rows={3}
-                                    />
-
-                                    
+                        {(currentTab === 1 && savedAddress)  && (
+            <>
+             {showAddForm && (
+      
+      <div className="location-container">
+                              
+       
+                              <div className="map-container" ref={mapRef}></div>
+                              
+                              <label>الموقع المختار:</label>
+                                  <textarea
+                                      value={addressDetails + "\n " + locationUrl}
+                                       rows={1}
+                                      readOnly
+                                  />
+                              
+                              <div className="form-group">
+                                  <label>المدينة:</label>
+                                  <input type="text" value={selectedCity} readOnly />
                                    
-                                </div>
-                            </div>
+                                  
+                              
+                              
+                              
+                                  <label>اسم البناء ورقم الشقة:</label>
+                                  <textarea
+                                      value={locationNotes}
+                                      onChange={(e) => setLocationNotes(e.target.value)}
+                                      rows={3}
+                                  />
+                              
+                                  
+                               
+                              </div>
+                              </div>
+                             
+            )}
+      
+      {AddressManager()}
+          </>
+            )}
+
+                        {(currentTab === 1 && !savedAddress)&& (
+            
+          " ss"
+            
+                          
+                     
                         )}
+
                     </div>
 
                     <div className={`tab ${currentTab === 2 ? 'active' : ''}`}>
@@ -1500,7 +1818,15 @@ const ProgressIndicator = () => {
                                                         <button 
                                                             type="button" 
                                                             className="add-slot-btn" 
-                                                            onClick={handleAddTimeSlot} 
+                                                            onClick={() => {
+                                                              if (serviceType === "package-12") {
+                                                                handleAddTimeSlot(12);
+                                                              } else if (serviceType === "package-4") {
+                                                                handleAddTimeSlot(4);
+                                                              } else {
+                                                                handleAddTimeSlot();
+                                                              }
+                                                            }}
                                                             disabled={offerTimeSlots.length >= maxOfferTimes}
                                                         >
                                                             إضافة موعد
@@ -1578,28 +1904,15 @@ const ProgressIndicator = () => {
                     </div>
                 </div>
   {renderBookingSummary()}
-             <div className="navigation">
+
+
+
+             <div className=" pt-16 navigation">
 
   
-  {/* Summary Button */}
-  <button 
-    className="btn-summary" 
-    onClick={() => setShowSummaryDetails(!showSummaryDetails)}
-  >
-    <span className="price-text">{totalPrice} درهم</span>
-    <span className={`arrow-icon ${showSummaryDetails ? 'up' : 'down'}`}>
-      {showSummaryDetails ? '▲' : '▼'}
-    </span>
-  </button>
   
-  {currentTab < 3 && (
-  <button onClick={handleNext} className="bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1 text-sm">
-  <span>التالي</span>
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 rtl:rotate-180" viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-  </svg>
-</button>
-  )}
+  
+  
   <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
         <div className="max-w-md mx-auto">
           {/* Collapsible price details */}
@@ -1621,9 +1934,9 @@ const ProgressIndicator = () => {
               {serviceType && (
            <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="font-medium text-gray-800">
-                {serviceType === 'one-time' ? 'حجز لمرة واحدة' : 
-                 serviceType === 'package-4' ? 'عرض 4 مرات' : 
-                 serviceType === 'package-8' ? 'عرض 8 مرات' : 'عرض 12 مرة'}
+                {serviceType === 'one-time' ? 'زيارة لمرة واحدة' : 
+                 serviceType === 'package-4' ? '4 زيارات أسبوعية' : 
+                 serviceType === 'package-8' ? '8 زيارات متعددة ' : '12 زيارة اسبوعية '}
               </span>
               <span className="text-gray-800 font-bold ">نوع الحجز</span>
             </div>
@@ -1680,10 +1993,9 @@ const ProgressIndicator = () => {
           <div className="p-4 bg-white flex justify-between items-center">
               {currentTab > 0 && (
             <button  onClick={handlePrev} className="bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1 text-sm">
+                   <ChevronRight className="w-4 h-4 rtl:rotate-180" />
             <span>رجوع</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 rtl:rotate-180" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
+
           </button>
   )}
             <button 
@@ -1697,9 +2009,8 @@ const ProgressIndicator = () => {
             {currentTab < 3 && (
             <button  onClick={handleNext} className="bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1 text-sm">
               <span>التالي</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 rtl:rotate-180" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
+              <ChevronLeft className="w-4 h-4 rtl:rotate-180" />
+          
             </button>
             )}
 
