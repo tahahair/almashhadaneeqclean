@@ -1,10 +1,10 @@
 "use client"
 // pages/index.tsx
-import { useState, useEffect, useRef  } from 'react';
+import { useState, useEffect, useRef, use  } from 'react';
 import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import CheckoutPage from "../components/CheckoutPage";
- import {  Menu, Shield, Award, Clock, Star } from 'lucide-react';
+ import {  Menu, Shield, Award, Clock, Star, ChevronDown, Check } from 'lucide-react';
 
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
@@ -50,7 +50,13 @@ const [selectedCity, setSelectedCity] = useState("");
     if (serviceType === 'one-time') {
         // Calculate price for one-time service
         // Example base rate per hour
-        const extra = (hours - 4) * 20;
+        let extra = (hours - 4) * 20;
+
+        if (hours <4) {
+            
+          extra = 0;
+      }
+       
         if (workers > 0) {
             
             setTotalPrice((basePrice * workers) + (extra * workers));
@@ -71,74 +77,38 @@ useEffect(() => {
 }, [ serviceType, basePrice, workers, hours, selectedCity]);
 
  
- 
-  const renderBookingSummary = () => {
-   
+const [showSummaryDetails, setShowSummaryDetails] = useState(false);
+
+// Modified renderBookingSummary function - will be rendered at the bottom of the page
+const renderBookingSummary = () => {
+  if (!showSummaryDetails) {
+    return null;
+  }
+  
+  // Return the expanded view as a fixed position panel at the bottom
   console.log("totalPrice", totalPrice);
-    return (
-        <div dir="ltr" className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 shadow-lg border border-gray-100 max-w-md mx-auto">
-        <h3 className="text-xl font-bold text-center mb-4 text-gray-800 border-b pb-2">ملخص الحجز</h3>
+  return (
+    <div className="summary-overlay">
+      <div dir="ltr" className="summary-panel bg-gradient-to-br from-blue-50 to-white rounded-t-xl p-6 shadow-lg border border-gray-100">
+        <div className="flex justify-between items-center mb-4">
+          <button 
+            onClick={() => setShowSummaryDetails(false)} 
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+          <h3 className="text-xl font-bold text-center text-gray-800 border-b pb-2">ملخص الحجز</h3>
+        </div>
         
         <div className="space-y-3 text-right w-full mx-auto">
-          {serviceType && (
-            <div className="flex justify-between items-center py-1 border-b border-gray-100">
-              <span className="font-medium text-gray-800">
-                {serviceType === 'one-time' ? 'حجز لمرة واحدة' : 
-                 serviceType === 'package-4' ? 'عرض 4 مرات' : 
-                 serviceType === 'package-8' ? 'عرض 8 مرات' : 'عرض 12 مرة'}
-              </span>
-              <span className="text-gray-800 font-bold ">نوع الحجز</span>
-            </div>
-          )}
-          
-          {workers > 0 && (
-            <div className="flex justify-between items-center py-1 border-b border-gray-100">
-              <span className="text-gray-800">{workers} </span>
-              <span className="text-gray-800 font-bold ">عدد العمال</span>
-            </div>
-          )}
-          
-          {hours > 0 && (
-            <div className="flex justify-between items-center py-1 border-b border-gray-100">
-              <span className="text-gray-600">{hours} </span>
-              <span className="text-gray-800 font-bold  ">عدد الساعات</span>
-            </div>
-          )}
-          
-{
-    selectedCity && (
-        <div className="flex justify-between items-left py-1 border-b border-gray-100">
-            <span className="text-gray-600 w-[40%] text-left ">{addressDetails + "\n " + locationUrl}</span>
-            <span className="text-gray-800 font-bold ">الموقع</span>
-        </div>
-    )
-}
-
-          {selectedTime && (
-            <div className="flex justify-between items-center py-1 border-b border-gray-100">
-              <span className="text-gray-800">{selectedTime}</span>
-              <span className="text-gray-800 font-bold ">وقت الوصول</span>
-            </div>
-          )}
-          
-          {date && (
-            <div className="flex justify-between items-center py-1 border-b border-gray-100">
-              <span className="text-gray-800">{date}</span>
-              <span className="text-gray-800 font-bold ">التاريخ</span>
-            </div>
-          )}
-          
-          {totalPrice > 0 && (
-            <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-200">
-              <span className="text-lg font-bold text-blue-600">{totalPrice} درهم</span>
-              <span className="  text-gray-800 font-bold ">السعر الإجمالي</span>
-            </div>
-          )}
+        
         </div>
       </div>
-    );
-  };
-
+    </div>
+  );
+};
 
     const handleserviceTypeSelect = (type: string) => {
  
@@ -177,111 +147,158 @@ useEffect(() => {
    
         return (
           <div>
-            <h2 className="text-xl font-bold text-center mb-4">اختر نوع الحجز</h2>
-            
-            <div className="grid grid-cols-2 gap-3 mb-6">
-              <div 
-                className={`rounded-lg border-2 p-3 text-right cursor-pointer ${serviceType === 'one-time' ? 'border-blue-600 bg-blue-50' : 'border-gray-300'}`}
-                onClick={() => handleserviceTypeSelect('one-time')}
-              >
-                <h3 className="font-semibold">مرة واحدة</h3>
-                <p className="text-sm text-gray-600">100 درهم </p>
-                 
-              </div>
-              
-              <div 
-                className={`rounded-lg border-2 p-3 text-right cursor-pointer ${serviceType === 'package-4' ? 'border-blue-600 bg-blue-50' : 'border-gray-300'}`}
-                onClick={() => handleserviceTypeSelect('package-4')}
-              >
-                <h3 className="font-semibold">عرض 4</h3>
-                <p className="text-sm text-gray-600">360 ريال</p>
-                <p className="text-xs text-green-600">خصم 15%</p>
-              </div>
-              
-              <div 
-                className={`rounded-lg border-2 p-3 text-right cursor-pointer ${serviceType === 'package-8' ? 'border-blue-600 bg-blue-50' : 'border-gray-300'}`}
-                onClick={() => handleserviceTypeSelect('package-8')}
-              >
-                <h3 className="font-semibold">عرض 8</h3>
-                <p className="text-sm text-gray-600">680 درهم</p>
-                <p className="text-xs text-green-600">خصم 16%</p>
-              </div>
-              
-              <div 
-                className={`rounded-lg border-2 p-3 text-right cursor-pointer ${serviceType === 'package-12' ? 'border-blue-600 bg-blue-50' : 'border-gray-300'}`}
-                onClick={() => handleserviceTypeSelect('package-12')}
-              >
-                <h3 className="font-semibold">عرض 12</h3>
-                <p className="text-sm text-gray-600">1000 درهم</p>
-                <p className="text-xs text-green-600">خصم 17%</p>
-              </div>
-            </div>
-            
-            {serviceType && (
-              <>
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-right mb-3">عدد الساعات</h3>
-                  <div className="flex justify-between gap-2 flex-wrap">
-                    {[4, 5, 6, 7, 8].map((h) => (
-                      <button
-                        key={h}
-                        className={`py-1 px-4 rounded-md ${
-                          serviceType !== 'one-time' && h !== 4 
-                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed' 
-                            : hours === h 
-                              ? 'bg-blue-600 text-white' 
-                              : 'bg-gray-100'
-                        }`}
-                        onClick={() => { if (serviceType === 'one-time') setHours(h); calculateTotalPrice({ hours: h, workers }); }}
-                        disabled={serviceType !== 'one-time' && h !== 4}
-                      >
-                        {h} ساعات
-                        <br />
-                        {h !== 4 &&
-                           <span className="text-xs text-green-500"> + {(h-4)*20 } درهم  </span>
-                        }
-                     
-                      </button>
-                    
-                    ))}
-                  </div>
+   <div className="border-b pb-3 mb-4">
+        <div className="flex justify-between items-center">
+          <h1 className="text-xl font-bold text-gray-800">خدمة التنظيف المنزلي</h1>
+          <div className="flex items-center gap-1 text-sm">
+            <span className="text-gray-600">(679k تقييم)</span>
+            <span className="font-semibold">4.8/5</span>
+            <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+          </div>
+        </div>
+      </div>
+ 
+ 
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold text-right  mb-3">كم عدد العمال المطلوب؟</h2>
+        <div className="flex justify-between px-8 gap-2">
+          {[1, 2, 3, 4].map((w) => (
+            <button
+              key={w}
+              className={`py-3 px-4 rounded-full flex justify-center items-center w-16 h-16 ${
+                workers === w 
+                  ? 'bg-teal-600 text-white ring-2 ring-teal-300' 
+                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+              }`}
+              onClick={() => setWorkers(w)}
+            >
+              <span className="text-lg font-semibold">{w}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+                {/* Hours selection */}
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold text-right mb-3">كم عدد الساعات التي يجب أن يبقوا فيها؟</h2>
+        <div className="grid grid-cols-4 gap-2">
+          {[1,2,3, 4, 5, 6,7,8].map((h) => (
+            <button
+              key={h}
+              className={`relative py-3 px-2 rounded-lg border text-center ${
+                hours === h 
+                  ? 'bg-teal-50 border-teal-500 text-teal-700' 
+                  : 'bg-gray-50 border-gray-200 hover:border-gray-300'
+              }`}
+              onClick={() => setHours(h)}
+            >
+              <div className="text-lg font-medium">{h}</div>
+              {h === 1 && (
+               <div className="text-xs text-gray-500">AED 100/hr</div>
+                )}
+                {h === 2 && (
+               <div className="text-xs text-gray-500">AED 50/hr</div>
+                )}
+                  {h === 3 && (
+               <div className="text-xs text-gray-500">AED 33/hr</div>
+                )}
+                        {h === 4 && (
+               <div className="text-xs text-gray-500">AED 25/hr</div>
+                )}
+                          {h > 4 && (
+               <div className="text-xs text-gray-500">AED 20/hr</div>
+                )}
+             
+              {hours === h && h === 4 && (
+                <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  موصى به
                 </div>
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
                 
-                <div className="mb-6">
-                  <h3 className="text-lg font-semibold text-right mb-3">عدد العمال</h3>
-                  <div className="flex justify-between gap-2">
-                    {[1, 2, 3, 4].map((w) => (
-                      <button
-                        key={w}
-                        className={`py-2 px-4 rounded-md ${
-                          serviceType !== 'one-time' && w !== 1
-                            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                            : workers === w 
-                              ? 'bg-blue-600 text-white' 
-                              : 'bg-gray-100'
-                        }`}
-                        onClick={() => {
-                          if (serviceType === 'one-time' || w === 1) {
-                            setWorkers(w);
-                          }
-                          calculateTotalPrice({ hours, workers: w });
-                        }}
-                        disabled={serviceType !== 'one-time' && w !== 1}
-                      >
-                        {w} {w === 1 ? 'عامل' : 'عمال'}
-                        <br />
-                        {w !== 1 &&
-                           <span className="text-xs text-green-500"> + {(w-1) *100 } درهم  </span>
-                        }
-                     
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </>
-            )}
+                {/* Service frequency */}
+      <div className="mb-6  ">
+        <h2 className="text-lg font-semibold text-right mb-3">ما هو معدل تكرار التنظيف المطلوب؟</h2>
+        <div className="space-y-6">
+          <div 
+            className={`rounded-lg border-2 p-4 cursor-pointer ${
+              serviceType === 'one-time' ? 'border-teal-500 bg-teal-50' : 'border-gray-200'
+            }`}
+            onClick={() => handleserviceTypeSelect('one-time')}
+          >
+            <div className="flex justify-between">
+              <div className="font-semibold text-gray-800">زيارة واحدة</div>
+              {serviceType === 'one-time' && <Check className="w-5 h-5 text-teal-600" />}
+            </div>
+            <div className="text-sm text-gray-600 mt-1">• حجز جلسة تنظيف لمرة واحدة</div>
+          </div>
+          
+          <div 
+            className={`rounded-lg border-2 p-4 cursor-pointer relative ${
+              serviceType === 'package-4' ? 'border-teal-500 bg-teal-50' : 'border-gray-200'
+            }`}
+            onClick={() => handleserviceTypeSelect('package-4')}
+          >
+            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform rotate-12">
+              خصم 10% لكل زيارة
+            </div>
+            <div className="flex justify-between">
+              <div className="font-semibold text-gray-800">4 زيارات اسبوعية</div>
+              {serviceType === 'weekly' && <Check className="w-5 h-5 text-teal-600" />}
+            </div>
+            <div className="text-sm text-gray-600 mt-1">• زيارات في نفس اليوم والتوقيت من كل اسبوع ولمدة شهر</div>
+
+            <div className="text-sm text-gray-600 mt-1">• احصل على نفس المنظف في كل مرة</div>
+            <div className="text-sm text-gray-600">•  جدولة بسهولة من خلال التطبيق</div>
+          </div>
+          <div 
+            className={`rounded-lg border-2 p-4 cursor-pointer relative ${
+              serviceType === 'package-12' ? 'border-teal-500 bg-teal-50' : 'border-gray-200'
+            }`}
+            onClick={() => handleserviceTypeSelect('package-12')}
+          >
+            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform rotate-12">
+              خصم 10% لكل زيارة
+            </div>
+            <div className="flex justify-between">
+              <div className="font-semibold text-gray-800">12 زيارة اسبوعية</div>
+              {serviceType === 'weekly' && <Check className="w-5 h-5 text-teal-600" />}
+            </div>
+            <div className="text-sm text-gray-600 mt-1">• زيارات في نفس اليوم والتوقيت من كل اسبوع ولمدة 3 أشهر</div>
+
+            <div className="text-sm text-gray-600 mt-1">• احصل على نفس المنظف في كل مرة</div>
+            <div className="text-sm text-gray-600">•  جدولة بسهولة من خلال التطبيق</div>
+          </div>
+
+          <div 
+            className={`rounded-lg border-2 p-4 cursor-pointer relative ${
+              serviceType === 'package-8' ? 'border-teal-500 bg-teal-50' : 'border-gray-200'
+            }`}
+            onClick={() => handleserviceTypeSelect('package-8')}
+          >
+            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform rotate-12">
+              خصم 15% لكل زيارة
+            </div>
+            <div className="flex justify-between">
+              <div className="font-semibold text-gray-800">عدة زيارات في الشهر</div>
+              {serviceType === 'multiple' && <Check className="w-5 h-5 text-teal-600" />}
+            </div>
+            <div className="text-sm text-gray-600 mt-1">• أختر الايام والتوقيت المفضل بسهولة </div>
+            <div className="text-sm text-gray-600 mt-1">• 8 زيارات مع خصم يصل الى 16 بالمئة </div>
+
+            <div className="text-sm text-gray-600 mt-1">• احصل على نفس المنظف في كل مرة</div>
+            <div className="text-sm text-gray-600">• إختيار أوقات الزيارات بسهولة من الموقع</div>
+          </div>
+        </div>
+      </div>
+
+             
+          
          
-         <div className="bg-blue-50 p-4 rounded-lg mb-6">
+         <div dir='ltr' className="bg-blue-50 p-4 rounded-lg mb-6">
            <h3 className="text-lg font-semibold text-right mb-2">لماذا تختار خدماتنا؟</h3>
            <ul className="space-y-2 text-right">
              <li className="flex justify-end items-center gap-2">
@@ -302,11 +319,12 @@ useEffect(() => {
              </li>
            </ul>
          </div>
+         
        </div>
      );
    };
 
-
+ 
     const showSection = () => {
     
         router.push(`/`);
@@ -728,12 +746,24 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
         }
     });
 };
+ useEffect(() => {
+  if (serviceType !== 'one-time' ) {
+            
+    if (hours !== 4 || workers !== 1) {
+    alert("   الرجاء اختيار 4 ساعات وعامل واحد مع هذا العدد من الزيارات ");
+    setWorkers(1);
+    setHours(4);
+    return;}
+  }
 
+ }, [workers,hours]);
     const handleNext = async () => {
         // Add validation for location tab
         if (currentTab === 1 ){
 
           loadinfo();
+
+         
 
         }
         if (currentTab === 2 ){
@@ -1354,9 +1384,9 @@ const ProgressIndicator = () => {
 
             <div   className="container">
                 <ProgressIndicator />
-                {renderBookingSummary()}
-                <br />
+                 
                 <div className="tabs">
+
                     <div className={`tab ${currentTab === 0 ? 'active' : ''}`}>
 
                    
@@ -1547,26 +1577,181 @@ const ProgressIndicator = () => {
                         )}
                     </div>
                 </div>
+  {renderBookingSummary()}
+             <div className="navigation">
 
-                <div className="navigation">
-               
-                    {currentTab > 0 && (
-                        <button className="btn-prev" onClick={handlePrev}>
-                            <span className="btn-icon">→</span>
-                            <span className="btn-text">رجوع</span>
-                        </button>
-                    )}
-                    {currentTab < 3 && (
-                        <button className="btn-next" onClick={handleNext}>
-                            <span className="btn-text">التالي</span>
-                            <span className="btn-icon">←</span>
-                        </button>
-                    ) }
-                    
-                </div>
+  
+  {/* Summary Button */}
+  <button 
+    className="btn-summary" 
+    onClick={() => setShowSummaryDetails(!showSummaryDetails)}
+  >
+    <span className="price-text">{totalPrice} درهم</span>
+    <span className={`arrow-icon ${showSummaryDetails ? 'up' : 'down'}`}>
+      {showSummaryDetails ? '▲' : '▼'}
+    </span>
+  </button>
+  
+  {currentTab < 3 && (
+  <button onClick={handleNext} className="bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1 text-sm">
+  <span>التالي</span>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 rtl:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+  </svg>
+</button>
+  )}
+  <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
+        <div className="max-w-md mx-auto">
+          {/* Collapsible price details */}
+          {showSummaryDetails && (
+            <div className="p-4 bg-white border-b">
+              <div className="mb-2 flex justify-between items-center">
+                <button 
+                  onClick={() => setShowSummaryDetails(false)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+                <h3 className="text-lg font-bold text-gray-800 text-center">تفاصيل الحجز</h3>
+              </div>
+         
+              <div className="space-y-2 text-sm text-right">
+              {serviceType && (
+           <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="font-medium text-gray-800">
+                {serviceType === 'one-time' ? 'حجز لمرة واحدة' : 
+                 serviceType === 'package-4' ? 'عرض 4 مرات' : 
+                 serviceType === 'package-8' ? 'عرض 8 مرات' : 'عرض 12 مرة'}
+              </span>
+              <span className="text-gray-800 font-bold ">نوع الحجز</span>
+            </div>
+          )}
+          
+          {workers > 0 && (
+             <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="text-gray-800">{workers} </span>
+              <span className="text-gray-800 font-bold ">عدد العمال</span>
+            </div>
+          )}
+          
+          {hours > 0 && (
+             <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="text-gray-600">{hours} </span>
+              <span className="text-gray-800 font-bold  ">عدد الساعات</span>
+            </div>
+          )}
+          
+          {selectedCity && (
+           <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="text-gray-600 w-[40%] text-left ">{addressDetails + "\n " + locationUrl}</span>
+              <span className="text-gray-800 font-bold ">الموقع</span>
+            </div>
+          )}
+
+          {selectedTime && (
+           <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="text-gray-800">{selectedTime}</span>
+              <span className="text-gray-800 font-bold ">وقت الوصول</span>
+            </div>
+          )}
+          
+          {date && (
+            <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="text-gray-800">{date}</span>
+              <span className="text-gray-800 font-bold ">التاريخ</span>
+            </div>
+          )}
+          
+          {totalPrice > 0 && (
+             <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="text-lg font-bold text-blue-600">{totalPrice} درهم</span>
+              <span className="text-gray-800 font-bold ">السعر الإجمالي</span>
+            </div>
+          )}
+
+                
+              </div>
+            </div>
+          )}
+          
+          {/* Fixed price bar */}
+          <div className="p-4 bg-white flex justify-between items-center">
+              {currentTab > 0 && (
+            <button  onClick={handlePrev} className="bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1 text-sm">
+            <span>رجوع</span>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 rtl:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+  )}
+            <button 
+              onClick={() => setShowSummaryDetails(!showSummaryDetails)}
+              className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              <span className="text-gray-700 text-sm">AED {totalPrice}</span>
+              <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${showSummaryDetails ? 'rotate-180' : ''}`} />
+            </button>
+          
+            {currentTab < 3 && (
+            <button  onClick={handleNext} className="bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1 text-sm">
+              <span>التالي</span>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 rtl:rotate-180" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            )}
+
+          </div>
+        </div>
+        </div>
+</div>
+
             </div>
             <style jsx>{`
                 /* Base Styles */
+
+
+                
+.btn-summary {
+  background-color: #f0f8ff;
+  color: #333;
+  border: 1px solid #4e73df;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 120px;
+  margin: 0 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-summary:hover {
+  background-color: #e6f0ff;
+}
+
+.price-text {
+  font-weight: bold;
+  color: #4e73df;
+}
+
+.arrow-icon {
+  margin-right: 8px;
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.arrow-icon.up {
+  transform: rotate(180deg);
+}
+
+.navigation {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
                 .container {
                     width: 100%;
                     max-width: 600px;
