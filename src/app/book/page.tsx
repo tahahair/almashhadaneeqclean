@@ -39,7 +39,7 @@ const TabsPage = () => {
   const [serviceType, setServiceType] = useState< string>('package-12');
 const [totalPrice, setTotalPrice] = useState(100);
 const [selectedCity, setSelectedCity] = useState("");
-const [selectedDay, setSelectedDay] = useState("sun");
+//const [selectedDay, setSelectedDay] = useState("sun");
  
 
 
@@ -368,17 +368,17 @@ const renderBookingSummary = () => {
       </div>
     </div>
   );
-};
+};/* 
 interface Day {
   id: string;
   label: string;
   available: boolean;
-}
+} */
 const [savedAddress, setSavedAddress] = useState<string | null>(null);
-
+/* 
 const handleDaySelection = (day: Day['id']) => {
   setSelectedDay(day);
-};
+}; */
     const handleserviceTypeSelect = (type: string) => {
  
         setServiceType(type);
@@ -563,8 +563,8 @@ const handleDaySelection = (day: Day['id']) => {
         </div>
       </div>
        
-             
-          {/* Day selection - only visible for weekly and multiple services */}
+      
+         {/*   
           {(serviceType === 'package-12' || serviceType === 'package-4') && (
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-right mb-2">في أي أيام الأسبوع تريد الخدمة؟</h2>
@@ -601,7 +601,7 @@ const handleDaySelection = (day: Day['id']) => {
           </div>
         </div>
       )}
-
+ */}
          
          <div dir='ltr' className="bg-blue-50 p-4 rounded-lg mb-6">
            <h3 className="text-lg font-semibold text-right mb-2">لماذا تختار خدماتنا؟</h3>
