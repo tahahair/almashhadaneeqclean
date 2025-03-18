@@ -36,7 +36,7 @@ const TabsPage = () => {
   const [date, setDate] = useState('');
   const [basePrice, setBasePrice] = useState(0);
   const [workers, setWorkers] = useState(1);
-  const [serviceType, setServiceType] = useState< string>('package-12');
+  const [serviceType, setServiceType] = useState< string>('one-time');
 const [totalPrice, setTotalPrice] = useState(100);
 const [selectedCity, setSelectedCity] = useState("");
 //const [selectedDay, setSelectedDay] = useState("sun");
@@ -322,11 +322,29 @@ const deleteAddress = (id: number) => {
             setTotalPrice((basePrice * workers) + (extra * workers));
         }
     } else if (serviceType === 'package-4') {
-        setTotalPrice(340);
+      if (hours <=4 && workers === 1) {
+
+        setTotalPrice(340);}
+        else  {
+          
+            setTotalPrice((340+ (hours - 4) * 20)*workers);
+        }
     } else if (serviceType === 'package-8') {
-        setTotalPrice(680);
+      if (hours <=4 && workers === 1) {
+
+        setTotalPrice(680);}
+        else  {
+          
+            setTotalPrice((680+ (hours - 4) * 20)*workers);
+        }
     } else if (serviceType === 'package-12') {
-        setTotalPrice(1000);
+      if (hours <=4 && workers === 1) {
+
+        setTotalPrice(1000);}
+        else  {
+          
+            setTotalPrice((1000+ (hours - 4) * 20)*workers);
+        }
     }
 };
 
@@ -418,7 +436,7 @@ const handleDaySelection = (day: Day['id']) => {
           <div>
    <div className="border-b pb-3 mb-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold text-gray-800">خدمة التنظيف المنزلي</h1>
+          <h1 className="text-xl font-bold text-gray-800">خدمة التنظيف العميق</h1>
           <div className="flex items-center gap-1 text-sm">
             <span className="text-gray-600">(679k تقييم)</span>
             <span className="font-semibold">4.8/5</span>
@@ -447,46 +465,56 @@ const handleDaySelection = (day: Day['id']) => {
         </div>
       </div>
 
-                {/* Hours selection */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold text-right mb-3">كم عدد الساعات التي يجب أن يبقوا فيها؟</h2>
-        <div className="grid grid-cols-4 gap-2">
-          {[1,2,3, 4, 5, 6,7,8].map((h) => (
-            <button
-              key={h}
-              className={`relative py-3 px-2 rounded-lg border text-center ${
-                hours === h 
-                  ? 'bg-teal-50 border-teal-500 text-teal-700' 
-                  : 'bg-gray-50 border-gray-200 hover:border-gray-300'
-              }`}
-              onClick={() => setHours(h)}
-            >
-              <div className="text-lg font-medium">{h}</div>
-              {h === 1 && (
-               <div className="text-xs text-gray-500">AED 100/hr</div>
-                )}
-                {h === 2 && (
-               <div className="text-xs text-gray-500">AED 50/hr</div>
-                )}
-                  {h === 3 && (
-               <div className="text-xs text-gray-500">AED 33/hr</div>
-                )}
-                        {h === 4 && (
-               <div className="text-xs text-gray-500">AED 25/hr</div>
-                )}
-                          {h > 4 && (
-               <div className="text-xs text-gray-500">AED 20/hr</div>
-                )}
-             
-              {hours === h && h === 4 && (
-                <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full">
-                  موصى به
-                </div>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
+           {/* Hours selection */}
+<div className="mb-6">
+  <h2 className="text-lg font-semibold text-right mb-3">كم عدد الساعات التي يجب أن يبقوا فيها؟</h2>
+  <div className="grid grid-cols-4 gap-2">
+    {[1, 2, 3, 4, 5, 6, 7, 8].map((h) => (
+      <button
+        key={h}
+        className={`relative py-3 px-2 rounded-lg border text-center transition-all duration-200 ${
+          hours === h 
+            ? 'bg-teal-100 border-teal-600 text-teal-800 shadow-md' 
+            : 'bg-gray-50 border-gray-200 hover:border-gray-300 hover:bg-gray-100'
+        }`}
+        onClick={() => setHours(h)}
+      >
+        <div className="text-lg font-medium">{h}</div>
+        {h === 1 && (
+          <div className="text-xs text-gray-600">AED 100/hr</div>
+        )}
+        {h === 2 && (
+          <div className="text-xs text-gray-600">AED 50/hr</div>
+        )}
+        {h === 3 && (
+          <div className="text-xs text-gray-600">AED 33/hr</div>
+        )}
+        {h === 4 && (
+          <div className="text-xs text-gray-600">AED 25/hr</div>
+        )}
+        {h > 4 && (
+          <div className="text-xs text-gray-600">AED 20/hr</div>
+        )}
+        
+        {/* علامة الصح عند الاختيار */}
+        {hours === h && (
+          <div className="absolute -top-2 -left-2 bg-teal-500 text-white text-xs p-1 rounded-full w-6 h-6 flex items-center justify-center shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        )}
+        
+        {/* العلامة الموصى بها */}
+        {hours === h && h === 4 && (
+          <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-md">
+            موصى به
+          </div>
+        )}
+      </button>
+    ))}
+  </div>
+</div>
                 
                 {/* Service frequency */}
       <div className="mb-6  ">
@@ -659,10 +687,66 @@ const handleDaySelection = (day: Day['id']) => {
     // States for Time and Offer Selection remain the same
     const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
     const [selectedDate, setSelectedDate] = useState<string>('');
+ const [loading, setLoading] = useState<boolean>(false);
+ 
+ const [availableCleanersM, setAvailableCleanersM] = useState<number>(15);
+const [availableCleanersE, setAvailableCleanersE] = useState<number>(15);
  
  
-     const [availableCleaners, setAvailableCleaners] = useState<number>(15);
-    const totalCleaners = 15;
+ const getcleaners = async (date: Date): Promise<void> => {
+  if (!date) return;
+
+  setLoading(true);
+  try {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+
+    const response = await fetch(`/api/booking?date=${formattedDate}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('Fetched reservations:', data); // التحقق من البيانات
+
+    if (!Array.isArray(data)) {
+      console.error("Unexpected data format:", data);
+      return;
+    }
+
+    // حساب عدد العمال المحجوزين في كل فترة
+    let bookedMorning = 0;
+    let bookedEvening = 0;
+
+    data.forEach((reservation) => {
+      if (!reservation.timePeriod || !reservation.workerCount) return;
+
+      if (reservation.timePeriod.toUpperCase() === "MORNING") {
+        bookedMorning += reservation.workerCount;
+      } else if (reservation.timePeriod.toUpperCase() === "EVENING") {
+        bookedEvening += reservation.workerCount;
+      }
+    });
+
+    // تحديث عدد العمال المتاحين
+    setAvailableCleanersM(Math.max(15 - bookedMorning, 0));
+    setAvailableCleanersE(Math.max(15 - bookedEvening, 0));
+    console.log("cleanersM", availableCleanersM);
+console.log("cleanersE", availableCleanersE);
+  } catch (error) {
+    console.error("Failed to fetch reservations:", error);
+    alert("فشل في جلب الحجوزات. يرجى المحاولة مرة أخرى لاحقًا.");
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+    
+    
     
     // States for offer times remain the same
     const [offerTimeSlots, setOfferTimeSlots] = useState<OfferTimeSlot[]>([]);
@@ -1013,17 +1097,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
       setSavedAddress(storedAddress);
     }
   }, []);
- useEffect(() => {
-  if (serviceType !== 'one-time' ) {
-            
-    if (hours !== 4 || workers !== 1) {
-    alert("   الرجاء اختيار 4 ساعات وعامل واحد مع هذا العدد من الزيارات ");
-    setWorkers(1);
-    setHours(4);
-    return;}
-  }
 
- }, [workers,hours]);
 
  const handleSaveAddress = () => {
 const opject = {
@@ -1107,7 +1181,7 @@ if (user?.phone.substring(0, 2) !== "05") {
           }
           
         handleSave();
-
+ 
 
 
         try {
@@ -1196,49 +1270,7 @@ if (user?.phone.substring(0, 2) !== "05") {
         }
 
         //Validation for time and date
-        if (currentTab === 2) {
-            if (serviceType === 'one-time') {
-                if (!selectedDate) {
-                    alert("الرجاء اختيار التاريخ");
-                    return;
-                }
-
-              
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); // set the time to 00:00:00 to compare only the date
-
-                if (new Date(selectedDate) < new Date()) {
-                  alert("الرجاء اختيار  تاريخ مستقبلي.");
-                  return;
-                }
-
-                // Check if the selected date is a working day (Saturday to Thursday)
-            
-               
- 
-
-                if (workers > availableCleaners) {
-                    alert(`لا يوجد عدد كاف من عمال النظافة متاحين. متاح حاليا: ${availableCleaners}`);
-                    return;
-                }
-
-                
-            
-           
-            }
-
-              if (serviceType === 'offer') {
-                if (!selectedOffer) {
-                    alert("الرجاء اختيار عرضًا.");
-                    return;
-                }
-
-                if (offerTimeSlots.length < maxOfferTimes) {
-                    alert(`الرجاء إضافة ${maxOfferTimes} مواعيد للعرض.`);
-                    return;
-                }
-            }
-        }
+       
 
         if (currentTab < 3) {
             setCurrentTab(currentTab + 1);
@@ -1251,17 +1283,7 @@ if (user?.phone.substring(0, 2) !== "05") {
         }
     };
      
-    // Function to calculate available cleaners
-    const calculateAvailableCleaners = () => {
-        // This is a placeholder.  You'll need to replace this with your actual logic
-        // to determine the number of available cleaners based on the selected date and time.
-        // You might need to fetch this data from an API or a database.
-
-        //For simplicity I am hardcoding the value
-        return totalCleaners - workers;
-
-    };
-
+   
 
 
 
@@ -1271,10 +1293,7 @@ if (user?.phone.substring(0, 2) !== "05") {
 
 
     
-    useEffect(() => {
-        // Update available cleaners when date or time changes
-        setAvailableCleaners(calculateAvailableCleaners());
-    }, [selectedDate,   workers]);
+ 
 
     // Function to check if a date is a working day (Saturday to Thursday)
     
@@ -1410,10 +1429,14 @@ if (user?.phone.substring(0, 2) !== "05") {
 
 
 const handleDateSelection = (day: DisplayDay) => {
+  setSelectedTimeSlot(" ");
+                setSelectedTime("");
     if (!day.isDisabled) {
       const dateString = `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
       setSelectedDate(dateString);
       setDate(dateString);
+      getcleaners(new Date(dateString));
+
     }
   };
   
@@ -1428,6 +1451,7 @@ const handleDateSelection = (day: DisplayDay) => {
                 <button 
                   className="bg-gray-100 hover:bg-gray-200 p-2 rounded-md"
                   onClick={goToPreviousWeek}
+                  disabled={currentWeekStart <= new Date()}
                 >
                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -1482,41 +1506,101 @@ const handleDateSelection = (day: DisplayDay) => {
             
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-right mb-3">وقت الوصول المفضل</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {times.map((item) => (
-                  <button
-                    key={item.time}
-                    className={`p-3 text-center rounded-lg border ${
-                      item.disabled 
-                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
-                        : selectedTime === item.time
-                          ? 'bg-blue-600 text-white border-blue-600'
-                          : 'border-gray-300 hover:border-blue-300'
-                    }`}
-                    onClick={() => {
-                        if (!item.disabled) {
-                            
-                                
-                               
-                                if (item.time=== '11:00 AM - 11:30 AM' ){
-                                  setSelectedTime(item.time);
-                            setSelectedTimeSlot("MORNING");}
-                            
-                            else if (item.time=== '4:00 PM - 4:30 PM' ){    
-                                setSelectedTimeSlot("EVENING");
-                                setSelectedTime(item.time);
-                            }
 
-                         
-                        }
-                    }}
-                    disabled={item.disabled}
-                  >
-                    {item.time}
-                    {item.disabled && <span className="block text-xs">غير متاح</span>}
-                  </button>
-                ))}
-              </div>
+              { loading &&(
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60">
+  
+  <circle cx="40" cy="30" r="5" fill="#333">
+    <animate
+      attributeName="opacity"
+      values="0.3;1;0.3"
+      dur="1.5s"
+      begin="0s"
+      repeatCount="indefinite"
+    />
+  </circle>
+  
+  <circle cx="60" cy="30" r="5" fill="#333">
+    <animate
+      attributeName="opacity"
+      values="0.3;1;0.3"
+      dur="1.5s"
+      begin="0.3s"
+      repeatCount="indefinite"
+    />
+  </circle>
+  
+  <circle cx="80" cy="30" r="5" fill="#333">
+    <animate
+      attributeName="opacity"
+      values="0.3;1;0.3"
+      dur="1.5s"
+      begin="0.6s"
+      repeatCount="indefinite"
+    />
+  </circle>
+  
+ </svg>
+
+              )
+              
+              
+              }
+
+              { !loading &&(
+
+<div className="grid grid-cols-2 gap-3">
+{times.map((item) => (
+  <button
+    key={item.time}
+    className={`p-3 text-center rounded-lg border ${
+      item.disabled 
+        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed' 
+        : selectedTime === item.time
+          ? 'bg-blue-600 text-white border-blue-600'
+          : 'border-gray-300 hover:border-blue-300'
+    }`}
+    onClick={() => {
+      
+        if (!item.disabled) {
+            
+                
+               
+                if (item.time=== '11:00 AM - 11:30 AM' ){
+                  if (availableCleanersM>workers){
+                  setSelectedTime(item.time);
+            setSelectedTimeSlot("MORNING");} else {
+              alert("عدد العمال لهذا التوقيت غير كافي ");
+              return;
+            }
+    
+          }
+            else if (item.time=== '4:00 PM - 4:30 PM' ){  
+              if (availableCleanersE>workers){  
+                setSelectedTimeSlot("EVENING");
+                setSelectedTime(item.time);}
+                else {
+                  alert("عدد العمال لهذا التوقيت غير كافي ");
+                  return;
+                }
+
+            }
+
+         
+        }
+    }}
+    disabled={item.disabled }
+  >
+    {item.time}
+    {item.disabled && <span className="block text-xs">غير متاح</span>}
+  </button>
+))}
+</div>
+              )
+
+              }
+              
               
             </div>
           </div>
@@ -1540,7 +1624,7 @@ const handleDateSelection = (day: DisplayDay) => {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
     
-            if (new Date(selectedDate) < today) {
+            if (new Date(selectedDate) === today && new Date(selectedDate).getHours() >= 11) {
                 alert("الرجاء اختيار تاريخ مستقبلي.");
                 return;
             }
@@ -1742,9 +1826,45 @@ const ProgressIndicator = () => {
             )}
 
                         {(currentTab === 1 && !savedAddress)&& (
-            
-          " ss"
-            
+             <>
+             {showAddForm && (
+      
+      <div className="location-container">
+                              
+       
+                              <div className="map-container" ref={mapRef}></div>
+                              
+                              <label>الموقع المختار:</label>
+                                  <textarea
+                                      value={addressDetails + "\n " + locationUrl}
+                                       rows={1}
+                                      readOnly
+                                  />
+                              
+                              <div className="form-group">
+                                  <label>المدينة:</label>
+                                  <input type="text" value={selectedCity} readOnly />
+                                   
+                                  
+                              
+                              
+                              
+                                  <label>اسم البناء ورقم الشقة:</label>
+                                  <textarea
+                                      value={locationNotes}
+                                      onChange={(e) => setLocationNotes(e.target.value)}
+                                      rows={3}
+                                  />
+                              
+                                  
+                               
+                              </div>
+                              </div>
+                             
+            )}
+      
+      {AddressManager()}
+          </>
                           
                      
                         )}
@@ -1833,9 +1953,7 @@ const ProgressIndicator = () => {
                                                         </button>
                                                     </div>
                                                     
-                                                    {selectedDate && new Date(selectedDate) < new Date() && (
-                                                        <p className="error-message">الرجاء اختيار   تاريخ مستقبلي.</p>
-                                                    )}
+                                                   
                                                     {illegalOfferDays.includes(selectedDate) && (
                                                         <p className="error-message">هذا اليوم محدد مسبقًا، الرجاء اختيار يوم آخر.</p>
                                                     )}
