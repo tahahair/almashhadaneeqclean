@@ -1,6 +1,8 @@
 "use client"
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef  } from 'react';
+ 
 import { ChevronRight, ChevronLeft, Calendar, Clock, MapPin, Phone, Mail,  DollarSign, Users, X, Edit, ChevronDown, ChevronUp, Plus, Save } from 'lucide-react';
+import { useRouter } from "next/navigation";
 
 // أنواع الخدمات
 const ServiceType: { [key: string]: string } = {
@@ -16,7 +18,44 @@ const TimePeriod = {
   EVENING: 'مسائي'
 };
 
+
+
+
 const ReservationManager = () => {
+
+
+ const [logedin, setLogedin] = useState(false);
+ const [admin, setAdmin] = useState(false);
+  const router = useRouter();
+  
+  // Get the 'book' parameter as a string and convert to boolean
+  // UseEffect to check if the user is already logged in
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      
+     
+      setLogedin(user.logedin || false);
+    }
+  }, []);
+
+  // UseEffect to redirect the user once they are logged in
+  useEffect(() => {
+    if (logedin) {
+      const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+       
+       
+   if (storedUser.type === "ADMIN") {
+      setAdmin(true);
+   } else {
+     router.push(`/login `);
+   }  
+    }
+  }, [logedin]);
+
+  
+
   // دالة للحصول على التاريخ الأولي (اليوم أو السبت القادم)
   const getInitialDate = () => {
     const today = new Date();
@@ -575,9 +614,9 @@ if (editingReservationId && newReservation.dates.length > 0) {
 
 
   return (
+    (logedin && admin) ? (
     <div className="flex flex-col p-6 text-right" dir="rtl">
-      {/* ... (واجهة المستخدم كما في الكود السابق) ... */}
-      <div className="flex justify-between items-center mb-6">
+       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">{editingReservationId ? 'تعديل حجز' : 'نظام إدارة الحجوزات'}</h1>
         <div className="flex items-center space-x-4">
           <div className="bg-gray-100 p-3 rounded-lg text-sm flex items-center ml-4">
@@ -1261,6 +1300,11 @@ if (editingReservationId && newReservation.dates.length > 0) {
         </div>
       )}
     </div>
+    ) : (
+      <>
+      {router.push(`/login `)}
+      </>
+    )
   );
 };
 
