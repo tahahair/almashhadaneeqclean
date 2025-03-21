@@ -845,34 +845,46 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     });
 };
 
-  // تحميل العنوان من التخزين المحلي عند تحميل الصفحة
-  const loadAddress = () => {
-    const storedAddress = localStorage.getItem("userAddress");
-    const parsedAddress = storedAddress ? JSON.parse(storedAddress) : {};
-    const params = new URLSearchParams(new URL(parsedAddress.locationUrl).search);
-    const coordinates = params.get("q");
-    if (coordinates) {
-      const [lat, lng] = coordinates.split(",").map(Number);
-      setSelectedLocation({
-        lat: lat,
-        lng: lng,
-      });
-      // Update marker position
-        if (markerRef.current && mapInstanceRef.current) {
-        markerRef.current.setPosition({ lat: lat, lng: lng });
-        mapInstanceRef.current.setCenter({ lat: lat, lng: lng });
+const loadAddress = () => {
+  const storedAddress = localStorage.getItem("userAddress");
+  const parsedAddress = storedAddress ? JSON.parse(storedAddress) : {};
+  
+  // Initialize with default values first
+  setAddressDetails(parsedAddress.addressDetails || "");
+  setLocationNotes(parsedAddress.locationNotes || "");
+  setSelectedCity(parsedAddress.selectedCity || "");
+  setLocationUrl(parsedAddress.locationUrl || "");
+
+  // Only process location URL if it exists and is valid
+  if (parsedAddress.locationUrl) {
+    try {
+      const url = new URL(parsedAddress.locationUrl);
+      const params = new URLSearchParams(url.search);
+      const coordinates = params.get("q");
+      
+      if (coordinates) {
+        const [lat, lng] = coordinates.split(",").map(Number);
+        
+        // Only update if both coordinates are valid numbers
+        if (!isNaN(lat) && !isNaN(lng)) {
+          setSelectedLocation({ lat, lng });
+          
+          // Update map and marker if references exist
+          if (markerRef.current && mapInstanceRef.current) {
+            markerRef.current.setPosition({ lat, lng });
+            mapInstanceRef.current.setCenter({ lat, lng });
+          }
+          
+          getAddressFromCoordinates({ lat, lng });
+        }
       }
-      // Update address details when marker position changes
-      getAddressFromCoordinates({
-        lat: lat,
-        lng:lng,
-      });
+    } catch (error) {
+      console.error("Error processing saved address:", error);
+      // Optionally clear invalid location URL
+      setLocationUrl("");
     }
-    setAddressDetails(parsedAddress.addressDetails || "");
-    setLocationNotes(parsedAddress.locationNotes || "");
-    setSelectedCity(parsedAddress.selectedCity || "");
-    setLocationUrl(parsedAddress.locationUrl || "");
-  };
+  }
+};
 
 
 
