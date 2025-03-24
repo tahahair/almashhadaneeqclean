@@ -25,12 +25,12 @@ export async function PUT(req: Request) {
     }
 }
 
-// Remove booking by ID
+// Remove booking by phone
 export async function DELETE(req: Request) {
     try {
-        const { id } = await req.json();
-        await prisma.uncompleted.delete({ where: { id } });
-        return NextResponse.json({ message: "uncompleted deleted successfully" }, { status: 200 });
+        const { phone } = await req.json();
+        await prisma.uncompleted.delete({ where: { phone } });
+        return NextResponse.json({ message: "Uncompleted entry deleted successfully" }, { status: 200 });
     } catch (error) {
         return NextResponse.json({ error: (error as Error).message }, { status: 400 });
     }

@@ -13,10 +13,12 @@ import { PaymentRequest } from "@stripe/stripe-js";
 const CheckoutPage = ({
   amount,
   language,
+  
   bookingData,
 }: {
   amount: number;
   language: "ar" | "en";
+   
   bookingData: string[];
 }) => {
   const stripe = useStripe();
@@ -167,6 +169,29 @@ const CheckoutPage = ({
         if (response.ok) {
           const responseData = await response.json();
           bookingId.push(responseData.id);
+
+
+          const responseUN = await fetch("/api/uncompleted", {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: bookingData[i],
+          });
+          if (responseUN.ok) {
+             
+            console.log("Un deleted:");
+          } else {
+            const errorData = await response.json();
+            alert(
+              language === "ar"
+                ? `حدث خطأ أثناء حذف الحجز: ${errorData.error || "Unknown error"}`
+                : `Error while deleting booking: ${errorData.error || "Unknown error"}`
+            );
+          }
+
+
+          
         } else {
           const errorData = await response.json();
           alert(
@@ -178,7 +203,8 @@ const CheckoutPage = ({
           return;
         }
       }
-    } catch {
+    } catch (e){
+      console.log("error",e);
       alert(
         language === "ar"
           ? "حدث خطأ أثناء الاتصال بالخادم."

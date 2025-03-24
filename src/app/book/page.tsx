@@ -4,7 +4,7 @@ import { useState, useEffect, useRef   } from 'react';
 import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import CheckoutPage from "../components/CheckoutPage";
- import {  Menu, Shield, Award, Clock, Star, ChevronDown, ChevronLeft , ChevronRight, Check } from 'lucide-react';
+ import {  Menu, Shield, Award, Clock, Star, ChevronDown, ChevronLeft , ChevronRight, Check, CalendarDays, User, AlertCircle } from 'lucide-react';
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
  
@@ -39,7 +39,6 @@ const TabsPage = () => {
   const [serviceType, setServiceType] = useState< string>('one-time');
 const [totalPrice, setTotalPrice] = useState(100);
 const [selectedCity, setSelectedCity] = useState("");
-//const [selectedDay, setSelectedDay] = useState("sun");
  
 
 
@@ -91,7 +90,7 @@ const [selectedCity, setSelectedCity] = useState("");
         setTotalPrice(340);}
         else  {
           
-            setTotalPrice((340+ (hours - 4) * 20)*workers);
+            setTotalPrice((340+ (hours - 4) *4* 20)*workers);
         }
     } else if (serviceType === 'package-8') {
       if (hours <=4 && workers === 1) {
@@ -99,7 +98,7 @@ const [selectedCity, setSelectedCity] = useState("");
         setTotalPrice(680);}
         else  {
           
-            setTotalPrice((680+ (hours - 4) * 20)*workers);
+            setTotalPrice((680+ (hours - 4) * 8*20)*workers);
         }
     } else if (serviceType === 'package-12') {
       if (hours <=4 && workers === 1) {
@@ -107,7 +106,7 @@ const [selectedCity, setSelectedCity] = useState("");
         setTotalPrice(1000);}
         else  {
           
-            setTotalPrice((1000+ (hours - 4) * 20)*workers);
+            setTotalPrice((1000+ (hours - 4) * 12*20)*workers);
         }
     }
 };
@@ -234,21 +233,7 @@ const renderBookingSummary = () => {
         onClick={() => setHours(h)}
       >
         <div className="text-lg font-medium">{h}</div>
-        {h === 1 && (
-          <div className="text-xs text-gray-600">AED 100/hr</div>
-        )}
-        {h === 2 && (
-          <div className="text-xs text-gray-600">AED 50/hr</div>
-        )}
-        {h === 3 && (
-          <div className="text-xs text-gray-600">AED 33/hr</div>
-        )}
-        {h === 4 && (
-          <div className="text-xs text-gray-600">AED 25/hr</div>
-        )}
-        {h > 4 && (
-          <div className="text-xs text-gray-600">AED 20/hr</div>
-        )}
+       
         
         {/* علامة الصح عند الاختيار */}
         {hours === h && (
@@ -262,7 +247,7 @@ const renderBookingSummary = () => {
         {/* العلامة الموصى بها */}
         {hours === h && h === 4 && (
           <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-md">
-            موصى به
+           الأكثر مبيعاً
           </div>
         )}
       </button>
@@ -270,82 +255,142 @@ const renderBookingSummary = () => {
   </div>
 </div>
                 
-                {/* Service frequency */}
-      <div className="mb-6  ">
-        <h2 className="text-lg font-semibold text-right mb-3">ما هو معدل تكرار التنظيف المطلوب؟</h2>
-        <div className="space-y-6">
-          <div 
-            className={`rounded-lg border-2 p-4 cursor-pointer ${
-              serviceType === 'one-time' ? 'border-teal-500 bg-teal-50' : 'border-gray-200'
-            }`}
-            onClick={() => handleserviceTypeSelect('one-time')}
-          >
-            <div className="flex justify-between">
-              <div className="font-semibold text-gray-800">زيارة واحدة</div>
-              {serviceType === 'one-time' && <Check className="w-5 h-5 text-teal-600" />}
-            </div>
-            <div className="text-sm text-gray-600 mt-1">• حجز جلسة تنظيف لمرة واحدة</div>
-          </div>
-          
-          <div 
-            className={`rounded-lg border-2 p-4 cursor-pointer relative ${
-              serviceType === 'package-4' ? 'border-teal-500 bg-teal-50' : 'border-gray-200'
-            }`}
-            onClick={() => handleserviceTypeSelect('package-4')}
-          >
-            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform  ">
-الأكثر مبيعاً            </div>
-            <div className="flex justify-between">
-              <div className="font-semibold text-gray-800">4 زيارات اسبوعية</div>
-              {serviceType === 'package-4' && <Check className="w-5 h-5 text-teal-600" />}
-            </div>
-            <div className="text-sm text-gray-600 mt-1">• زيارات في نفس اليوم والتوقيت من كل اسبوع ولمدة شهر</div>
+{/* Service frequency */}
+<div className="mb-6">
+  <h2 className="text-xl font-bold text-right mb-4">ما هو معدل تكرار التنظيف المطلوب؟</h2>
+  <div className="space-y-6">
+    {/* زيارة واحدة */}
+    <div 
+      className={`rounded-lg border-2 p-5 cursor-pointer transition-all duration-300 hover:shadow-md ${
+        serviceType === 'one-time' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
+      }`}
+      onClick={() => handleserviceTypeSelect('one-time')}
+    >
+      <div className="flex justify-between items-center mb-2">
+        <div className="font-bold text-gray-800 text-lg">زيارة واحدة</div>
+        {serviceType === 'one-time' && <Check className="w-6 h-6 text-teal-600" />}
+      </div>
+      <div className="flex items-center text-gray-700 mt-3">
+        <CalendarDays className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
+        <div>حجز جلسة تنظيف لمرة واحدة</div>
+      </div>
+    </div>
+    
+    {/* العرض البرونزي */}
+    <div 
+      className={`rounded-lg border-2 p-5 cursor-pointer relative transition-all duration-300 hover:shadow-md ${
+        serviceType === 'package-4' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
+      }`}
+      onClick={() => handleserviceTypeSelect('package-4')}
+    >
+      <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md">
+        خصم 15% لكل زيارة
+      </div>
+      <div className="flex justify-between items-center mb-3">
+        <div className="font-bold text-gray-800 text-lg">العرض البرونزي</div>
+        {serviceType === 'package-4' && <Check className="w-6 h-6 text-teal-600" />}
+      </div>
 
-            <div className="text-sm text-gray-600 mt-1">• احصل على نفس المنظف في كل مرة</div>
-            <div className="text-sm text-gray-600">•  جدولة بسهولة من خلال التطبيق</div>
-          </div>
-          <div 
-            className={`rounded-lg border-2 p-4 cursor-pointer relative ${
-              serviceType === 'package-12' ? 'border-teal-500 bg-teal-50' : 'border-gray-200'
-            }`}
-            onClick={() => handleserviceTypeSelect('package-12')}
-          >
-            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform " >
-              خصم 17% لكل زيارة
-            </div>
-            <div className="flex justify-between">
-              <div className="font-semibold text-gray-800">12 زيارة اسبوعية</div>
-              {serviceType === 'package-12' && <Check className="w-5 h-5 text-teal-600" />}
-            </div>
-            <div className="text-sm text-gray-600 mt-1">• زيارات في نفس اليوم والتوقيت من كل اسبوع ولمدة 3 أشهر</div>
-
-            <div className="text-sm text-gray-600 mt-1">• احصل على نفس المنظف في كل مرة</div>
-            <div className="text-sm text-gray-600">•  جدولة بسهولة من خلال التطبيق</div>
-          </div>
-
-          <div 
-            className={`rounded-lg border-2 p-4 cursor-pointer relative ${
-              serviceType === 'package-8' ? 'border-teal-500 bg-teal-50' : 'border-gray-200'
-            }`}
-            onClick={() => handleserviceTypeSelect('package-8')}
-          >
-            <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-2 py-1 rounded-full transform  ">
-              خصم 15% لكل زيارة
-            </div>
-            <div className="flex justify-between">
-              <div className="font-semibold text-gray-800">عدة زيارات في الشهر</div>
-              {serviceType === 'package-8' && <Check className="w-5 h-5 text-teal-600" />}
-            </div>
-            <div className="text-sm text-gray-600 mt-1">• أختر الايام والتوقيت المفضل بسهولة </div>
-            <div className="text-sm text-gray-600 mt-1">• 8 زيارات مع خصم يصل الى 16 بالمئة </div>
-
-            <div className="text-sm text-gray-600 mt-1">• احصل على نفس المنظف في كل مرة</div>
-            <div className="text-sm text-gray-600">• إختيار أوقات الزيارات بسهولة من الموقع</div>
-          </div>
+      <div className="space-y-2 mt-3">
+        <div className="flex items-center text-gray-700">
+          <CalendarDays className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
+          <div>يشمل العرض زيارة واحدة أسبوعياً لمدة 4 ساعات</div>
+        </div>
+        
+        <div className="flex items-center text-gray-700">
+          <User className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
+          <div>عاملة تنظيف واحدة و 4 زيارات في الشهر</div>
+        </div>
+        
+        <div className="flex items-center text-gray-700">
+          <Clock className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
+          <div>إجمالي عدد الساعات هو 16 شهرياً</div>
+        </div>
+        
+        <div className="flex items-center text-gray-700">
+          <AlertCircle className="w-5 h-5 text-orange-500 ml-2 flex-shrink-0" />
+          <div>يتم تطبيق رسوم إضافية على الساعات والعمال الإضافيين</div>
         </div>
       </div>
-       
-      
+    </div>
+
+    {/* العرض الفضي */}
+    <div 
+      className={`rounded-lg border-2 p-5 cursor-pointer relative transition-all duration-300 hover:shadow-md ${
+        serviceType === 'package-8' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
+      }`}
+      onClick={() => handleserviceTypeSelect('package-8')}
+    >
+      <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md">
+        خصم 16% لكل زيارة
+      </div>
+      <div className="flex justify-between items-center mb-3">
+        <div className="font-bold text-gray-800 text-lg">العرض الفضي</div>
+        {serviceType === 'package-8' && <Check className="w-6 h-6 text-teal-600" />}
+      </div>
+
+      <div className="space-y-2 mt-3">
+        <div className="flex items-center text-gray-700">
+          <CalendarDays className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
+          <div>يشمل العرض زيارتين أسبوعياً لمدة 8 ساعات</div>
+        </div>
+        
+        <div className="flex items-center text-gray-700">
+          <User className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
+          <div>عاملة تنظيف واحدة و 8 زيارات في الشهر</div>
+        </div>
+        
+        <div className="flex items-center text-gray-700">
+          <Clock className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
+          <div>إجمالي عدد الساعات هو 32 شهرياً</div>
+        </div>
+        
+        <div className="flex items-center text-gray-700">
+          <AlertCircle className="w-5 h-5 text-orange-500 ml-2 flex-shrink-0" />
+          <div>يتم تطبيق رسوم إضافية على الساعات والعمال الإضافيين</div>
+        </div>
+      </div>
+    </div>
+
+    {/* العرض الذهبي */}
+    <div 
+      className={`rounded-lg border-2 p-5 cursor-pointer relative transition-all duration-300 hover:shadow-md ${
+        serviceType === 'package-12' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
+      }`}
+      onClick={() => handleserviceTypeSelect('package-12')}
+    >
+      <div className="absolute -top-3 -right-3 bg-orange-500 text-white px-3 py-1 rounded-full font-bold shadow-lg animate-bounce">
+        الأكثر مبيعاً
+      </div>
+      <div className="flex justify-between items-center mb-3">
+        <div className="font-bold text-gray-800 text-lg">العرض الذهبي</div>
+        {serviceType === 'package-12' && <Check className="w-6 h-6 text-teal-600" />}
+      </div>
+
+      <div className="space-y-2 mt-3">
+        <div className="flex items-center text-gray-700">
+          <CalendarDays className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
+          <div>يشمل العرض 3 زيارات أسبوعياً لمدة 12 ساعة</div>
+        </div>
+        
+        <div className="flex items-center text-gray-700">
+          <User className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
+          <div>عاملة تنظيف واحدة و 12 زيارة في الشهر</div>
+        </div>
+        
+        <div className="flex items-center text-gray-700">
+          <Clock className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
+          <div>إجمالي عدد الساعات هو 48 شهرياً</div>
+        </div>
+        
+        <div className="flex items-center text-gray-700">
+          <AlertCircle className="w-5 h-5 text-orange-500 ml-2 flex-shrink-0" />
+          <div>يتم تطبيق رسوم إضافية على الساعات والعمال الإضافيين</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
          {/*   
           {(serviceType === 'package-12' || serviceType === 'package-4') && (
         <div className="mb-6">
@@ -418,7 +463,7 @@ const renderBookingSummary = () => {
       };
     // All state declarations remain the same
     const [currentTab, setCurrentTab] = useState(0);
-    const [user, setUser] = useState<{ name: string; phone: string;mail: string; phoneVerified: boolean } | null>(null);
+    const [user, setUser] = useState<{ name: string; phone: string; phoneVerified: boolean } | null>(null);
     const [mapLoaded, setMapLoaded] = useState(false);
     console.log("mapLoaded", mapLoaded);
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -506,8 +551,7 @@ console.log("cleanersE", availableCleanersE);
     const [offerTimeSlots, setOfferTimeSlots] = useState<OfferTimeSlot[]>([]);
     let items: string[] = [];
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
-    const [illegalOfferDays, setIllegalOfferDays] = useState<string[]>([]);
-
+console.log("selectedTimeSlot", selectedTimeSlot);
     // Available time slots
     //const availableTimeSlots = [
        // "الفترة الصباحية من 11:00-11:30 الى 15:00-15:30","الفترة المسائية من 16:00-16:30 الى 20:00-20:30"  ];
@@ -521,10 +565,9 @@ console.log("cleanersE", availableCleanersE);
     ];
 
     const selectedOfferData = offers.find(offer => offer.id === selectedOffer);
-    const maxOfferTimes = selectedOfferData ? selectedOfferData.times : 12;
+    console.log("selectedOfferData", selectedOfferData);
     const [name, setName] = useState(user?.name || '');
     const [phone, setPhone] = useState(user?.phone || '');
-    const [mail, setMail] = useState(user?.mail || '');
     const [minDate, setMinDate] = useState<string>('');
     console.log("minDate", minDate);
     // Set min date effect - remains the same
@@ -558,7 +601,6 @@ console.log("cleanersE", availableCleanersE);
    const userdata = {
     name: user?.name || name, // Use the name from response or input
     phone: user?.phone || phone,
-    mail: user?.mail || mail,
     logedin: true,
   };
   localStorage.setItem("user", JSON.stringify(userdata));
@@ -735,18 +777,18 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
 
             items.push(JSON.stringify({name: user?.name || '',  // Use name from user object
                 phone: user?.phone || '',  // Use phone from user object
-                email: user?.mail || '',  // Use email from user object
+                email:   '',  // Use email from user object
                 city: selectedCity,
                 address: addressDetails + "\n " + locationNotes,
                 locationUrl: locationUrl,
                 serviceType:
                     serviceType === 'one-time'
                         ? 'ONE_TIME'
-                        : selectedOffer === 'package-4'
+                        : serviceType === 'package-4'
                             ? 'OFFER_4'
-                            : selectedOffer === 'package-8'
+                            : serviceType === 'package-8'
                                 ? 'OFFER_8'
-                                : selectedOffer === 'package-12'
+                                : serviceType === 'package-12'
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date:new Date( offerTimeSlots[i].date) , // Convert to DateTime, handle empty string
@@ -767,18 +809,18 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
             items.push(JSON.stringify({
                 name: user?.name || '',  // Use name from user object
                 phone: user?.phone || '',  // Use phone from user object
-                email: user?.mail || '',  // Use email from user object
+                email:  '',  // Use email from user object
                 city: selectedCity,
                 address: addressDetails + "\n " + locationNotes,
                 locationUrl: locationUrl,
                 serviceType:
                     serviceType === 'one-time'
                         ? 'ONE_TIME'
-                        : selectedOffer === 'package-4'
+                        : serviceType === 'package-4'
                             ? 'OFFER_4'
-                            : selectedOffer === 'package-8'
+                            : serviceType === 'package-8'
                                 ? 'OFFER_8'
-                                : selectedOffer === 'package-12'
+                                : serviceType === 'package-12'
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
@@ -925,14 +967,7 @@ loadAddress();
             alert("   الرجاء إدخال معلوماتك الشخصية");
             return;
           }
-          if (user?.name===null || user?.phone===null || user?.mail===null) {
-            alert("   الرجاء إدخال معلوماتك الشخصية");
-            return;
-          }
-          if (user?.name.trim()==="" || user?.phone.trim()==="" || user?.mail.trim()==="") {
-            alert("   الرجاء إدخال معلوماتك الشخصية");
-            return;
-          } 
+           
 if (user?.phone.substring(0, 2) !== "05") {
   alert("الرجاء إدخال رقم هاتف صحيح");
   return;
@@ -941,18 +976,7 @@ if (user?.phone.substring(0, 2) !== "05") {
             alert("الرجاء إدخال رقم هاتف صحيح");
             return;
           }
-          if (user?.mail.length < 6) {
-            alert("الرجاء إدخال بريد إلكتروني صحيح");
-            return;
-          }
-          if (user?.mail.indexOf("@") === -1) {
-            alert("الرجاء إدخال بريد إلكتروني صحيح");
-            return;
-          }
-          if (user?.mail.indexOf(".") === -1) {
-            alert("الرجاء إدخال بريد إلكتروني صحيح");
-            return;
-          }
+        
           if (user?.name.length < 3) {
             alert("الرجاء إدخال اسم صحيح");
             return;
@@ -988,7 +1012,7 @@ if (user?.phone.substring(0, 2) !== "05") {
               },
               body: JSON.stringify({name: user?.name || '',  // Use name from user object
                 phone: user?.phone || '',  // Use phone from user object
-                email: user?.mail || '',  // Use email from user object
+                email:   '',  // Use email from user object
                 city: selectedCity,
                 address: addressDetails + "\n " + locationNotes,
                 locationUrl: locationUrl,
@@ -1012,8 +1036,9 @@ if (user?.phone.substring(0, 2) !== "05") {
           });
         
           if (response.ok) {
-         
+           
          console.log("response.ok", response.ok);
+   
           }          
           else {
               const errorData = await response.json();
@@ -1410,8 +1435,7 @@ const handleDateSelection = (day: DisplayDay) => {
               }
 { !loading && (
   <div className="max-w-2xl mx-auto">
-    <h3 className="text-xl font-medium mb-4 text-center">اختر الوقت المناسب</h3>
-    
+     
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {times.map((item) => {
         // تحديد توفر العمال بناءً على الفترات الزمنية المحددة
@@ -1502,6 +1526,18 @@ const handleDateSelection = (day: DisplayDay) => {
         <p className="text-blue-800">
           تم اختيار موعد الخدمة: <strong>{selectedTime}</strong>
         </p>
+        { serviceType !== 'one-time' && (
+
+
+<div className="offer-time-slots">
+<h3> سيتم التواصل معاكم من قبل خدمة العملاء لتثبيت المواعيد القادمة </h3>
+
+
+ 
+</div>
+        )
+
+        }
       </div>
     )}
   </div>
@@ -1513,84 +1549,19 @@ const handleDateSelection = (day: DisplayDay) => {
         );
       };
 
-      const handleAddTimeSlot = (repeatCount: number = 1) => {
-        if (selectedDate && selectedTimeSlot) {
-            // التحقق مما إذا كان اليوم موجودًا في الأيام المحظورة
-            if (illegalOfferDays.includes(selectedDate)) {
-                alert("هذا اليوم محدد مسبقًا، الرجاء اختيار يوم آخر.");
-                return;
-            }
-    
-            // التحقق مما إذا كان التاريخ مكررًا بالفعل
-            if (offerTimeSlots.some(slot => slot.date === selectedDate)) {
-                alert("لا يمكنك تحديد نفس التاريخ لمرات عديدة.");
-                return;
-            }
-    
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-    
-            if (new Date(selectedDate) === today && new Date(selectedDate).getHours() >= 11) {
-                alert("الرجاء اختيار تاريخ مستقبلي.");
-                return;
-            }
-    
-            const newSlots: OfferTimeSlot[] = [];
-            const newIllegalDays: string[] = [];
-    
-            for (let i = 0; i < repeatCount; i++) {
-                const nextDate = new Date(selectedDate);
-                nextDate.setDate(nextDate.getDate() + i * 7); // كل مرة بفارق أسبوع
-    
-                const formattedDate = nextDate.toISOString().split("T")[0];
-    
-                if (!offerTimeSlots.some(slot => slot.date === formattedDate) && !illegalOfferDays.includes(formattedDate)) {
-                    newSlots.push({ date: formattedDate, timeSlot: selectedTime });
-                    newIllegalDays.push(formattedDate);
-                }
-            }
-    
-            if (offerTimeSlots.length + newSlots.length <= maxOfferTimes) {
-                setOfferTimeSlots([...offerTimeSlots, ...newSlots]);
-                setIllegalOfferDays([...illegalOfferDays, ...newIllegalDays]);
-    
-                console.log("Offer time slots", offerTimeSlots);
-                console.log("Illegal offer days", illegalOfferDays);
-            } else {
-                alert(`لقد وصلت إلى الحد الأقصى لعدد المواعيد المتاحة (${maxOfferTimes}).`);
-            }
-        } else {
-            alert("الرجاء تحديد التاريخ والوقت.");
-        }
-    };
-    
 
-    // Function to remove time slot for offer
-   const handleRemoveTimeSlot = (index: number) => {
-        const timeSlotToRemove = offerTimeSlots[index];
-        const newTimeSlots = [...offerTimeSlots];
-        newTimeSlots.splice(index, 1);
-        setOfferTimeSlots(newTimeSlots);
-
-        // Remove the date from illegalOfferDays
-        setIllegalOfferDays(illegalOfferDays.filter(date => date !== timeSlotToRemove.date));
-    };
 
    
   
     const testfunc = (): boolean => {
       console.log("tester value", selectedTime);
-      if (serviceType === 'one-time') {
+      
       if (selectedTime && selectedDate) {
         return true;
       }
-      return false;}
-      else{
-        if (offerTimeSlots.length===maxOfferTimes){
-          return true;
-        }
-        return false;
-      }
+      return false;
+      
+      
     };
 
   // Progress indicator component to show which step the user is on
@@ -1758,14 +1729,7 @@ const ProgressIndicator = () => {
                                     setPhone(e.target.value);
                                     handleSave();
                                 }}     />
-                                <label>البريد الإلكتروني:</label>
-                                <input  type="email" value={user?.mail || mail}  onChange={(e) => {
-                                    if (user) {
-                                        user.mail = e.target.value;
-                                    }
-                                    setMail(e.target.value);
-                                    handleSave();
-                                }}  placeholder="example@domain.com" />
+                               
                                 
                             </div>
                      
@@ -1817,61 +1781,6 @@ const ProgressIndicator = () => {
                                         
                                       
                                          
-                                                <div className="offer-time-slots">
-                                                    <h3>المواعيد ({offerTimeSlots.length}/{maxOfferTimes})</h3>
-                                                    
-                                                    <div className="add-time-slot">
- 
-                                                  
-
-                                                        <button 
-                                                            type="button" 
-                                                            className="add-slot-btn" 
-                                                            onClick={() => {
-                                                              if (serviceType === "package-12") {
-                                                                handleAddTimeSlot(12);
-                                                              } else if (serviceType === "package-4") {
-                                                                handleAddTimeSlot(4);
-                                                              } else {
-                                                                handleAddTimeSlot();
-                                                              }
-                                                            }}
-                                                            disabled={offerTimeSlots.length >= maxOfferTimes}
-                                                        >
-                                                            إضافة موعد
-                                                        </button>
-                                                    </div>
-                                                    
-                                                   
-                                                    {illegalOfferDays.includes(selectedDate) && (
-                                                        <p className="error-message">هذا اليوم محدد مسبقًا، الرجاء اختيار يوم آخر.</p>
-                                                    )}
-
-                                                    <div className="time-slots-list">
-                                                        {offerTimeSlots.length > 0 ? (
-                                                            <ul>
-                                                                {offerTimeSlots.map((timeSlot, index) => (
-                                                                    <li key={index} className="time-slot-item">
-                                                                        <span className="time-slot-info">
-                                                                            <span className="time-slot-date">{timeSlot.date}</span>
-                                                                            <span className="time-slot-time">{timeSlot.timeSlot}</span>
-                                                                        </span>
-                                                                        <button 
-                                                                            type="button" 
-                                                                            className="remove-slot-btn"
-                                                                            onClick={() => handleRemoveTimeSlot(index)}
-                                                                        >
-                                                                            ×
-                                                                        </button>
-                                                                        
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
-                                                        ) : (
-                                                            <p className="no-slots">لم يتم تحديد أي مواعيد بعد.</p>
-                                                        )}
-                                                    </div>
-                                                </div>
                                             </>
                                 
                                
@@ -1900,7 +1809,7 @@ const ProgressIndicator = () => {
           currency: "aed",
         }}
       >
-        <CheckoutPage amount={totalPrice}   language="ar" bookingData={createBookingdata()} />
+        <CheckoutPage amount={totalPrice}   language="ar"  bookingData={createBookingdata()} />
       </Elements>
                                 </div>
                             
@@ -1940,9 +1849,9 @@ const ProgressIndicator = () => {
               {serviceType && (
            <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="font-medium text-gray-800">
-                {serviceType === 'one-time' ? 'زيارة لمرة واحدة' : 
-                 serviceType === 'package-4' ? '4 زيارات أسبوعية' : 
-                 serviceType === 'package-8' ? '8 زيارات متعددة ' : '12 زيارة اسبوعية '}
+                {serviceType === 'one-time' ? 'زيارة  واحدة' : 
+                 serviceType === 'package-4' ? 'العرض البرونزي' : 
+                 serviceType === 'package-8' ? 'العرض الفضي ' : 'العرض الذهبي'}
               </span>
               <span className="text-gray-800 font-bold ">نوع الحجز</span>
             </div>
