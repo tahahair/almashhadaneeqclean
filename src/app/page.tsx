@@ -1,50 +1,52 @@
+// pages/about.tsx
 "use client";
-import React, { useState, useRef ,  useEffect } from "react";
-import { Shield, MessageCircle  ,ShieldCheck ,CheckCircle, ThumbsUp, Search, Sparkles,Menu , X, Heart, Star,  Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
+
+"use client";
+ import {   MessageCircle ,CheckCircle ,ShieldCheck , ThumbsUp, Search, Sparkles,Menu , X, Heart, Star,  Clock,CheckCircle2, Home as HomeIcon, Calendar, Users ,Building2,   UtensilsCrossed  } from 'lucide-react';
 import StoriesGallery from './StoriesGallery';
 import Link from "next/link";
 import "swiper/css";
 import './globals.css';
+import Footer from './components/Footer';
 
-import Cookies from "js-cookie";
-import Image from 'next/image';
+ import Image from 'next/image';
+import { useRouter } from "next/navigation";
+
+import { useState, useEffect } from 'react';
+ import {  Home, FileText, Award, Shield } from 'lucide-react';
 
 
- 
-export default function Home() {
-  const elementRef = useRef<HTMLDivElement>(null);
-  const [visibleSection, setVisibleSection] = useState<string>("main");
-  const [scrollTarget, setScrollTarget] = useState<number>(0); // Scroll position
-console.log(Shield);
-const GlowingButton: React.FC<{ mainText: string; subText: string }> = ({ mainText, subText }) => {
-  const handleClick = () => {
-    window.location.href = "/book";
-  };
-  console.log(handleClick);
-  return (
-    <div className="text-center mt-4">
-      <div className="relative inline-block">
-        <div className="absolute -inset-[1px] bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg blur-[2px] opacity-40 animate-pulse"></div>
-        
-        {/* Subtle glow effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg blur-md opacity-20 group-hover:opacity-20 animate-pulse scale-90"></div>
-        <div className="absolute inset-3 bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg animate-ping opacity-80 scale-80 mx-4"></div>
-        <Link href="/book">
-        <button   className="group relative inline-flex flex-col items-center justify-center px-4 py-2 overflow-hidden rounded-lg transition-all duration-300 hover:scale-102">
-          <div className="absolute inset-0 bg-[#F26B05] scale-200 opacity-90 group-hover:opacity-100" />
-          
-          <div className="relative flex flex-col items-center text-white z-10">
-            <span className="mt-1 text-lg font-medium">{mainText}</span>
-            <span className="mt-1 text-sm font-medium animate-bounce">{subText}</span>
-          </div>
-        </button>
-        </Link>
-      </div>
-    </div>
-  );
-};
- 
-
+const features = [
+  {
+    title: "نفرق بين النظافة والطهارة",
+    icon: "✨"
+  },
+  {
+    title: "نعرف أهمية التطهير في المطابخ والحمامات",
+    icon: "🧼"
+  },{
+    title: "دربنا فريقنا على معايير النظافة الإسلامية",
+            icon: "📋"
+}
+];
+const solutions = [
+  {
+    title: "نفس الفريق المتخصص لبيتك",
+    subtitle: "ما تشرح من جديد",
+    icon: "👥"
+  },
+  {
+    title: "نظام تنظيف مدروس",
+    subtitle: "نظافة وطهارة مضمونة",
+    icon: "✨"
+  },
+  {
+    title: "فريق موثوق",
+    subtitle: "راحة بال",
+    icon: "🤝"
+  }
+];
+/* 
 const Svgen: React.FC = () => {
   return (
 <svg className="w-[100%] h-auto" width="362" height="918" viewBox="0 0 362 918" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -128,7 +130,7 @@ const Svgen: React.FC = () => {
 
 
 );
-};
+}; */
 
 const Svgar: React.FC = () => {
   return (
@@ -276,128 +278,8 @@ const Svgar: React.FC = () => {
  
   );
 };
-  // Scroll when visibleSection changes
-  useEffect(() => {
-    const scroll = () => {
 
-      
-      window.scrollTo({
-        top: scrollTarget, // Target scroll position
-        behavior: "smooth", // Smooth scroll effect
-      });
-    };
-
-    // Ensure DOM has updated before scrolling
-    requestAnimationFrame(scroll);
-  }, [visibleSection, scrollTarget]);
-   
-  const showSection = (section: string) => {
-    if (section === "ask") {
-      setVisibleSection("main");
-      console.log(elementRef.current);
-      if (elementRef.current) {
-        elementRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
- 
-    } else {
-      setVisibleSection(section);
-      setScrollTarget(0); // Scroll to top
-    }
-  };
-
-
-  const textar  = "نخدمك في كل إمارات الدولة | شركة مرخصة "  ;
-  const texten= "We serve you across all Emirates of the country | A licensed company";
-
-  const [EN, setEN] = useState(false);
- 
-  const [AR, setAR] = useState(false);
-  const [lang, setlang] = useState("");
-  const [langclick, setlangclick] = useState(false);
-  const [showMinue, setshowMinue] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Track if data is being loaded
-
-  const features = [
-    {
-      title: "نفرق بين النظافة والطهارة",
-      icon: "✨"
-    },
-    {
-      title: "نعرف أهمية التطهير في المطابخ والحمامات",
-      icon: "🧼"
-    },{
-      title: "دربنا فريقنا على معايير النظافة الإسلامية",
-              icon: "📋"
-}
-  ];
-
- 
-  const solutions = [
-    {
-      title: "نفس الفريق المتخصص لبيتك",
-      subtitle: "ما تشرح من جديد",
-      icon: "👥"
-    },
-    {
-      title: "نظام تنظيف مدروس",
-      subtitle: "نظافة وطهارة مضمونة",
-      icon: "✨"
-    },
-    {
-      title: "فريق موثوق",
-      subtitle: "راحة بال",
-      icon: "🤝"
-    }
-  ];
-  // Load the cookie value before rendering the component
-  useEffect(() => {
-    const savedSvgState = Cookies.get('lang');
-    console.log(savedSvgState);
-    console.log('Language loaded from cookies:', savedSvgState);
-    console.log('Language loaded from cookies:', lang);
-    setlang(savedSvgState || ""); // Set state based on cookie or default to an empty string
-     if (savedSvgState === "AR") {
-      setEN(true);
- 
-      setAR(false);
-    }
-     
-     
-    else {
-      setEN(false);
-  
-      setAR(true);
-
-    }
-    setIsLoading(false); // Mark loading as complete
-  }, []);
-
-  const handleClick: React.MouseEventHandler<SVGPathElement> = (): void => {
-    
-    setlangclick(true);
-
-    
-  };
-   // Save the new state to cookies
-console.log(handleClick);
-  
-
-  const handleClickmain: React.MouseEventHandler<HTMLDivElement> = () => {
-    if (showMinue) {
-      setshowMinue(false);
-      
-    }
-    if (langclick) {
-      setlangclick(false);
-    }
-  };
- 
-
-  const handleClick2: React.MouseEventHandler<SVGPathElement> = (): void => {
-    setshowMinue((prevState) => !prevState);
-  };
- 
-    const stats = [
+  const stats = [
       {
         icon: <HomeIcon className="w-8 h-8 text-blue-500" />,
         number: "+9080",
@@ -414,125 +296,473 @@ console.log(handleClick);
         text: "من عملائنا يحجزون مجدداً"
       }
     ];
-  useEffect(() => {
-    const updateLanguage = (newLang: string) => {
-      setAR(newLang === 'AR');
-       
-      setEN(newLang === 'EN');
-      Cookies.set('lang', newLang);
-      setlang(newLang);
-      console.log(`Language set to ${newLang}`);
-    };
-   
-    switch(lang) {
-      case 'AR':
-        updateLanguage('AR');
-        break;
- 
-      case 'EN':
-        updateLanguage('EN');
-        break;
+// Language content configuration
+const content = {
+  en: {
+    direction: "ltr",
+    meta: {
+      title: "About Us | Elegant Scene",
+      description: "Elegant Scene - An Emirati success story in the world of professional cleaning"
+    },
+    header: {
+      home: "Home",
+      about: "About Us",
+      privacy: "Privacy Policy",
+      terms: "Terms & Conditions",
+      guarantee: "Golden Guarantee"
+    },
+    hero: {
+      title: "About Us",
+      subtitle: "Elegant Scene - An Emirati success story in the world of professional cleaning"
+    },
+    sections: {
+      vision: {
+        title: "From Vision to Reality",
+        content: "Elegant Scene was established in the United Arab Emirates as a solution to a problem we all face as homeowners and families: the difficulty of obtaining reliable cleaning services with consistent quality. We started our journey with a small team and a big dream: to revolutionize the home cleaning sector. Today, after years of continuous work, we have become the first name in deep cleaning in the UAE."
+      },
+      features: {
+        title: "What Makes Us Special",
+        items: [
+          {
+            title: "Specialists in Deep Cleaning Only",
+            content: "We focus on what we excel at"
+          },
+          {
+            title: "Consistent Team for Each Home",
+            content: "To ensure continuity of quality and privacy"
+          },
+          {
+            title: "More Than 9,080 Happy Homes",
+            content: "Trust built day by day"
+          },
+          {
+            title: "95% Customer Satisfaction Rate",
+            content: "That's why most of our customers book with us again"
+          },
+          {
+            title: "100% Licensed Emirati Company",
+            content: "Operating according to local laws and regulations"
+          }
+        ]
+      },
+      team: {
+        title: "Our Team",
+        content: "The Elegant Scene team consists of a professional group trained to the highest global and Islamic cleaning standards. All members of our team are:",
+        items: [
+          {
+            title: "Officially Documented",
+            content: "With legal work permits"
+          },
+          {
+            title: "Professionally Trained",
+            content: "On deep cleaning techniques"
+          },
+          {
+            title: "Subject to Background Checks",
+            content: "To ensure the safety of your home and family"
+          },
+          {
+            title: "Minimum 3 Years Experience",
+            content: "In professional cleaning"
+          }
+        ]
+      },
+      commitment: {
+        title: "Our Commitment",
+        items: [
+          {
+            title: "Time Commitment",
+            content: "Your time is valuable, we always respect it"
+          },
+          {
+            title: "Consistency in Quality",
+            content: "Same excellent level of service in every visit"
+          },
+          {
+            title: "Transparency in Pricing",
+            content: "Clear and fixed price from the beginning, without hidden fees"
+          },
+          {
+            title: "Golden Guarantee",
+            content: "If you don't like the result, get your money back in full"
+          }
+        ]
+      },
+      responsibility: {
+        title: "Our Social Responsibility",
+        content: "We believe that success comes with responsibility. Therefore, we are keen on:",
+        items: [
+          "Using environmentally friendly products",
+          "Providing decent and sustainable job opportunities",
+          "Supporting community initiatives in the UAE"
+        ]
+      },
+      certifications: {
+        title: "Our Certifications and Accreditations",
+        items: [
+          {
+            title: "Official License",
+            content: "From the Department of Economic Development 🇦🇪"
+          },
+          {
+            title: "Approved",
+            content: "By the UAE Chamber of Commerce and Industry"
+          },
+          {
+            title: "ISO 9001 Global Quality Certificate",
+            content: ""
+          }
+        ]
+      },
+      quote: {
+        text: "Because we were once customers looking for distinguished cleaning service... we understood your needs and designed the optimal solution",
+        attribution: "Elegant Scene Management"
+      }
     }
-   }, [lang]);
-
- 
-  
-  // Render a loading indicator while the page waits for the cookie to load
-  if (isLoading) {
-    return <div>Loading...</div>; // Replace with a better loading indicator if needed
+  },
+  ar: {
+    direction: "rtl",
+    meta: {
+      title: "من نحن | المشهد الأنيق",
+      description: "المشهد الأنيق - قصة نجاح إماراتية في عالم التنظيف الاحترافي"
+    },
+    header: {
+      home: "الرئيسية",
+      about: "من نحن",
+      privacy: "سياسة الخصوصية",
+      terms: "الشروط والأحكام",
+      guarantee: "الضمان الذهبي"
+    },
+    hero: {
+      title: "من نحن",
+      subtitle: "المشهد الأنيق - قصة نجاح إماراتية في عالم التنظيف الاحترافي"
+    },
+    sections: {
+      vision: {
+        title: "من رؤية إلى حقيقة",
+        content: "تأسست شركة المشهد الأنيق في دولة الإمارات العربية المتحدة كحل لمشكلة واجهناها جميعاً كأصحاب منازل وعائلات: صعوبة الحصول على خدمة تنظيف موثوقة بجودة ثابتة. بدأنا مسيرتنا بفريق صغير وحلم كبير: إحداث ثورة في قطاع التنظيف المنزلي. واليوم، وبعد سنوات من العمل المتواصل، أصبحنا الاسم الأول في مجال التنظيف العميق في الإمارات."
+      },
+      features: {
+        title: "ما يميزنا",
+        items: [
+          {
+            title: "متخصصون في التنظيف العميق فقط",
+            content: "نركز على ما نتقنه"
+          },
+          {
+            title: "فريق ثابت لكل منزل",
+            content: "لضمان استمرارية الجودة والخصوصية"
+          },
+          {
+            title: "أكثر من 9,080 منزل سعيد",
+            content: "ثقة تبنى يوماً بعد يوم"
+          },
+          {
+            title: "نسبة رضا عملاء 95%",
+            content: "ولذلك معظم عملائنا يحجزون معنا مجدداً"
+          },
+          {
+            title: "شركة إماراتية مرخصة 100%",
+            content: "تعمل وفق القوانين واللوائح المحلية"
+          }
+        ]
+      },
+      team: {
+        title: "فريقنا",
+        content: "يتكون فريق المشهد الأنيق من مجموعة محترفة مدربة على أعلى معايير النظافة العالمية والإسلامية. جميع أعضاء فريقنا:",
+        items: [
+          {
+            title: "موثقون رسمياً",
+            content: "بتصاريح عمل قانونية"
+          },
+          {
+            title: "مدربون مهنياً",
+            content: "على تقنيات التنظيف العميق"
+          },
+          {
+            title: "خاضعون لفحص الخلفية الأمنية",
+            content: "لضمان أمان منزلك وعائلتك"
+          },
+          {
+            title: "خبرة لا تقل عن 3 سنوات",
+            content: "في مجال التنظيف الاحترافي"
+          }
+        ]
+      },
+      commitment: {
+        title: "التزامنا",
+        items: [
+          {
+            title: "الالتزام بالمواعيد",
+            content: "وقتك ثمين، نحترمه دائماً"
+          },
+          {
+            title: "الثبات في الجودة",
+            content: "نفس مستوى الخدمة المتميز في كل زيارة"
+          },
+          {
+            title: "الشفافية في الأسعار",
+            content: "سعر واضح وثابت من البداية، بدون رسوم خفية"
+          },
+          {
+            title: "الضمان الذهبي",
+            content: "إذا لم تعجبك النتيجة، استرد أموالك كاملة"
+          }
+        ]
+      },
+      responsibility: {
+        title: "مسؤوليتنا المجتمعية",
+        content: "نؤمن أن النجاح يأتي مع المسؤولية. لذلك نحرص على:",
+        items: [
+          "استخدام منتجات صديقة للبيئة",
+          "توفير فرص عمل كريمة ومستدامة",
+          "دعم المبادرات المجتمعية في الإمارات"
+        ]
+      },
+      certifications: {
+        title: "شهاداتنا واعتماداتنا",
+        items: [
+          {
+            title: "ترخيص رسمي",
+            content: "من دائرة التنمية الاقتصادية 🇦🇪"
+          },
+          {
+            title: "معتمدون",
+            content: "من غرفة تجارة وصناعة الإمارات"
+          },
+          {
+            title: "شهادة الجودة العالمية ISO 9001",
+            content: ""
+          }
+        ]
+      },
+      quote: {
+        text: "لأننا كنا في يوم من الأيام عملاء نبحث عن خدمة تنظيف مميزة... فهمنا احتياجاتكم وصممنا الحل الأمثل",
+        attribution: "إدارة المشهد الأنيق"
+      }
+    }
   }
-  const langImages = {
-    
-    EN: '/english.png',
-    AR: '/arabic.png'
+};
+
+const langImages = {
+  EN: '/english.png',
+  AR: '/arabic.png'
+};
+
+// Menu items with icons
+const menuItems = [
+  { key: 'home', path: '/', icon: Home },
+  { key: 'about', path: '/about', icon: Users },
+  { key: 'privacy', path: '/privacy', icon: FileText },
+  { key: 'terms', path: '/terms', icon: Shield },
+  { key: 'guarantee', path: '/guarantee', icon: Award },
+];
+
+const AboutPage: React.FC = () => {
+
+
+
+   
+
+  const router = useRouter();
+  const [showMenu, setShowMenu] = useState(false);
+  const [lang, setLang] = useState("AR"); // Default to Arabic
+  const [currentPath, setCurrentPath] = useState('/');
+  
+  // Get current language content
+  const t = lang === "EN" ? content.en : content.ar;
+  const isRTL = lang === "AR";
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.menu-container') && !target.closest('.menu-button')) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Toggle menu
+  const handleMenuToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowMenu(!showMenu);
   };
 
-      
-  return (
-    <>
-      <style jsx global>{`
-        html, body {
-          margin: 0;
-          padding: 0;
-          width: 100%;
-        }
-      `}</style>
+  // Navigation
+  const navigateTo = (path: string) => {
+    router.push(path);
+    setCurrentPath(path);
+    setShowMenu(false);
+  };
 
-      <div onClick={handleClickmain} className="min-h-screen bg-gradient-to-b from-white to-blue-50">
-        {/* Top Banner - Updated with brand colors */}
-        <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 text-white p-1 relative overflow-hidden z-50">
-          <div className="absolute inset-0 opacity-10" />
-          <div className={`max-w-7xl mx-auto flex items-center justify-center`}>
-            <div className="overflow-hidden relative w-full">
-              <p className={`text-center ${AR ? "mt-1 text-[90%] " : "mt-2 text-[65%] "}    md:text-[70%] lg:text-[70%] font-bold mr-4`}>
-{AR && (
-  <>
-   <span className="inline-flex items-center">
-   <Image src="/arabic.png" alt="Flag of the United Arab Emirates" width={12} height={12} className="mr-2" />
-  {textar}
 
-</span>
-  </>
-)}
-                {EN && (
-  <>
-   <span className="inline-flex items-center">
-   {texten}
-   <Image src="/arabic.png" alt="Flag of the United Arab Emirates" width={12} height={12} className="ml-2" />
-  
-
-</span>
-  </>
-)}
-              </p>
+  const GlowingButton: React.FC<{ mainText: string; subText: string }> = ({ mainText, subText }) => {
+    const handleClick = () => {
+      window.location.href = "/book";
+    };
+    console.log(handleClick);
+    return (
+      <div className="text-center mt-4">
+        <div className="relative inline-block">
+          <div className="absolute -inset-[1px] bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg blur-[2px] opacity-40 animate-pulse"></div>
+          
+          {/* Subtle glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg blur-md opacity-20 group-hover:opacity-20 animate-pulse scale-90"></div>
+          <div className="absolute inset-3 bg-gradient-to-r from-[#F26B05] to-[#F26B05] rounded-lg animate-ping opacity-80 scale-80 mx-4"></div>
+          <Link href="/book">
+          <button   className="group relative inline-flex flex-col items-center justify-center px-4 py-2 overflow-hidden rounded-lg transition-all duration-300 hover:scale-102">
+            <div className="absolute inset-0 bg-[#F26B05] scale-200 opacity-90 group-hover:opacity-100" />
+            
+            <div className="relative flex flex-col items-center text-white z-10">
+              <span className="mt-1 text-lg font-medium">{mainText}</span>
+              <span className="mt-1 text-sm font-medium animate-bounce">{subText}</span>
             </div>
-       
+          </button>
+          </Link>
+        </div>
+      </div>
+    );
+  };
+
+
+
+
+
+
+
+  const textar  = "نخدمك في كل إمارات الدولة | شركة مرخصة "  ;
+  const texten= "We serve you across all Emirates of the country | A licensed company";
+
+
+  return (
+   <> 
+
+
+    <div className={isRTL ? "rtl" : "ltr"} dir={t.direction}>
+    <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 text-white p-1 relative overflow-hidden z-50">
+        <div className="absolute inset-0 opacity-10" />
+        <div className={`max-w-7xl mx-auto flex items-center justify-center`}>
+          <div className="overflow-hidden relative w-full">
+            <p className={`text-center ${isRTL ? "mt-1 text-[90%] " : "mt-2 text-[65%] "}    md:text-[70%] lg:text-[70%] font-bold mr-4`}>
+              {isRTL ? (
+                <>
+                  <span className="inline-flex items-center">
+                  {textar}
+                    <Image src="/arabic.png" alt="Flag of the United Arab Emirates" width={12} height={12} className="mr-2" />
+                    
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="inline-flex items-center text-[105%] mb-2">
+                    {texten}
+                    <Image src="/arabic.png" alt="Flag of the United Arab Emirates" width={12} height={12} className="ml-2 " />
+                  </span>
+                </>
+              )}
+            </p>
           </div>
         </div>
+      </div>
 
-        {/* Header - Updated hover states and rings */}
-        <header className="bg-white/80 backdrop-blur-sm sticky top-0 z-40 border-b">
-          <div className="max-w-7xl mx-auto px-2 py-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <div className="absolute -inset-2 bg-blue-100 rounded-full blur-lg opacity-60"></div>
-                  <img onClick={() => showSection('main')} src="/logo.png" alt="Next Graft" className="h-12 relative" />
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <div className="flex gap-3">
-                  {['EN', 'AR'].map((langa) => {
-                    const langKey = langa.toUpperCase() as keyof typeof langImages;
-                    return (
-                      <button 
-                        key={langa}
-                        onClick={() => setlang(langa)}
-                        className={`relative rounded-full overflow-hidden w-8 h-8 transition-transform ${
-                          lang === langa ? 'scale-110 ring-2 ring-blue-500' : 'hover:scale-105'
-                        }`}
-                      >
-                        <img 
-                          src={langImages[langKey]}
-                          alt={langKey} 
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    );
-                  })}
-                </div>
-                <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors" onClick={handleClick2 as unknown as React.MouseEventHandler<HTMLButtonElement>}>
-                  <Menu className="w-8 h-8 text-gray-700" /> 
-                </button>
+      {/* Header - Simple design with logo left and menu right */}
+      <header dir="ltr" className="bg-white sticky top-0 z-40 border-b shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex justify-between items-center">
+            {/* Logo on the left */}
+            <div className="flex items-center">
+              <div className="order-first">
+                <img 
+                  onClick={() => navigateTo('/')} 
+                  src="/logo.png" 
+                  alt={isRTL ? "المشهد الأنيق" : "Elegant Scene"} 
+                  className="h-12 cursor-pointer" 
+                />
               </div>
             </div>
+            
+            {/* Language and menu button on the right */}
+            <div className="flex items-center gap-3">
+              <div className="flex gap-3 mr-2">
+                {['EN', 'AR'].map((langCode) => {
+                  const langKey = langCode.toUpperCase() as keyof typeof langImages;
+                  return (
+                    <button 
+                      key={langCode}
+                      onClick={() => setLang(langCode)}
+                      className={`relative rounded-full overflow-hidden w-8 h-8 ${
+                        lang === langCode ? 'ring-2 ring-gray-400' : 'opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <img 
+                        src={langImages[langKey]}
+                        alt={langKey} 
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+              <button 
+                className="p-2 hover:bg-gray-100 rounded-lg menu-button"
+                onClick={handleMenuToggle}
+              >
+                <Menu className="w-6 h-6 text-gray-700" /> 
+              </button>
+            </div>
           </div>
-        </header>
+          
+          {/* Simplified Menu */}
+          {showMenu && (
+            <nav className="menu-container">
+              <div className="absolute right-2 w-64 z-50 mt-2">
+                <ul className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                  {menuItems.map((item, index) => {
+                    const Icon = item.icon;
+                    const isActive = currentPath === item.path;
+                    
+                    return (
+                      <li key={item.key}>
+                        <button 
+                          onClick={() => navigateTo(item.path)}
+                          className={`w-full text-right py-3 px-4 transition-colors ${
+                            isActive 
+                              ? 'bg-gray-100 text-gray-900 font-medium' 
+                              : 'hover:bg-gray-50 text-gray-700'
+                          } ${index !== 0 ? 'border-t border-gray-100' : ''}`}
+                        >
+                          <div className={`flex items-center ${isRTL ? 'flex-row-reverse' : 'flex-row-reverse'}`}>
+                            <Icon className={`h-4 w-4 ${isRTL ? 'ml-3' : 'ml-3'} ${
+                              isActive ? 'text-gray-700' : 'text-gray-500'
+                            }`} />
+                            <span>
+                              {t.header[item.key as keyof typeof t.header]}
+                            </span>
+                          </div>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </nav>
+          )}
+        </div>
+      </header>
 
-
-
-        {AR && (
+      
+      {/* Main Content */}
+      <main className="max-w-5xl mx-auto    ">
+        {/* Vision to Reality Section */}
+        <section className="mb-12">
+        
+        {1 && (
 
 <div dir="rtl"   >
   <div  className="relative bg-white/90 overflow-hidden max-w-7xl mx-auto text-center">
@@ -1474,917 +1704,16 @@ console.log(handleClick);
 
 
         )}
-        {EN && (
-  
-     <div>
-     <div className="relative bg-white/90 overflow-hidden mx-auto max-w-7xl">
         
-       <div className="absolute inset-0  " />
-       <div className="absolute inset-0   " />
-    
-       <div className="w-full max-w-6xl mx-auto      ">
-         <h1 className="text-3xl sm:text-3xl  pt-4 font-bold text-center   text-black">
-           We Specialize in Deep Cleaning
-         </h1>
-         <h1 className="text-3xl sm:text-3xl pb-4 font-bold text-center text-black drop-shadow-lg bg-gradient-to-r from-black via-gray-700 to-black bg-clip-text text-transparent">
-           Only....
-         </h1>
-         <div className="grid grid-cols-3 gap-2 p-4 sm:gap-4">
-           {stats.map((stat, index) => (
-             <div
-               key={index}
-               className="transform hover:scale-102 transition-all duration-300"
-             >
-               <div className="h-full flex flex-col items-center justify-center text-center gap-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl py-6 px-2 sm:p-6 hover:shadow-md">
-                 <div className="flex-shrink-0">
-                   {stat.icon}
-                 </div>
-                 <div className="min-w-0 flex-1">
-                   <div className="text-lg sm:text-2xl font-bold text-black">
-                     {stat.number}
-                   </div>
-                   <div className="text-sm sm:text-base text-gray-600 mt-1">
-                     {stat.text}
-                   </div>
-                 </div>
-               </div>
-             </div>
-           ))}
-         </div>
-    
-         <GlowingButton
-           mainText="Book Your Cleaning Service Now"
-           subText="Click Here to Book ⬇️"
-         />
-    
-         <div className="relative pt-4 pb-4 mt-4">
-           <div className="absolute inset-0 backdrop-blur-sm"></div>
-           <div className="relative z-10 flex flex-col items-center">
-             
-             <h2 className="text-2xl md:text-4xl font-bold text-center py-4 bg-black text-transparent bg-clip-text relative">
-               What Our Customers Say About Their Experience
-             </h2>
-             <div className="flex items-center justify-center gap-8 mt-2">
-           
-               <div className="flex gap-2">
-                 {[1, 2, 3, 4, 5].map((star) => (
-                   <Star
-                     key={star}
-                     className="w-6 h-6 text-[#FF4500] fill-current animate-pulse"
-                     fill="#FF4500"
-                   />
-                 ))}
-               </div>
-             
-             </div>
-           </div>
-         </div>
-       </div>
-        {/* Stories Gallery */}
-        <div className="flex-1 overflow-hidden  ">
-             <StoriesGallery />
-           </div>
-           <hr className="m-6 border-t border-gray-200 " />
-    
-       <div className="max-w-6xl mx-auto py-4 space-y-6">
-         
-         {/* First Section */}
-         <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4  ">
-           <div className="text-center mb-6">
-             <div className="relative inline-block px-8 py-4">
-               <span className="absolute -left-2 -top-2 text-4xl p-4 text-gray-400">
-               &quot;
-               </span>
-               <span className="absolute -right-2 -bottom-2 text-4xl px-4 text-gray-400">
-               &quot;
-               </span>
-               <h2 className="text-xl md:text-xl font-bold text-black">
-                 Before we were Elegant Scene Management...
-               </h2>
-               <h2 className="text-xl md:text-xl font-bold text-black mt-4">
-                 We are also Elegant Scene customers.
-               </h2>
-             </div>
-           </div>
-    
-           <h3 className="text-xl sm:text-xl pb-4 font-bold text-center text-black drop-shadow-lg bg-gradient-to-r from-black via-gray-700 to-black bg-clip-text text-transparent">
-             We Understand the Needs of the Arab Family
-           </h3>
-    
-           <div className="overflow-x-auto">
-             <div className="flex flex-nowrap gap-2 pb-4 px-2 min-w-full justify-start md:justify-center">
-               {features.map((feature, index) => (
-                 <div key={index} className="flex-none w-[32%] md:w-[33%]">
-                   <div className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow h-full">
-                     <div className="flex flex-col items-center text-center gap-2">
-                       <span className="text-3xl">{feature.icon}</span>
-                       <p className="text-sm md:text-base font-medium text-black leading-relaxed">
-                         {feature.title}
-                       </p>
-                     </div>
-                   </div>
-                 </div>
-               ))}
-             </div>
-           </div>
-    
-           {/* Second Section */}
-    
-           <h2 className="text-2xl md:text-3xl pb-8  pt-8 font-bold text-center text-black drop-shadow-sm bg-gradient-to-r from-black via-gray-700 to-black bg-clip-text text-transparent">
-             We know exactly how you feel and what you need
-           </h2>
-    
-           <div className="grid grid-cols-1 sm:grid-cols-2 px-8 gap-6 mb-16">
-             {[
-               { text: "We know the fatigue of explaining the same thing every time", icon: "🗣️" },
-               { text: "We understand the value of wasted time in monitoring", icon: "⏰" },
-               { text: "We realize the importance of trust in the cleaning team", icon: "🤝" },
-               { text: "We trained our team on Islamic hygiene standards", icon: "📋" }
-             ].map((point, index) => (
-               <div key={index} className="group">
-                 <div className="bg-gray-50 rounded-2xl p-8 shadow hover:shadow-md transition-all h-full transform group-hover:-translate-y-1">
-                   <div className="flex items-center gap-6">
-                     <span className="text-4xl transform group-hover:scale-110 transition-transform duration-300">
-                       {point.icon}
-                     </span>
-                     <p className="text-[90%] md:text-[90%] text-black leading-relaxed">
-                       {point.text}
-                     </p>
-                   </div>
-                 </div>
-               </div>
-             ))}
-           </div>
-    
-           <h3 className="text-xl sm:text-xl pb-4 pt-4  font-bold text-center text-black drop-shadow-lg bg-gradient-to-r from-black via-gray-700 to-black bg-clip-text text-transparent">
-             Therefore, we changed the equation
-           </h3>
-    
-           <div className="grid grid-cols-1 sm:grid-cols-2 px-8 lg:grid-cols-3 gap-3 md:gap-4">
-             {solutions.map((solution, index) => (
-               <div key={index} className="w-full">
-                 <div className="bg-gray-50 rounded-lg p-3 md:p-4 hover:shadow-md transition-shadow h-full">
-                   <div className="text-center space-y-2 md:space-y-3">
-                     <span className="text-2xl md:text-3xl block">
-                       {solution.icon}
-                     </span>
-                     <h4 className="text-black font-bold text-sm md:text-base">
-                       {solution.title}
-                     </h4>
-                     <p className="text-gray-600 text-xs md:text-sm">
-                       {solution.subtitle}
-                     </p>
-                   </div>
-                 </div>
-               </div>
-             ))}
-           </div>
-    
-           <div className="relative bg-white/90 max-w-2xl mx-auto p-4 mt-4">
-             {/* Gradient Border Container */}
-             <div className="p-[2px] rounded-3xl bg-gradient-to-r from-blue-500 via-blue-400 to-blue-300">
-               {/* Main Card */}
-               <div className="relative bg-gradient-to-br from-blue-600 via-blue-500 to-blue-400 rounded-3xl p-8 overflow-hidden">
-                 {/* Decorative Elements */}
-                 <div className="absolute top-0 right-0 w-40 h-40 bg-blue-300 opacity-20 rounded-full blur-3xl transform translate-x-20 -translate-y-20"></div>
-                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-blue-200 opacity-20 rounded-full blur-3xl transform -translate-x-20 translate-y-20"></div>
-                 <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-blue-400 opacity-10 rounded-full blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
-    
-                 {/* Glass Overlay */}
-                 <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-sm"></div>
-    
-                 {/* Content Container */}
-                 <div className="relative z-10 space-y-8">
-                   {/* Header Section */}
-                   <div className="text-center space-y-4">
-                     <h3 className="text-4xl font-bold text-white tracking-wide">
-                       And the result?
-                     </h3>
-                     <div className="flex items-center justify-center gap-2 text-blue-100">
-                       <MessageCircle className="w-5 h-5" />
-                       <p className="text-xl font-medium">Our Customers Say:</p>
-                     </div>
-                   </div>
-    
-                   {/* Testimonials Container */}
-                   <div className="space-y-6">
-                     {/* First Testimonial */}
-                     <div className="group">
-                       <div className="relative">
-                         <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-300/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
-                         <div className="relative flex items-center gap-4 bg-white/10 rounded-2xl p-2 hover:bg-white/[0.15] transition-all duration-300">
-                           <div className="bg-gradient-to-br from-blue-400/80 to-blue-500/80 p-3 rounded-xl group-hover:scale-110 transition-all duration-300 shadow-lg">
-                             <Search className="w-6 h-6 text-white" />
-                           </div>
-                           <span className="text-[120%] font-medium text-white text-right flex-1">
-                           &quot;This is what we were looking for&quot;
-                           </span>
-                         </div>
-                       </div>
-                     </div>
-    
-                     {/* Second Testimonial */}
-                     <div className="group">
-                       <div className="relative">
-                         <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-300/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
-                         <div className="relative flex items-center gap-4 bg-white/10 rounded-2xl p-2 hover:bg-white/[0.15] transition-all duration-300">
-                           <div className="bg-gradient-to-br from-blue-400/80 to-blue-500/80 p-3 rounded-xl group-hover:scale-110 transition-all duration-300 shadow-lg">
-                             <Sparkles className="w-6 h-6 text-white" />
-                           </div>
-                           <span className="text-[120%] font-medium text-white text-right flex-1">
-                           &quot;Finally, we are relieved of the cleaning burden&quot;
-                           </span>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
-                   <div className="text-center  p-2 text-white ">
-                     <p className=" text-2xl font-bold text-white  ">
-                       All this is guaranteed with...
-                       <br />
-                       <span className="text-yellow-400">The Golden Guarantee</span>
-                       <br />
-                       <span className="text-[70%]">
-                         If you don&apos;t like the cleaning, don&apos;t pay anything
-                       </span>
-                       <br />
-                       💯
-                     </p>
-                   </div>
-    
-                   <GlowingButton
-                     mainText="Book Your Cleaning Service Now"
-                     subText="Click Here to Book ⬇️"
-                   />
-                 </div>
-    
-                 {/* Bottom Accent */}
-                 <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-200/30 to-transparent"></div>
-               </div>
-             </div>
-           </div>
-    
-           <div className="relative bg-white/90 pt-4 pb-4 mt-4">
-             <div className="absolute inset-0 backdrop-blur-sm"></div>
-             <div className="relative z-10 flex flex-col items-center">
-              
-               <h2 className="text-2xl md:text-4xl font-bold text-center py-4 bg-black text-transparent bg-clip-text relative">
-                 What Our Customers Say About Their Experience
-               </h2>
-               <div className="flex items-center justify-center gap-8 mt-2">
-               <div className="flex gap-2">
-                 {[1, 2, 3, 4, 5].map((star) => (
-                   <Star
-                     key={star}
-                     className="w-6 h-6 text-[#FF4500] fill-current animate-pulse"
-                     fill="#FF4500"
-                   />
-                 ))}
-               </div>
-    
-                
-               </div>
-             </div>
-           </div>
-           
-           </div>
-           {/* Stories Gallery */}
-           <div className="flex-1 overflow-hidden  ">
-             <StoriesGallery />
-           </div>
-         </div>
-    
-         <hr className="m-6 border-t border-gray-200" />
-    
-         <div className="relative bg-white/90 overflow-hidden max-w-7xl mx-auto px-4  ">
-           
-           <div className="relative bg-white/60 backdrop-blur-xl rounded-3xl px-8 md:p-12  ">
-             {/* Top Section */}
-             <div className="text-center  py-8">
-               <div className="flex justify-center mb-6">
-                 <div className="bg-blue-50 p-3 rounded-full">
-                   <Sparkles className="text-blue-600 w-8 h-8" />
-                 </div>
-               </div>
-    
-               {/* Main Title */}
-               <h1 className="text-4xl font-bold text-gray-800 mb-4">
-                 Why Choose Elegant Scene for Cleaning Services?
-               </h1>
-    
-               {/* Subtitle */}
-               <div className="inline-block">
-                 <p className="text-xl text-gray-600 font-medium">
-                   A realistic comparison based on:
-                 </p>
-               </div>
-             </div>
-    
-             {/* Comparison Sources */}
-             <div className="flex flex-wrap justify-center gap-6 mb-2 text-[90%]">
-               <div className="flex items-center gap-3 bg-gray-50 p-4 w-[100%] rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                 <div className="bg-yellow-100 p-2 rounded-full">
-                   <Star className="text-yellow-500" size={24} />
-                 </div>
-                 <span className="font-medium">
-                   Hundreds of customer reviews on Google
-                 </span>
-               </div>
-               <div className="flex items-center gap-3 bg-gray-50 p-4 w-[100%] rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                 <div className="bg-green-100 p-2 rounded-full">
-                   <CheckCircle className="text-green-500" size={24} />
-                 </div>
-                 <span className="font-medium">Our extensive experience in the market</span>
-               </div>
-               <div className="flex items-center gap-3 bg-gray-50 p-4 w-[100%] rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                 <div className="bg-purple-100 p-2 rounded-full">
-                   <ThumbsUp className="text-purple-500" size={24} />
-                 </div>
-                 <span className="font-medium ">
-                   Testimonials from our customers who have tried other companies
-                 </span>
-               </div>
-             </div>
-           </div>
-    
-           <div className="overflow-x-auto ">
-             <Svgen />
-           </div>
-           <GlowingButton
-             mainText="Get the Perfect Cleaning"
-             subText="Click Here to Book ⬇️"
-           />
-       
-       </div>
-       <div className="relative overflow-hidden">
-         <div className="relative mt-4 ">
-           {/* Testimonials Section */}
-           <div className="relative overflow-hidden">
-             {/* Animated background elements */}
-             <div className="absolute inset-0">
-               <div className="absolute top-0 left-0 w-72 h-72 bg-gradient-to-r from-[#0088CC]/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-               <div className="absolute bottom-0 right-0 w-72 h-72 bg-gradient-to-l from-[#4B0082]/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
-             </div>
-    
-             {/* Header */}
-             <div className="relative pt-8 pb-4">
-               <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 backdrop-blur-sm"></div>
-               <div className="relative z-10 flex flex-col items-center">
-                 <h2 className="text-2xl md:text-4xl font-bold text-center py-6 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text relative">
-                   What Our Customers Say About Their Experience
-                 </h2>
-                 <div className="flex gap-2">
-     {[1, 2, 3, 4, 5].map((star) => (
-       <Star
-         key={star}
-         className="w-6 h-6 text-[#FF4500] fill-current animate-pulse"
-         fill="#FF4500"
-       />
-     ))}
+        </section>
+
+        
+      </main>
+
+      {/* Footer */}
+      <Footer language={lang === "EN" ? "en" : "ar"} companyName={lang === "EN" ? "Elegant Scene" : "المشهد الأنيق"} />
     </div>
-    
-               </div>
-             </div>
-    
-             {/* Stories Gallery */}
-             <div className="flex-1 overflow-hidden">
-               <StoriesGallery />
-             </div>
-           </div>
-           
-             <div className=" rounded-2xl md:rounded-3xl p-4 md:p-8   relative overflow-hidden">
-               {/* Background decoration */}
-               <div className="absolute top-0 left-0 w-32 md:w-64 h-32 md:h-64 bg-blue-100 rounded-full blur-2xl md:blur-3xl"></div>
-               <div className="absolute bottom-0 right-0 w-32 md:w-64 h-32 md:h-64 bg-purple-100 rounded-full blur-2xl md:blur-3xl"></div>
-    
-               <h2 className="text-2xl md:text-3xl font-bold text-center mb-6 md:mb-8 bg-black text-transparent bg-clip-text">
-                 Facts in Numbers
-               </h2>
-    
-               <div className="flex flex-row overflow-x-auto gap-3 md:gap-4 pb-2 md:pb-4 px-1 snap-x snap-mandatory">
-                 {/* Customer Satisfaction */}
-                 <div className="group flex-none w-[31%] md:w-[31%] snap-start">
-                   <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 md:p-6 text-center shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full">
-                     <div className="relative z-10">
-                       <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
-                         <Heart className="w-6 h-6 md:w-8 md:h-8 text-blue-500" />
-                       </div>
-                       <div className="text-3xl md:text-4xl font-bold text-purple-800 mb-1 md:mb-2">
-                         95%
-                       </div>
-                       <div className="text-sm md:text-base text-blue-500 font-medium">
-                         Customer Satisfaction Rate
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-    
-                 {/* Trusted Homes */}
-                 <div className="group flex-none w-[31%] md:w-[31%] snap-start">
-                   <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 md:p-6 text-center shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full">
-                     <div className="relative z-10">
-                       <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
-                         <HomeIcon className="w-6 h-6 md:w-8 md:h-8 text-blue-500" />
-                       </div>
-                       <div className="text-3xl md:text-4xl font-bold text-purple-800 mb-1 md:mb-2">
-                         +9080
-                       </div>
-                       <div className="text-sm md:text-base text-blue-500 font-medium">
-                         Homes Trust Our Services
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-    
-                 {/* Recommendations */}
-                 <div className="group flex-none w-[31%] md:w-[31%] snap-start">
-                   <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 md:p-6 text-center shadow-sm hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full">
-                     <div className="relative z-10">
-                       <div className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-3 md:mb-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center">
-                         <Users className="w-6 h-6 md:w-8 md:h-8 text-blue-500" />
-                       </div>
-                       <div className="text-3xl md:text-4xl font-bold text-purple-800 mb-1 md:mb-2">
-                         8/10
-                       </div>
-                       <div className="text-sm md:text-base text-blue-500 font-medium">
-                         Customers Recommend Us to Relatives
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-               </div>
-             </div>
-            
-    
-             <hr className="m-6 border-t border-gray-200" />
-           {/* Family Section */}
-           <div className="max-w-7xl  ">
-                {/* Header Section with animated gradient */}
-               <div className="relative px-6 py-12 text-center text-black overflow-hidden">
-                  <div className="relative z-10">
-                   <h2 className="text-3xl md:text-4xl font-bold mb-4   drop-shadow-lg transform hover:scale-105 transition-transform">
-                     We at Elegant Scene Cleaning Services...
-                   </h2>
-                   <p className="text-xl text-black/90">
-                     As fathers and mothers, as men and women in company management,
-                     we fully understand your needs.
-                   </p>
-                 </div>
-         
-    
-               {/* Main Content */}
-               <div className="px-8   backdrop-blur-sm">
-                 {/* Challenges Section */}
-                 <div className="mb-12">
-                   <h3 className="text-2xl font-bold text-center mb-8 bg-black text-transparent bg-clip-text">
-                     In our homes, we faced the same challenges:
-                   </h3>
-                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                     {[
-                       {
-                         icon: HomeIcon,
-                         text: "We know what it means to come home after a long day... and need to see it clean and tidy"
-                       },
-                       {
-                         icon: Heart,
-                         text: "We understand a mother's concern for her children's health... and the importance of deep sterilization"
-                       },
-                       {
-                         icon: Shield,
-                         text: "We realize the embarrassment of a housewife from superficial cleanliness... especially with guests"
-                       },
-                       {
-                         icon: Clock,
-                         text: "We are aware of the importance of family time... instead of wasting it following up on cleaning companies"
-                       }
-                     ].map((item, index) => (
-                       <div
-                         key={index}
-                         className="group flex items-start gap-4 p-6 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-                       >
-                         <div className="p-3 bg-white rounded-lg shadow-md group-hover:shadow-lg transition-shadow">
-                           <item.icon className="w-6 h-6 text-[#0088CC] group-hover:text-[#4B0082] transition-colors" />
-                         </div>
-                         <p className="text-[#4B0082] text-lg group-hover:text-[#0088CC] transition-colors">
-                           {item.text}
-                         </p>
-                       </div>
-                     ))}
-                   </div>
-                 </div>
-    
-                 {/* Solutions Section */}
-                 <div className="mb-12">
-                   <h3 className="text-2xl font-bold text-center mb-8 bg-black text-transparent bg-clip-text">
-                     Therefore, we designed a cleaning system that meets all these
-                     needs:
-                   </h3>
-                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                     {[
-                       "A stable team you trust... just like you trust your family",
-                       "Deep cleaning... that puts every mother's heart at ease",
-                       "Punctual appointments... that respect family time"
-                     ].map((text, index) => (
-                       <div
-                         key={index}
-                         className="group p-6 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-xl text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105"
-                       >
-                         <p className="text-[#4B0082] text-lg group-hover:text-[#0088CC] transition-colors">
-                           {text}
-                         </p>
-                       </div>
-                     ))}
-                   </div>
-                 </div>
-    
-                 {/* Closing Statement */}
-                 <div className="text-center mb-8">
-                   <div className="inline-block relative">
-                     <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/20 to-[#4B0082]/20 blur-xl animate-pulse"></div>
-                     <p className="relative z-10 text-2xl font-bold bg-black text-transparent bg-clip-text">
-                       We are a family serving your family...
-                       <br />
-                       With understanding and care
-                     </p>
-                     <span className=" text-3xl "> ✨</span>
-                   </div>
-                 </div>
-    
-                 <GlowingButton
-                   mainText="Book a Cleaning to Family Standards"
-                   subText="Click Here to Book ⬇️"
-                 />
-               </div>
-             </div>
-           </div>
-         </div>
-         <hr className="m-6 border-t border-gray-200" />
-         {/* Hero Section */}
-         <div className="relative overflow-hidden">
-           <div className="max-w-7xl mx-auto px-4 ">
-             <div className=" rounded-3xl p-10 text-black relative overflow-hidden">
-               <div className="absolute top-0 left-0 w-72 h-72 bg-black/10 rounded-full blur-3xl animate-pulse" />
-               <div className="absolute bottom-0 right-0 w-72 h-72 bg-black/10 rounded-full blur-3xl animate-pulse" />
-    
-               <div className="relative z-10">
-                 <h1 className="text-4xl font-bold text-center mb-4">
-                   Our Guarantees to You:
-                 </h1>
-                 <div className="grid gap-6 max-w-2xl mx-auto">
-                   <div className="bg-black/10 backdrop-blur-sm rounded-2xl p-2 hover:bg-black/20 transition-all duration-300">
-                     <p className="text-[100%]">
-                       ✓ Guaranteed Cleanliness or Your Money Back
-                     </p>
-                   </div>
-                   <div className="bg-black/10 backdrop-blur-sm rounded-2xl p-2 hover:bg-black/20 transition-all duration-300">
-                     <p className="text-[100%]">✓ Licensed and Officially Documented Team</p>
-                   </div>
-                   <div className="bg-black/10 backdrop-blur-sm rounded-2xl p-2 hover:bg-black/20 transition-all duration-300">
-                     <p className="text-[100%]">
-                       ✓ Same Quality Level on Every Visit
-                     </p>
-                   </div>
-                 </div>
-               </div>
-             </div>
-           </div>
-         </div>
-    
-         {/* Services Section */}
-         <div className="max-w-7xl mx-auto px-4 py-8 ">
-           <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-[#0088CC] to-[#4B0082] text-transparent bg-clip-text">
-             Our Services 🏠
-           </h2>
-           <div className="grid gap-8">
-         {/* House & Villa Service */}
-         <div className="group relative bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500">
-           <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
-           <div className="relative z-10">
-             <div className="flex items-center mb-4">
-               <div className="w-16 h-16 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                 <HomeIcon className="w-8 h-8 text-[#0088CC]" />
-               </div>
-               <h3 className="text-2xl font-bold text-[#4B0082] mr-4">
-                 Houses and Villas ✓
-               </h3>
-             </div>
-             <p className="text-gray-600 text-lg">
-               Deep Cleaning System | Comprehensive Sterilization | Guaranteed Result
-             </p>
-           </div>
-         </div>
-    
-         {/* Office Service */}
-         <div className="group relative bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500">
-           <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
-           <div className="relative z-10">
-             <div className="flex items-center mb-4">
-               <div className="w-16 h-16 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                 <Building2 className="w-8 h-8 text-[#0088CC]" />
-               </div>
-               <h3 className="text-2xl font-bold text-[#4B0082] mr-4">
-                 Offices and Companies ✓
-               </h3>
-             </div>
-             <p className="text-gray-600 text-lg">
-               Fast Evening Cleaning | Without Disrupting Your Work
-             </p>
-           </div>
-         </div>
-    
-         {/* Furnished Apartments */}
-         <div className="group relative bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500">
-           <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
-           <div className="relative z-10">
-             <div className="relative z-10">
-              <div className="flex items-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                  <HomeIcon className="w-8 h-8 text-[#0088CC]" />
-                </div>
-                <h3 className="text-2xl font-bold text-[#4B0082] mr-4">
-                  Furnished Apartments ✓
-                </h3>
-              </div>
-              <p className="text-gray-600 text-lg">
-                Hotel Standards | Focused Attention on Every Corner
-              </p>
-            </div>
-          </div>
-    
-          {/* Restaurant Kitchens */}
-          <div className="group relative bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-500">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300" />
-            <div className="relative z-10">
-              <div className="flex items-center mb-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                  <UtensilsCrossed className="w-8 h-8 text-[#0088CC]" />
-                </div>
-                <h3 className="text-2xl font-bold text-[#4B0082] mr-4">
-                  Restaurant Kitchens ✓
-                </h3>
-              </div>
-              <p className="text-gray-600 text-lg">
-                Professional Sterilization | Global Health Standards
-              </p>
-            </div>
-          </div>
-        </div>
-          </div>
-    
-          {/* Statistics */}
-          <div className="max-w-7xl mx-auto px-4 py-4 text-center">
-            <div className="bg-white rounded-3xl p-12   relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0088CC]/5 to-[#4B0082]/5" />
-              <div className="relative z-10">
-                <p className="text-2xl text-[#4B0082] font-bold mb-8">
-                  More than 9080 customers have chosen our specialized cleaning system... because it ensures a deep clean that lasts longer 💯
-                </p>
-              </div>
-              
-            <GlowingButton
-              mainText="  Try the Specialized Cleaning System "
-              subText=" ⬇️ Guaranteed Result or Your Money Back ⬇️"
-            />
-    
-            {/* Footer Note */}
-            <div className="max-w-7xl mx-auto px-4 py-8">
-              <p className="text-center text-gray-600">
-                *All our services include a special cleaning system, global materials, and a trained team
-              </p>
-            </div>
-            </div>
-    
-          </div>
-          <hr className="m-6 border-t border-gray-200" />
-          <div
-            className="min-h-screen   p-8"
-            dir="rtl"
-          >
-            {/* Hero Comparison */}
-            <div className="max-w-5xl mx-auto mb-16">
-              <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-                <div className="grid md:grid-cols-2 divide-x-2 divide-x-reverse divide-dashed">
-                  {/* Regular Companies */}
-                  <div className="p-8 bg-gray-50">
-                    <div className="text-center mb-6">
-                      <h3 className="text-2xl font-bold text-gray-600 mb-4">
-                        Regular Cleaning Companies
-                      </h3>
-                      <p className="text-xl text-gray-500">&apos;Try Your Luck&apos;</p>
-                    </div>
-                  </div>
-    
-                  {/* Our Company */}
-                  <div className="p-8 bg-gradient-to-br from-[#0088CC]/10 to-[#4B0082]/10">
-                    <div className="text-center mb-6">
-                      <h3 className="text-2xl font-bold bg-black/90 text-transparent bg-clip-text mb-4">
-                        We Tell You
-                      </h3>
-                      <p className="text-2xl font-bold text-[#4B0082]">
-                      &apos;We Guarantee You 100% Result&apos; </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-    
-            {/* Golden Guarantee */}
-            <div className="max-w-5xl mx-auto mb-16">
-              <div className="bg-gradient-to-r from-[#0088CC] to-[#4B0082] rounded-3xl py-12 px-2 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full transform translate-x-1/2 -translate-y-1/2" />
-                <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full transform -translate-x-1/2 translate-y-1/2" />
-    
-                <div className="relative z-10">
-      <h2 className="text-[150%] font-bold text-center mb-8">
-        Our Golden Guarantee is Simple and Clear:
-      </h2>
-      <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto px-6">
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl px-2 py-6 hover:bg-white/20 transition-all duration-300">
-          <p className="text-[100%] text-center">
-            You are Satisfied... or we Redo the Cleaning for Free
-          </p>
-        </div>
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl py-6 px-2 hover:bg-white/20 transition-all duration-300">
-          <p className="text-[100%] text-center">Not Convinced? Get Your Money Back in Full</p>
-        </div>
-      </div>
-    </div>
-              </div>
-            </div>
-    
-            <div className="max-w-5xl mx-auto px-4 mb-16">
-          <h3 className="text-xl sm:text-2xl font-bold text-center mb-6 bg-black text-transparent bg-clip-text">
-            Why Can We Guarantee This Guarantee? <br></br> Because We Have:
-          </h3>
-          <div className="flex flex-row justify-center flex-wrap gap-4">
-            {[
-              { icon: Clock, text: "Years of Experience in Deep Cleaning" },
-              { icon: Users, text: "Team Trained to the Highest Standards" },
-              { icon: Shield, text: "Tried and Tested Cleaning System" }
-            ].map((item, index) => (
-              <div
-                key={index}
-                className="group bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex-1 w-[31%] "
-              >
-                <div className="w-12 h-12 mx-auto mb-4 bg-gradient-to-r from-[#0088CC]/10 to-[#4B0082]/10 rounded-full flex items-center justify-center">
-                  <item.icon className="w-6 h-6 text-[#0088CC] group-hover:text-[#4B0082] transition-colors duration-300" />
-                </div>
-                <p className="text-center text-gray-700 text-sm sm:text-base">{item.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-    
-            {/* Without Guarantee */}
-            <div className="max-w-5xl mx-auto mb-8">
-              <div className="bg-gray-50 rounded-3xl p-8">
-                <h3 className="text-2xl font-bold text-center mb-8 text-gray-700">
-                  Without This Guarantee:
-                </h3>
-                <div className="grid md:grid-cols-3 gap-6">
-                  {[
-                    "You Will Have to Try Company After Company",
-                    "Waste Your Time and Money",
-                    "And in The End... The Same Problem"
-                  ].map((text, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-4 bg-white p-4 rounded-xl shadow"
-                    >
-                      <X className="w-6 h-6 text-red-500 flex-shrink-0" />
-                      <p className="text-gray-600">{text}</p>
-                    </div>
-                  ))}
-                </div>
-                        {/* Confidence Statement */}
-            <div className="max-w-3xl mx-auto mb-4 mt-4 text-center">
-              <p className="text-2xl font-bold bg-black text-transparent bg-clip-text">
-                We Are Confident in Our Service...
-              </p>
-              <p className="text-2xl font-bold bg-black/70 text-transparent bg-clip-text">
-                To The Point Where We Refund Your Money if You Don&apos;t Like The Result!
-              </p>
-            </div>
-            
-            <GlowingButton
-              mainText="   Book a 100% Guaranteed Cleaning"
-              subText="Click Here to Book ⬇️"
-            />
-    
-              </div>
-              
-            </div>
-    
-    
-    
-          </div>
-          <hr className="m-6 border-t border-gray-200" />
-          <div
-            className="min-h-screen   "
-            dir="rtl"
-          >
-            {/* Customer Loyalty Section */}
-            <div className="max-w-5xl mx-auto mb-16 bg-white rounded-3xl shadow-xl p-8">
-              <h1 className="text-3xl font-bold text-center mb-6 bg-black text-transparent bg-clip-text">
-                Why Do 95% of Our Customers Stay With Us?
-              </h1>
-    
-              {/* Customer Quotes */}
-              <div className="bg-blue-50 py-6 px-1 rounded-xl mb-6">
-                <div className="text-[100%] text-gray-700 italic text-center">
-                <p className="py-2">Our Customers Always Tell Us:</p>
-                  <p className="py-2">&apos;Finally Found a Company We Can Rely On&apos;</p>
-                  <p className="py-2">&apos;We Don&apos;t Want to Change... We&apos;re Comfortable With You&apos;</p>
-                  <p className="py-2">&apos;The Team Now Knows Our House Better Than Us&apos;</p>
-                </div>
-              </div>
-    
-              {/* Secrets of Success */}
-              <div className="mb-6">
-                <h2 className="text-2xl font-semibold text-center text-black/80 mb-4">
-                  The Secret To Their Continued Loyalty:
-                </h2>
-                <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    "Same Level of Cleanliness Every Time",
-                    "Same Specialized Team for Each Home",
-                    "Same Punctual Appointments Always"
-                  ].map((text, index) => (
-                    <div
-                      key={index}
-                      className="bg-blue-100 py-4 px-4 rounded-xl text-[80%] flex items-center justify-right"
-                    >
-                      <CheckCircle2 className="text-green-500 ml-3" />
-                      <p className="text-gray-700">{text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-    
-              {/* Customer Statistics */}
-              <div className="bg-gradient-to-br from-[#0088CC]/10 to-[#4B0082]/10 py-6 px-4 rounded-xl mb-6">
-                <h2 className="text-2xl font-semibold text-center text-black mb-4">
-                  After Their First Experience With Us:
-                </h2>
-                <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    "95% of Customers Book a Second Time",
-                    "90% Request Weekly or Monthly Cleaning",
-                    "85% Recommend Our Services to Relatives and Friends"
-                  ].map((text, index) => (
-                    <div
-                      key={index}
-                      className="bg-white py-4 px-4 rounded-xl text-[80%]  text-right "
-                    >
-                      <p className="text-gray-700">{text}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-    
-              {/* Guaranteed Results */}
-              <div className="bg-green-50 py-6 px-2 rounded-xl text-center mb-8">
-                <h2 className="text-2xl font-bold text-green-800 mb-4">
-                  Because the Result is Always the Same:
-                </h2>
-                <div className="flex flex-col items-right  space-y-3">
-                  {[
-                    "Clean Home",
-                    "Relaxed Family",
-                    "Guaranteed Service"
-                  ].map((text, index) => (
-                    <div key={index} className="flex items-right mr-8">
-                      <CheckCircle2 className="text-green-600 ml-2" />
-                      <span>{text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-    
-              {/* Call to Action */}
-              <GlowingButton
-                mainText="Join Our Distinguished Customers"
-                subText="Click Here ⬇️"
-              />
-                <div className="p-12"> 
-                </div>
-                <hr className="m-6 border-t border-gray-200" />
-            </div>
-          
-          </div>
-        </div>
-      </div>
-    </div>
-    </div>
- 
-        )}
+ </> );
+};
 
-       
-      </div>
-    </>
-  );
-
-
-}
-
-
+export default AboutPage;

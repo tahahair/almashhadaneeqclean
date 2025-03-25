@@ -41,18 +41,18 @@ const StoriesGallery = () => {
     hintInterval.current = setInterval(() => {
       if (!isScrolling && !currentStory) {
         setActiveHintIndex((prev) => (prev + 1) % images.length);
-        
+
         // تمرير تلقائي للعرض إذا كان العنصر خارج نطاق الرؤية
         const container = scrollRef.current;
         const elements = container?.getElementsByClassName('story-item');
         if (container && elements) {
-          const nextElement = elements[activeHintIndex+1];
+          const nextElement = elements[activeHintIndex + 1];
           if (nextElement) {
             const containerRect = container.getBoundingClientRect();
             const elementRect = nextElement.getBoundingClientRect();
-            
+
             if (elementRect.right >= containerRect.right || elementRect.left <= containerRect.left) {
-              const scrollAmount = nextElement.offsetLeft - container.offsetLeft - containerRect.width / 2 + nextElement.offsetWidth / 2-100;
+              const scrollAmount = nextElement.offsetLeft - container.offsetLeft - containerRect.width / 2 + nextElement.offsetWidth / 2 - 100;
               container.scrollTo({
                 left: scrollAmount,
                 behavior: 'smooth'
@@ -80,7 +80,7 @@ const StoriesGallery = () => {
 
   const openStory = (index) => {
     if (!isScrolling) {
-      
+
       setCurrentStory(images[index]);
       setCurrentIndex(index);
       document.body.style.overflow = 'hidden';
@@ -93,16 +93,21 @@ const StoriesGallery = () => {
   };
 
   const navigateStory = (direction) => {
-    const newIndex = direction === 'next'
-      ? Math.min(currentIndex  , images.length - 1)
-      : Math.max(currentIndex  , 0);
+    let newIndex;
+    if (direction === 'next') {
+      newIndex = Math.min(currentIndex + 1, images.length - 1);
+    } else {
+      newIndex = Math.max(currentIndex - 1, 0);
+    }
 
     setCurrentStory(images[newIndex]);
     setCurrentIndex(newIndex);
   };
 
   const handleImageClick = () => {
+
     if (currentIndex < images.length - 1) {
+      console.log('next');
       navigateStory('next');
     } else {
       closeStory();
@@ -111,11 +116,11 @@ const StoriesGallery = () => {
 
   const handleScroll = () => {
     setIsScrolling(true);
-    
+
     if (scrollTimeout.current) {
       clearTimeout(scrollTimeout.current);
     }
-    
+
     scrollTimeout.current = setTimeout(() => {
       setIsScrolling(false);
     }, 150);
@@ -130,6 +135,7 @@ const StoriesGallery = () => {
           if (currentIndex < images.length - 1) navigateStory('next');
           break;
         case 'ArrowLeft':
+          console.log('ArrowLeft');
           if (currentIndex > 0) navigateStory('prev');
           break;
         case 'Escape':
@@ -178,26 +184,26 @@ const StoriesGallery = () => {
               onClick={() => openStory(index)}
             >
               {activeHintIndex === index && !currentStory && !isScrolling && (
-             <div className="absolute -top-12  inset-x-0 flex justify-center transition-all duration-500">
-             <div className="relative transform group-hover:-translate-y-1">
-               <div className="relative bg-white border border-orange-100 rounded-lg shadow overflow-hidden">
-                 <div className="absolute inset-0 bg-orange-50 opacity-50 group-hover:opacity-70 transition-opacity"></div>
-                 <div className="relative flex items-center gap-2 px-3 py-2">
-                   <div className="relative">
-                     <div className="absolute w-1 h-1 bg-orange-500 rounded-full animate-ping opacity-75"></div>
-                     <div className="relative w-1 h-1 bg-orange-600 rounded-full"></div>
-                   </div>
-                   <span className="text-xs font-medium text-orange-700 whitespace-nowrap">
-                     انقر للمشاهدة
-                   </span>
-                 </div>
-               </div>
-             </div>
-           </div>
+                <div className="absolute -top-12  inset-x-0 flex justify-center transition-all duration-500">
+                  <div className="relative transform group-hover:-translate-y-1">
+                    <div className="relative bg-white border border-orange-100 rounded-lg shadow overflow-hidden">
+                      <div className="absolute inset-0 bg-orange-50 opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                      <div className="relative flex items-center gap-2 px-3 py-2">
+                        <div className="relative">
+                          <div className="absolute w-1 h-1 bg-orange-500 rounded-full animate-ping opacity-75"></div>
+                          <div className="relative w-1 h-1 bg-orange-600 rounded-full"></div>
+                        </div>
+                        <span className="text-xs font-medium text-orange-700 whitespace-nowrap">
+                          انقر للمشاهدة
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
-             
-             <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-r from-[#0088CC] to-[#4B0082] shadow-golden-glow">
-                
+
+              <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-r from-[#0088CC] to-[#4B0082] shadow-golden-glow">
+
                 <div className="w-full h-full rounded-full overflow-hidden border-2 border-white">
                   <img
                     src={image.url}
@@ -207,9 +213,9 @@ const StoriesGallery = () => {
                 </div>
               </div>
               <p className="text-sm text-gray-700 mt-1">{image.title}</p>
-              
+
             </div>
-            
+
           ))}
         </div>
       </div>
@@ -251,10 +257,8 @@ const StoriesGallery = () => {
                 className="flex-1 h-1 rounded-full bg-white/30 overflow-hidden"
               >
                 <div
-                  className={`h-full bg-white transition-transform duration-300 ${
-                    index === currentIndex ? 'w-full' :
-                    index < currentIndex ? 'w-full' : 'w-0'
-                  }`}
+                  className={`h-full bg-white transition-transform duration-300 ${index === currentIndex ? 'w-full' :
+                      index < currentIndex ? 'w-full' : 'w-0'}`}
                 />
               </div>
             ))}

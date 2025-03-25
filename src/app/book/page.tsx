@@ -4,29 +4,349 @@ import { useState, useEffect, useRef   } from 'react';
 import { useRouter } from "next/navigation";
 import Script from 'next/script';
 import CheckoutPage from "../components/CheckoutPage";
- import {  Menu, Shield, Award, Clock, Star, ChevronDown, ChevronLeft , ChevronRight, Check, CalendarDays, User, AlertCircle } from 'lucide-react';
+ import {  Menu, Shield, Home, Users, FileText,  Award, Clock, Star, ChevronDown, ChevronLeft , ChevronRight, Check, CalendarDays, User, AlertCircle } from 'lucide-react';
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
- 
+import Image from 'next/image';
+
  if (process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY === undefined) {
    throw new Error("NEXT_PUBLIC_STRIPE_PUBLIC_KEY is not defined");
  }
  const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 
+// Language content configuration
+const content = {
+  en: {
+    direction: "ltr",
+    meta: {
+      title: "Terms & Conditions | Elegant Scene",
+      description: "Terms and conditions for Elegant Scene cleaning services"
+    },
+    header: {
+      home: "Home",
+      about: "About Us",
+      privacy: "Privacy Policy",
+      terms: "Terms & Conditions",
+      guarantee: "Golden Guarantee"
+    },
+    hero: {
+      title: "Terms & Conditions",
+      subtitle: "Rules and conditions for dealing with Elegant Scene"
+    },
+    sections: {
+      booking: {
+        title: "1. Service Booking",
+        items: [
+          {
+            title: "Advance Booking",
+            content: "Service must be booked at least 24 hours in advance of the requested appointment."
+          },
+          {
+            title: "Booking Confirmation",
+            content: "Your booking will be confirmed via SMS or email."
+          },
+          {
+            title: "Specify Requirements",
+            content: "Please specify any special requirements at the time of booking (areas needing special attention, specific cleaning materials, etc.)."
+          },
+          {
+            title: "Time Estimate",
+            content: "We will inform you of the estimated time the cleaning process will take based on the size of the location."
+          }
+        ]
+      },
+      pricing: {
+        title: "2. Pricing and Payment",
+        items: [
+          {
+            title: "Price Transparency",
+            content: "We offer clear and fixed prices from the start, without hidden fees."
+          },
+          {
+            title: "Payment Methods",
+            content: "We accept payment in cash, by bank cards, or through banking applications."
+          },
+          {
+            title: "Tax Invoice",
+            content: "We issue an official tax invoice for each payment."
+          },
+          {
+            title: "Offers and Discounts",
+            content: "Discounts apply only when their announced conditions are met."
+          }
+        ]
+      },
+      cancellation: {
+        title: "3. Cancellation Policy",
+        items: [
+          {
+            title: "Free Cancellation",
+            content: "You can cancel your booking for free up to 12 hours before the scheduled appointment."
+          },
+          {
+            title: "Late Cancellation Fees",
+            content: "A fee of 25% of the service value will be applied for cancellations less than 12 hours before the appointment."
+          },
+          {
+            title: "No-Show",
+            content: "In case of not being present at the scheduled appointment without prior notice, a fee of 50% of the service value will be charged."
+          },
+          {
+            title: "Rescheduling",
+            content: "You can reschedule the appointment once for free up to 6 hours before the original appointment."
+          }
+        ]
+      },
+      guarantee: {
+        title: "4. Golden Guarantee",
+        items: [
+          {
+            title: "Satisfaction Guarantee",
+            content: "We guarantee your complete satisfaction with our services."
+          },
+          {
+            title: "Re-cleaning",
+            content: "If you are not satisfied with the result, we will re-clean for free within 48 hours."
+          },
+          {
+            title: "Refund",
+            content: "If you are still not convinced after re-cleaning, we will refund the full amount without questions."
+          },
+          {
+            title: "Activating the Guarantee",
+            content: "The guarantee can be activated by contacting customer service and explaining the reason for dissatisfaction."
+          }
+        ]
+      },
+      responsibilities: {
+        title: "5. Our Responsibilities",
+        items: [
+          {
+            title: "Time Commitment",
+            content: "We commit to arrive at the specified time punctually."
+          },
+          {
+            title: "Qualified Team",
+            content: "We provide a trained, licensed, and officially documented team."
+          },
+          {
+            title: "Materials and Equipment",
+            content: "We use high-quality cleaning materials and professional equipment."
+          },
+          {
+            title: "Insurance",
+            content: "We provide insurance against any damage that may occur during service delivery."
+          }
+        ]
+      },
+      clientResponsibilities: {
+        title: "6. Client Responsibilities",
+        items: [
+          {
+            title: "Provide Access",
+            content: "You must ensure our team has access to the areas requiring cleaning."
+          },
+          {
+            title: "Disclosure",
+            content: "Please inform us of any sensitive surfaces or materials that require special care."
+          },
+          {
+            title: "Valuable Items",
+            content: "We recommend securing valuable possessions before the cleaning appointment."
+          },
+          {
+            title: "Pets",
+            content: "Please secure pets during the cleaning period."
+          }
+        ]
+      },
+      amendments: {
+        title: "7. Amendments to Terms and Conditions",
+        content: "We reserve the right to modify these terms and conditions at any time. You will be informed of any changes through our website or via email."
+      },
+      quote: {
+        text: "We seek to build a transparent and sustainable relationship with you, based on mutual trust and respect",
+        attribution: "Elegant Scene Management"
+      }
+    }
+  },
+  ar: {
+    direction: "rtl",
+    meta: {
+      title: "الشروط والأحكام | المشهد الأنيق",
+      description: "قواعد وشروط التعامل مع شركة المشهد الأنيق لخدمات التنظيف"
+    },
+    header: {
+      home: "الرئيسية",
+      about: "من نحن",
+      privacy: "سياسة الخصوصية",
+      terms: "الشروط والأحكام",
+      guarantee: "الضمان الذهبي"
+    },
+    hero: {
+      title: "الشروط والأحكام",
+      subtitle: "قواعد وشروط التعامل مع المشهد الأنيق"
+    },
+    sections: {
+      booking: {
+        title: "1. حجز الخدمة",
+        items: [
+          {
+            title: "الحجز المسبق",
+            content: "يجب حجز خدمة التنظيف قبل 24 ساعة على الأقل من الموعد المطلوب."
+          },
+          {
+            title: "تأكيد الحجز",
+            content: "سيتم تأكيد حجزكم من خلال رسالة نصية أو بريد إلكتروني."
+          },
+          {
+            title: "تحديد المتطلبات",
+            content: "يرجى تحديد أي متطلبات خاصة وقت الحجز (مناطق تحتاج عناية خاصة، مواد تنظيف معينة، إلخ)."
+          },
+          {
+            title: "تقدير الوقت",
+            content: "سنخبركم بالمدة التقديرية التي ستستغرقها عملية التنظيف بناء على حجم المكان."
+          }
+        ]
+      },
+      pricing: {
+        title: "2. الأسعار والدفع",
+        items: [
+          {
+            title: "شفافية الأسعار",
+            content: "نقدم أسعاراً واضحة وثابتة منذ البداية، بدون رسوم خفية."
+          },
+          {
+            title: "طرق الدفع",
+            content: "نقبل الدفع نقداً، بالبطاقات المصرفية، أو عبر التطبيقات البنكية."
+          },
+          {
+            title: "فاتورة ضريبية",
+            content: "نصدر فاتورة ضريبية رسمية لكل عملية دفع."
+          },
+          {
+            title: "العروض والخصومات",
+            content: "تطبق الخصومات فقط عند الوفاء بشروطها المعلنة."
+          }
+        ]
+      },
+      cancellation: {
+        title: "3. سياسة الإلغاء",
+        items: [
+          {
+            title: "إلغاء مجاني",
+            content: "يمكنكم إلغاء الحجز مجاناً قبل 12 ساعة من الموعد المحدد."
+          },
+          {
+            title: "رسوم الإلغاء المتأخر",
+            content: "يتم تطبيق رسوم بنسبة 25% من قيمة الخدمة عند الإلغاء قبل أقل من 12 ساعة من الموعد."
+          },
+          {
+            title: "عدم الحضور",
+            content: "في حال عدم التواجد في الموعد المحدد دون إشعار مسبق، يتم احتساب رسوم بنسبة 50% من قيمة الخدمة."
+          },
+          {
+            title: "إعادة الجدولة",
+            content: "يمكن إعادة جدولة الموعد مرة واحدة مجاناً قبل 6 ساعات من الموعد الأصلي."
+          }
+        ]
+      },
+      guarantee: {
+        title: "4. الضمان الذهبي",
+        items: [
+          {
+            title: "ضمان الرضا",
+            content: "نضمن لكم الرضا التام عن خدماتنا."
+          },
+          {
+            title: "إعادة التنظيف",
+            content: "إذا لم تكونوا راضين عن النتيجة، نقوم بإعادة التنظيف مجاناً خلال 48 ساعة."
+          },
+          {
+            title: "استرداد الأموال",
+            content: "إذا لم تقتنعوا بعد إعادة التنظيف، نسترد المبلغ كاملاً دون أسئلة."
+          },
+          {
+            title: "آلية تفعيل الضمان",
+            content: "يمكن تفعيل الضمان بالتواصل مع خدمة العملاء وتوضيح سبب عدم الرضا."
+          }
+        ]
+      },
+      responsibilities: {
+        title: "5. مسؤولياتنا",
+        items: [
+          {
+            title: "الالتزام بالمواعيد",
+            content: "نلتزم بالحضور في الموعد المحدد بدقة."
+          },
+          {
+            title: "فريق مؤهل",
+            content: "نوفر فريقاً مدرباً ومرخصاً وموثقاً رسمياً."
+          },
+          {
+            title: "المواد والمعدات",
+            content: "نستخدم مواد تنظيف عالية الجودة ومعدات احترافية."
+          },
+          {
+            title: "التأمين",
+            content: "نوفر تأميناً ضد أي أضرار قد تحدث أثناء تقديم الخدمة."
+          }
+        ]
+      },
+      clientResponsibilities: {
+        title: "6. مسؤوليات العميل",
+        items: [
+          {
+            title: "توفير الوصول",
+            content: "يجب تأمين وصول فريقنا إلى المناطق المطلوب تنظيفها."
+          },
+          {
+            title: "الإفصاح",
+            content: "يرجى إبلاغنا بأي أسطح أو مواد حساسة تتطلب عناية خاصة."
+          },
+          {
+            title: "الأغراض الثمينة",
+            content: "نوصي بتأمين المقتنيات الثمينة قبل موعد التنظيف."
+          },
+          {
+            title: "الحيوانات الأليفة",
+            content: "يرجى تأمين الحيوانات الأليفة خلال فترة التنظيف."
+          }
+        ]
+      },
+      amendments: {
+        title: "7. التعديلات على الشروط والأحكام",
+        content: "نحتفظ بحق تعديل هذه الشروط والأحكام في أي وقت. سيتم إعلامكم بأي تغييرات من خلال موقعنا الإلكتروني أو عبر البريد الإلكتروني."
+      },
+      quote: {
+        text: "نسعى لبناء علاقة شفافة ومستدامة معكم، تقوم على الثقة المتبادلة والاحترام",
+        attribution: "إدارة المشهد الأنيق"
+      }
+    }
+  }
+};
+
+ 
+
+// Menu items with icons
+const menuItems = [
+  { key: 'home', path: '/', icon: Home },
+  { key: 'about', path: '/about', icon: Users },
+  { key: 'privacy', path: '/privacy', icon: FileText },
+  { key: 'terms', path: '/terms', icon: Shield },
+  { key: 'guarantee', path: '/guarantee', icon: Award },
+];
 interface OfferTimeSlot {
     date: string;
     timeSlot: string;
 }
  
 
-
-  const langImages = {
-    
-    EN: '/english.png',
-    AR: '/arabic.png'
-  };
-
+const langImages = {
+  EN: '/english.png',
+  AR: '/arabic.png'
+};
 
   
 const TabsPage = () => {
@@ -34,10 +354,10 @@ const TabsPage = () => {
     const [hours, setHours] = useState(4);
   const [selectedTime, setSelectedTime] = useState('');
   const [date, setDate] = useState('');
-  const [basePrice, setBasePrice] = useState(100);
+  const [basePrice, setBasePrice] = useState(85);
   const [workers, setWorkers] = useState(1);
   const [serviceType, setServiceType] = useState< string>('one-time');
-const [totalPrice, setTotalPrice] = useState(100);
+const [totalPrice, setTotalPrice] = useState(85);
 const [selectedCity, setSelectedCity] = useState("");
  
 
@@ -61,18 +381,17 @@ const [selectedCity, setSelectedCity] = useState("");
 
 
 
+const [locationUrl, setLocationUrl] = useState("");
 
+const [currentTab, setCurrentTab] = useState(0);
 
- const calculateTotalPrice = ({hours, workers}: {hours: number; workers: number}) => {
-    
-    if (selectedCity === 'Dubai') {
-        setBasePrice(100);
-    } else if (selectedCity === 'Sharjah' || selectedCity === 'Ajman' || selectedCity === 'Umm Al Quwain') {
-        setBasePrice(85);
-    }
+ const calculateTotalPrice = ({hours, workers, currentBasePrice}: {hours: number; workers: number,currentBasePrice: number}) => {
+   
     if (serviceType === 'one-time') {
         // Calculate price for one-time service
         // Example base rate per hour
+
+        
         let extra = (hours - 4) * 20;
 
         if (hours <4) {
@@ -82,8 +401,10 @@ const [selectedCity, setSelectedCity] = useState("");
        
         if (workers > 0) {
             
-            setTotalPrice((basePrice * workers) + (extra * workers));
+            setTotalPrice((currentBasePrice * workers) + (extra * workers));
         }
+
+        console.log("setBasePrice", currentBasePrice);
     } else if (serviceType === 'package-4') {
       if (hours <=4 && workers === 1) {
 
@@ -113,11 +434,22 @@ const [selectedCity, setSelectedCity] = useState("");
 
 useEffect(() => {
     console.log("totalPrice useeffect", totalPrice);
+    console.log("calculateTotalPrice", selectedCity);
+    let newBasePrice = 0; // Declare newBasePrice here
+        if (selectedCity === 'Dubai') {
+            newBasePrice = 100;
+        } else {
+            newBasePrice = 85;
+        }
 
-    calculateTotalPrice({ hours, workers });
-}, [ serviceType, basePrice, workers, hours, selectedCity]);
+        setBasePrice(newBasePrice);
+}, [ serviceType, workers, hours, locationUrl,basePrice]);
 
- 
+useEffect(() => {
+  console.log("useEffect for totalPrice triggered - basePrice:", basePrice, "workers:", workers, "hours:", hours);
+  calculateTotalPrice({ hours, workers,currentBasePrice: basePrice}); // Pass basePrice here
+}, [basePrice, workers, hours,serviceType,locationUrl]); // Run when basePrice, workers, or hours change
+
 const [showSummaryDetails, setShowSummaryDetails] = useState(false);
 
 // Modified renderBookingSummary function - will be rendered at the bottom of the page
@@ -163,8 +495,8 @@ const renderBookingSummary = () => {
         switch(type) {
             case 'one-time':
              
-                setTotalPrice(100);
-                setBasePrice(100);
+                setTotalPrice(85);
+                setBasePrice(85);
                 break;
             case 'package-4':
                 setSelectedOffer(offers[0].id);
@@ -457,31 +789,22 @@ const renderBookingSummary = () => {
    };
 
  
-    const showSection = () => {
-    
-        router.push(`/`);
-      };
+   
     // All state declarations remain the same
-    const [currentTab, setCurrentTab] = useState(0);
     const [user, setUser] = useState<{ name: string; phone: string; phoneVerified: boolean } | null>(null);
     const [mapLoaded, setMapLoaded] = useState(false);
     console.log("mapLoaded", mapLoaded);
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
     const [addressDetails, setAddressDetails] = useState("");
     const [locationNotes, setLocationNotes] = useState("");
-    const [locationUrl, setLocationUrl] = useState("");
     const mapRef = useRef<HTMLDivElement>(null);
     const mapInstanceRef = useRef<google.maps.Map | null>(null);
     const markerRef = useRef<google.maps.Marker | null>(null)
     const router = useRouter();
 
-    const [showMinue, setshowMinue] = useState(false);
-    console.log("showMinue", showMinue);
-    const handleClick2: React.MouseEventHandler<SVGPathElement> = (): void => {
-      setshowMinue((prevState) => !prevState);
-    };
-  const [lang, setlang] = useState("");
-
+    
+   
+ 
 
     // States for Time and Offer Selection remain the same
     const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
@@ -857,20 +1180,20 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                 const normalizedCityName = cityName.toLowerCase();
                 if (normalizedCityName.includes("dubai") || normalizedCityName.includes("دبي")) {
                     setSelectedCity("Dubai");
-                    setBasePrice(100);
-                    calculateTotalPrice({ hours, workers });
+                    
+                    calculateTotalPrice({ hours, workers ,currentBasePrice: 100});
                 } else if (normalizedCityName.includes("sharjah") || normalizedCityName.includes("الشارقة")) {
                     setSelectedCity("Sharjah");
-                    setBasePrice(85);
-                    calculateTotalPrice({ hours, workers });
+                    
+                    calculateTotalPrice({ hours, workers ,currentBasePrice: 85});
                 } else if (normalizedCityName.includes("ajman") || normalizedCityName.includes("عجمان")) {
                     setSelectedCity("Ajman");
-                    setBasePrice(85);
-                    calculateTotalPrice({ hours, workers });
+                   
+                    calculateTotalPrice({ hours, workers ,currentBasePrice: 85});
                 } else if (normalizedCityName.includes("umm al quwain") || normalizedCityName.includes("أم القيوين")) {
                     setSelectedCity("Umm Al Quwain");
-                    setBasePrice(85);
-                    calculateTotalPrice({ hours, workers });
+                   
+                    calculateTotalPrice({ hours, workers,currentBasePrice: 85 });
                 }else{
                     setSelectedCity("");
                 }
@@ -948,8 +1271,7 @@ const opject = {
         // Add validation for location tab
    if (currentTab === 0) {
 
-loadAddress();
-
+loadAddress(); 
    }
         if (currentTab === 1 ){
 
@@ -1473,7 +1795,7 @@ const handleDateSelection = (day: DisplayDay) => {
           statusClass = 'bg-yellow-100 text-yellow-700 animate-pulse';
           statusIcon = '⚠️';
         } else {
-          statusText = `متاح ${workerCount} عامل`;
+          statusText = `متاح لفترة محدودة`;
           statusClass = 'bg-green-100 text-green-700';
           statusIcon = '✅';
         }
@@ -1594,48 +1916,159 @@ const ProgressIndicator = () => {
       </div>
   );
 };
-    return (
-        <>
 
-    {/* Header - Updated hover states and rings */}
-    <header className="bg-white/80 backdrop-blur-sm sticky top-0 z-40 border-b">
-          <div className="max-w-7xl mx-auto px-2 py-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <div className="absolute -inset-2 bg-blue-100 rounded-full blur-lg opacity-60"></div>
-                  <img onClick={() => showSection( )} src="/logo.png" alt="Next Graft" className="h-12 relative" />
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <div className="flex gap-3">
-                  {['EN', 'AR'].map((langa) => {
-                    const langKey = langa.toUpperCase() as keyof typeof langImages;
-                    return (
+  const [showMenu, setShowMenu] = useState(false);
+  const [lang, setLang] = useState("AR"); // Default to Arabic
+  console.log("lang", lang);
+  const [currentPath, setCurrentPath] = useState('/terms');
+ 
+  // Get current language content
+  const t = lang === "EN" ? content.en : content.ar;
+  const isRTL = lang === "AR";
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.menu-container') && !target.closest('.menu-button')) {
+        setShowMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Toggle menu
+  const handleMenuToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowMenu(!showMenu);
+  };
+
+  // Navigation
+  const navigateTo = (path: string) => {
+    router.push(path);
+    setCurrentPath(path);
+    setShowMenu(false);
+  };
+    const textar  = "نخدمك في كل إمارات الدولة | شركة مرخصة "  ;
+     const texten= "We serve you across all Emirates of the country | A licensed company";
+     return (
+ 
+       <div className={isRTL ? "rtl" : "ltr"} dir={t.direction}>
+   <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 text-white p-1 relative overflow-hidden z-50">
+           <div className="absolute inset-0 opacity-10" />
+           <div className={`max-w-7xl mx-auto flex items-center justify-center`}>
+             <div className="overflow-hidden relative w-full">
+               <p className={`text-center ${isRTL ? "mt-1 text-[90%] " : "mt-2 text-[65%] "}    md:text-[70%] lg:text-[70%] font-bold mr-4`}>
+                 {isRTL ? (
+                   <>
+                     <span className="inline-flex items-center">
+                     {textar}
+                       <Image src="/arabic.png" alt="Flag of the United Arab Emirates" width={12} height={12} className="mr-2" />
+                       
+                     </span>
+                   </>
+                 ) : (
+                   <>
+                     <span className="inline-flex items-center text-[105%] mb-2">
+                       {texten}
+                       <Image src="/arabic.png" alt="Flag of the United Arab Emirates" width={12} height={12} className="ml-2 " />
+                     </span>
+                   </>
+                 )}
+               </p>
+             </div>
+           </div>
+         </div>
+   
+         {/* Header - Simple design with logo left and menu right */}
+         <header dir="ltr" className="bg-white sticky top-0 z-40 border-b shadow-sm">
+           <div className="max-w-7xl mx-auto px-4 py-4">
+             <div className="flex justify-between items-center">
+               {/* Logo on the left */}
+               <div className="flex items-center">
+                 <div className="order-first">
+                   <img 
+                     onClick={() => navigateTo('/')} 
+                     src="/logo.png" 
+                     alt={isRTL ? "المشهد الأنيق" : "Elegant Scene"} 
+                     className="h-12 cursor-pointer" 
+                   />
+                 </div>
+               </div>
+               
+               {/* Language and menu button on the right */}
+               <div className="flex items-center gap-3 ">
+                 <div className="flex gap-3 mr-2">
+                   {['EN', 'AR'].map((langCode) => {
+                     const langKey = langCode.toUpperCase() as keyof typeof langImages;
+                     return (
                       <button 
-                        key={langa}
-                        onClick={() => setlang(langa)}
-                        className={`relative rounded-full overflow-hidden w-8 h-8 transition-transform ${
-                          lang === langa ? 'scale-110 ring-2 ring-blue-500' : 'hover:scale-105'
-                        }`}
-                      >
-                        <img 
-                          src={langImages[langKey]}
-                          alt={langKey} 
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    );
-                  })}
-                </div>
-                <button className="p-2 hover:bg-blue-50 rounded-lg transition-colors" onClick={handleClick2 as unknown as React.MouseEventHandler<HTMLButtonElement>}>
-                  <Menu className="w-8 h-8 text-gray-700" /> 
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+                      key={langCode}
+                      onClick={() => setLang(langCode)}
+                      className={`flex items-right w-full   hover:bg-gray-50 transition-colors ${
+                        lang === langCode ? 'ring-1 ring-gray-400' : 'opacity-70 hover:opacity-100'
+                      }`}
+                    ><div className="w-8 h-8 rounded  overflow-hidden">
+                      <img 
+                        src={langImages[langKey]}
+                        alt={langKey} 
+                        className="w-full h-full object-cover"
+                      />
+                          </div>
+                    </button>
+                     );
+                   })}
+                 </div>
+                 <button 
+                   className="p-2 hover:bg-gray-100 rounded-lg menu-button"
+                   onClick={handleMenuToggle}
+                 >
+                   <Menu className="w-6 h-6 text-gray-700" /> 
+                 </button>
+               </div>
+             </div>
+             
+             {/* Simplified Menu */}
+             {showMenu && (
+               <nav className="menu-container">
+                 <div className="absolute right-2 w-64 z-50 mt-2">
+                   <ul className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                     {menuItems.map((item, index) => {
+                       const Icon = item.icon;
+                       const isActive = currentPath === item.path;
+                       
+                       return (
+                         <li key={item.key}>
+                           <button 
+                             onClick={() => navigateTo(item.path)}
+                             className={`w-full text-right py-3 px-4 transition-colors ${
+                               isActive 
+                                 ? 'bg-gray-100 text-gray-900 font-medium' 
+                                 : 'hover:bg-gray-50 text-gray-700'
+                             } ${index !== 0 ? 'border-t border-gray-100' : ''}`}
+                           >
+                             <div className={`flex items-center ${isRTL ? 'flex-row-reverse' : 'flex-row-reverse'}`}>
+                               <Icon className={`h-4 w-4 ${isRTL ? 'ml-3' : 'ml-3'} ${
+                                 isActive ? 'text-gray-700' : 'text-gray-500'
+                               }`} />
+                               <span>
+                                 {t.header[item.key as keyof typeof t.header]}
+                               </span>
+                             </div>
+                           </button>
+                         </li>
+                       );
+                     })}
+                   </ul>
+                 </div>
+               </nav>
+             )}
+           </div>
+         </header>
 
 
             {/* Load Google Maps JavaScript API */}
@@ -2766,7 +3199,7 @@ const ProgressIndicator = () => {
                     }
                 }
             `}</style>
-        </>
+        </div>
     );
 };
 
