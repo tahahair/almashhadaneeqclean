@@ -361,8 +361,7 @@ const CheckoutPage = ({
       
       return url.toString();
     }
-    console.log("bookingData:", bookingData[0]);
-    
+     
    
 
 

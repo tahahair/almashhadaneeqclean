@@ -72,8 +72,15 @@ const langDict = {
 
 export default function BookingConfirmation() {
   // Load language from local storage or default to 'AR'
-  const [lang, setLang] = useState<'EN' | 'AR'>((localStorage.getItem('lang') as 'EN' | 'AR') || 'AR');
-  const [isLoading, setIsLoading] = useState(true);
+  const [lang, setLang] = useState<'EN' | 'AR'>('AR');
+
+  useEffect(() => {
+    const storedLang = localStorage.getItem('lang') as 'EN' | 'AR';
+    if (storedLang) {
+      setLang(storedLang);
+    }
+  }, []);
+    const [isLoading, setIsLoading] = useState(true);
   const [bookingData, setBookingData] = useState<BookingData>(defaultBookingData);
   const searchParams = useSearchParams();
 
