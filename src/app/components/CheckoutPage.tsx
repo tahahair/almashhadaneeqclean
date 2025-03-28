@@ -214,11 +214,163 @@ const CheckoutPage = ({
       return;
     }
 
+    
+    interface BookingData {
+      serviceType: 'ONE_TIME' | 'OFFER_4' | 'OFFER_8' | 'OFFER_12';
+      timePeriod: 'MORNING'  | 'EVENING';
+      date: string;
+      extraHours?: number;
+      city: string;
+      address: string;
+      workerCount: number;
+      price: number;
+      name: string;
+      phone: string;
+    }
+
+    interface ExtractedBookingInfo {
+      type: string;
+      workers: number;
+      hours: number;
+      location: string;
+      time: string;
+      date: string;
+      price: number;
+      customerName: string;
+      customerPhone: string;
+    }
+
+    function extractBookingInfo(bookingData: string | BookingData): ExtractedBookingInfo {
+      // تحليل البيانات إذا كانت سلسلة نصية
+      const data: BookingData = typeof bookingData === 'string' ? JSON.parse(bookingData) : bookingData;
+      
+      // تحويل نوع الخدمة إلى نص مفهوم بالعربية
+      let bookingType: string;
+      switch (data.serviceType) {
+      case 'ONE_TIME':
+        if (language === 'ar' ){
+          bookingType = 'زيارة واحدة';
+        } else {
+          bookingType = 'One Time Visit';
+        }
+         break;
+      case 'OFFER_4':
+        if (language === 'ar' ){
+          bookingType = 'العرض البرونزي';
+        }
+        else {
+          bookingType = 'Bronze Offer';
+        }
+        
+        break;
+      case 'OFFER_8':
+        if (language === 'ar' ){
+          bookingType = 'العرض الفضي';
+        }
+        else {
+          bookingType = 'Silver Offer';
+        }
+        
+        break;
+        case 'OFFER_12':
+          if (language === 'ar' ){
+            bookingType = 'العرض الذهبي';
+          }
+          else {
+            bookingType = 'Golden Offer';
+          }
+           break;
+      default:
+      if (language === 'ar' ){  
+        bookingType = 'زيارة واحدة';
+      }
+      else {
+        bookingType = 'One Time Visit';
+      }
+      }
+      
+      // تحويل فترة الوقت إلى نص مفهوم بالعربية
+      let arrivalTime: string;
+      switch (data.timePeriod) {
+      case 'MORNING':
+        arrivalTime = '11:00 AM - 11:30 AM';
+        break;
+      
+      case 'EVENING':
+        arrivalTime = '16:00 PM - 16:30 PM';
+        break;
+      default:
+        arrivalTime = '08:00 AM - 11:00 AM';
+      }
+      
+      // تحويل التاريخ إلى الصيغة المناسبة (YYYY-MM-DD)
+      const dateObj = new Date(data.date);
+      const formattedDate: string = dateObj.toISOString().split('T')[0];
+      
+      // احتساب عدد الساعات (افتراض 4 ساعات أساسية + ساعات إضافية)
+      const baseHours = 4;
+      const hours: number = baseHours + (data.extraHours || 0);
+      
+      // تجميع الموقع من المدينة والعنوان
+      const location: string = `${data.city} - ${data.address.split('\n')[0]}`;
+      
+      // إنشاء كائن بالمعلومات المطلوبة
+      return {
+      type: bookingType,
+      workers: data.workerCount,
+      hours: hours,
+      location: location,
+      time: arrivalTime,
+      date: formattedDate,
+      price: data.price,
+      // معلومات إضافية للعميل يمكن إضافتها
+      customerName: data.name,
+      customerPhone: data.phone
+      };
+    }
+    interface ExtractedBookingInfo {
+      type: string;
+      workers: number;
+      hours: number;
+      location: string;
+      time: string;
+      date: string;
+      price: number;
+      customerName: string;
+      customerPhone: string;
+    }
+
+    function createConfirmationLink(bookingData: string): string {
+      const extractedData: ExtractedBookingInfo = extractBookingInfo(bookingData);
+      
+      // إنشاء كائن URL
+      const url = new URL('/submit-booking', window.location.origin);
+      
+      // إضافة المعلمات إلى الرابط
+      url.searchParams.append('type', encodeURIComponent(extractedData.type));
+      url.searchParams.append('workers', extractedData.workers.toString());
+      url.searchParams.append('hours', extractedData.hours.toString());
+      url.searchParams.append('location', encodeURIComponent(extractedData.location));
+      url.searchParams.append('time', encodeURIComponent(extractedData.time));
+      url.searchParams.append('date', encodeURIComponent(extractedData.date));
+      url.searchParams.append('price', extractedData.price.toString());
+      
+      // يمكن إضافة معلومات العميل أيضًا إذا كنت تريد عرضها في صفحة التأكيد
+      url.searchParams.append('name', encodeURIComponent(extractedData.customerName));
+      url.searchParams.append('phone', encodeURIComponent(extractedData.customerPhone));
+      
+      return url.toString();
+    }
+    console.log("bookingData:", bookingData[0]);
+    
+   
+
+
     const { error } = await stripe.confirmPayment({
       elements,
       clientSecret,
       confirmParams: {
-        return_url: `https://almashhadaneeq.vercel.app/submit-booking`,
+        return_url: `${createConfirmationLink(bookingData[0])}`,
       },
     });
 

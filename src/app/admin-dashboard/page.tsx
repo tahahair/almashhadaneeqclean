@@ -1302,8 +1302,7 @@ if (editingReservationId && newReservation.dates.length > 0) {
     </div>
     ) : (
       <>
-      {router.push(`/login `)}
-      </>
+       </>
     )
   );
 };

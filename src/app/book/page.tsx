@@ -20,8 +20,8 @@ const content = {
   en: {
     direction: "ltr",
     meta: {
-      title: "Terms & Conditions | Elegant Scene",
-      description: "Terms and conditions for Elegant Scene cleaning services"
+      title: "Cleaning Service Booking | Elegant Scene",
+      description: "Book your cleaning service with Elegant Scene"
     },
     header: {
       home: "Home",
@@ -31,151 +31,121 @@ const content = {
       guarantee: "Golden Guarantee"
     },
     hero: {
-      title: "Terms & Conditions",
-      subtitle: "Rules and conditions for dealing with Elegant Scene"
+      title: "Book a Cleaning Service",
+      subtitle: "Easy booking in just a few steps"
     },
-    sections: {
-      booking: {
-        title: "1. Service Booking",
-        items: [
-          {
-            title: "Advance Booking",
-            content: "Service must be booked at least 24 hours in advance of the requested appointment."
-          },
-          {
-            title: "Booking Confirmation",
-            content: "Your booking will be confirmed via SMS or email."
-          },
-          {
-            title: "Specify Requirements",
-            content: "Please specify any special requirements at the time of booking (areas needing special attention, specific cleaning materials, etc.)."
-          },
-          {
-            title: "Time Estimate",
-            content: "We will inform you of the estimated time the cleaning process will take based on the size of the location."
-          }
-        ]
-      },
-      pricing: {
-        title: "2. Pricing and Payment",
-        items: [
-          {
-            title: "Price Transparency",
-            content: "We offer clear and fixed prices from the start, without hidden fees."
-          },
-          {
-            title: "Payment Methods",
-            content: "We accept payment in cash, by bank cards, or through banking applications."
-          },
-          {
-            title: "Tax Invoice",
-            content: "We issue an official tax invoice for each payment."
-          },
-          {
-            title: "Offers and Discounts",
-            content: "Discounts apply only when their announced conditions are met."
-          }
-        ]
-      },
-      cancellation: {
-        title: "3. Cancellation Policy",
-        items: [
-          {
-            title: "Free Cancellation",
-            content: "You can cancel your booking for free up to 12 hours before the scheduled appointment."
-          },
-          {
-            title: "Late Cancellation Fees",
-            content: "A fee of 25% of the service value will be applied for cancellations less than 12 hours before the appointment."
-          },
-          {
-            title: "No-Show",
-            content: "In case of not being present at the scheduled appointment without prior notice, a fee of 50% of the service value will be charged."
-          },
-          {
-            title: "Rescheduling",
-            content: "You can reschedule the appointment once for free up to 6 hours before the original appointment."
-          }
-        ]
-      },
-      guarantee: {
-        title: "4. Golden Guarantee",
-        items: [
-          {
-            title: "Satisfaction Guarantee",
-            content: "We guarantee your complete satisfaction with our services."
-          },
-          {
-            title: "Re-cleaning",
-            content: "If you are not satisfied with the result, we will re-clean for free within 48 hours."
-          },
-          {
-            title: "Refund",
-            content: "If you are still not convinced after re-cleaning, we will refund the full amount without questions."
-          },
-          {
-            title: "Activating the Guarantee",
-            content: "The guarantee can be activated by contacting customer service and explaining the reason for dissatisfaction."
-          }
-        ]
-      },
-      responsibilities: {
-        title: "5. Our Responsibilities",
-        items: [
-          {
-            title: "Time Commitment",
-            content: "We commit to arrive at the specified time punctually."
-          },
-          {
-            title: "Qualified Team",
-            content: "We provide a trained, licensed, and officially documented team."
-          },
-          {
-            title: "Materials and Equipment",
-            content: "We use high-quality cleaning materials and professional equipment."
-          },
-          {
-            title: "Insurance",
-            content: "We provide insurance against any damage that may occur during service delivery."
-          }
-        ]
-      },
-      clientResponsibilities: {
-        title: "6. Client Responsibilities",
-        items: [
-          {
-            title: "Provide Access",
-            content: "You must ensure our team has access to the areas requiring cleaning."
-          },
-          {
-            title: "Disclosure",
-            content: "Please inform us of any sensitive surfaces or materials that require special care."
-          },
-          {
-            title: "Valuable Items",
-            content: "We recommend securing valuable possessions before the cleaning appointment."
-          },
-          {
-            title: "Pets",
-            content: "Please secure pets during the cleaning period."
-          }
-        ]
-      },
-      amendments: {
-        title: "7. Amendments to Terms and Conditions",
-        content: "We reserve the right to modify these terms and conditions at any time. You will be informed of any changes through our website or via email."
-      },
-      quote: {
-        text: "We seek to build a transparent and sustainable relationship with you, based on mutual trust and respect",
-        attribution: "Elegant Scene Management"
-      }
-    }
+    bookingDetails: {
+        serviceTitle: "Deep Cleaning Service",
+        ratingText: "(679k reviews)",
+        workersQuestion: "How many workers do you need?",
+        hoursQuestion: "How many hours should they stay?",
+        hoursRecommended: "Best Seller",
+        serviceFrequencyQuestion: "What is the required cleaning frequency?",
+        oneTimeVisit: "One-Time Visit",
+        oneTimeVisitDescription: "Book a one-time cleaning session",
+        bronzeOffer: "Bronze Offer",
+        bronzeOfferDiscount: "15% Off per visit",
+        bronzeOfferDescription1: "Includes one visit per week for 4 hours",
+        bronzeOfferDescription2: "One cleaner and 4 visits per month",
+        bronzeOfferDescription3: "Total hours per month is 16",
+        bronzeOfferDescription4: "Additional charges apply for extra hours and workers",
+        silverOffer: "Silver Offer",
+        silverOfferDiscount: "16% Off per visit",
+        silverOfferDescription1: "Includes two visits per week for 8 hours",
+        silverOfferDescription2: "One cleaner and 8 visits per month",
+        silverOfferDescription3: "Total hours per month is 32",
+        silverOfferDescription4: "Additional charges apply for extra hours and workers",
+        goldOffer: "Gold Offer",
+        goldOfferBestSeller: "Best Seller",
+        goldOfferDescription1: "Includes 3 visits per week for 12 hours",
+        goldOfferDescription2: "One cleaner and 12 visits per month",
+        goldOfferDescription3: "Total hours per month is 48",
+        goldOfferDescription4: "Additional charges apply for extra hours and workers",
+        whyChooseUsTitle: "Why Choose Our Services?",
+        qualityGuarantee: "100% Quality Guarantee",
+        professionalTeam: "Professional and Qualified Team",
+        punctuality: "Punctuality Commitment",
+        customerRating: "4.9/5 Customer Rating"
+    },
+    locationSelection: {
+        title: "Location Selection",
+        searchPlaceholder: "Search for a location on the map...",
+        selectedLocationLabel: "Selected Location:",
+        cityLabel: "City:",
+        buildingApartmentLabel: "Building Name and Apartment Number:",
+        buildingApartmentPlaceholder: "Building name, apartment number..."
+    },
+    userInfo: {
+        title: "User Information",
+        nameLabel: "Name:",
+        namePlaceholder: "First Name Last Name",
+        phoneLabel: "Phone Number:",
+        phonePlaceholder: "050 123 4567"
+    },
+    dateTimePayment: {
+        title: "Date, Time & Payment",
+        chooseArrivalTime: "Choose Arrival Time",
+        monthLabel: "Month",
+        preferredArrivalTime: "Preferred Arrival Time",
+        serviceTime: "Service Time:",
+        bookingSummaryTitle: "Booking Summary",
+        bookingType: "Booking Type",
+        numberOfWorkers: "Number of Workers",
+        numberOfHours: "Number of Hours",
+        location: "Location",
+        arrivalTime: "Arrival Time",
+        date: "Date",
+        totalPrice: "Total Price",
+        creditCardInfo: "Credit Card Information",
+        selectDateAndTimeMessage: "Please select a date and time.",
+        importantAlertTitle: "Important Alert:",
+        importantAlertMessage: "Our appointments are filling up quickly! Customers book their appointments 3-5 days in advance." ,
+        contactCustomerService: "Customer service will contact you to confirm upcoming appointments"
+
+    },
+    summary: {
+        bookingSummary: "Booking Summary"
+    },
+    button: {
+        next: "Next",
+        previous: "Previous",
+        back: "Back",
+        confirmBooking: "Confirm Booking"
+    },
+    alert: {
+        locationNotesRequired: "Please enter building name and apartment number.",
+        citySelectionRequired: "Please select a city within our service area (Dubai, Ajman, Sharjah, Umm Al Quwain).",
+        enterPersonalInfo: "Please enter your personal information.",
+        invalidPhoneNumber: "Please enter a valid phone number.",
+        invalidName: "Please enter a valid name."
+
+    },
+    timeSlots: {
+        morning: "Morning Period 11:00 AM - 11:30 AM",
+        evening: "Evening Period 4:00 PM - 4:30 PM",
+        availableLimitedTime: "Available for a limited time",
+        workersRemaining: "Only {workerCount} workers remaining!",
+        allWorkersBooked: "All workers are booked",
+        unavailableForBooking: "Unavailable for booking",
+        serviceTimeSelected: "Service time selected:",
+        contactForOffers: "Customer service will contact you to confirm upcoming appointments"
+
+    },
+    daysOfWeek: [ 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'] ,
+    monthsOfYear: [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ],
+    dayNames: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    serviceAreaText: "We serve you across all Emirates of the country | A licensed company"
+
+
   },
   ar: {
     direction: "rtl",
     meta: {
-      title: "الشروط والأحكام | المشهد الأنيق",
-      description: "قواعد وشروط التعامل مع شركة المشهد الأنيق لخدمات التنظيف"
+      title: "خدمة حجز التنظيف | المشهد الأنيق",
+      description: "احجز خدمة التنظيف الخاصة بك مع المشهد الأنيق"
     },
     header: {
       home: "الرئيسية",
@@ -185,149 +155,114 @@ const content = {
       guarantee: "الضمان الذهبي"
     },
     hero: {
-      title: "الشروط والأحكام",
-      subtitle: "قواعد وشروط التعامل مع المشهد الأنيق"
+      title: "احجز خدمة تنظيف",
+      subtitle: "حجز سهل بخطوات بسيطة"
     },
-    sections: {
-      booking: {
-        title: "1. حجز الخدمة",
-        items: [
-          {
-            title: "الحجز المسبق",
-            content: "يجب حجز خدمة التنظيف قبل 24 ساعة على الأقل من الموعد المطلوب."
-          },
-          {
-            title: "تأكيد الحجز",
-            content: "سيتم تأكيد حجزكم من خلال رسالة نصية أو بريد إلكتروني."
-          },
-          {
-            title: "تحديد المتطلبات",
-            content: "يرجى تحديد أي متطلبات خاصة وقت الحجز (مناطق تحتاج عناية خاصة، مواد تنظيف معينة، إلخ)."
-          },
-          {
-            title: "تقدير الوقت",
-            content: "سنخبركم بالمدة التقديرية التي ستستغرقها عملية التنظيف بناء على حجم المكان."
-          }
-        ]
-      },
-      pricing: {
-        title: "2. الأسعار والدفع",
-        items: [
-          {
-            title: "شفافية الأسعار",
-            content: "نقدم أسعاراً واضحة وثابتة منذ البداية، بدون رسوم خفية."
-          },
-          {
-            title: "طرق الدفع",
-            content: "نقبل الدفع نقداً، بالبطاقات المصرفية، أو عبر التطبيقات البنكية."
-          },
-          {
-            title: "فاتورة ضريبية",
-            content: "نصدر فاتورة ضريبية رسمية لكل عملية دفع."
-          },
-          {
-            title: "العروض والخصومات",
-            content: "تطبق الخصومات فقط عند الوفاء بشروطها المعلنة."
-          }
-        ]
-      },
-      cancellation: {
-        title: "3. سياسة الإلغاء",
-        items: [
-          {
-            title: "إلغاء مجاني",
-            content: "يمكنكم إلغاء الحجز مجاناً قبل 12 ساعة من الموعد المحدد."
-          },
-          {
-            title: "رسوم الإلغاء المتأخر",
-            content: "يتم تطبيق رسوم بنسبة 25% من قيمة الخدمة عند الإلغاء قبل أقل من 12 ساعة من الموعد."
-          },
-          {
-            title: "عدم الحضور",
-            content: "في حال عدم التواجد في الموعد المحدد دون إشعار مسبق، يتم احتساب رسوم بنسبة 50% من قيمة الخدمة."
-          },
-          {
-            title: "إعادة الجدولة",
-            content: "يمكن إعادة جدولة الموعد مرة واحدة مجاناً قبل 6 ساعات من الموعد الأصلي."
-          }
-        ]
-      },
-      guarantee: {
-        title: "4. الضمان الذهبي",
-        items: [
-          {
-            title: "ضمان الرضا",
-            content: "نضمن لكم الرضا التام عن خدماتنا."
-          },
-          {
-            title: "إعادة التنظيف",
-            content: "إذا لم تكونوا راضين عن النتيجة، نقوم بإعادة التنظيف مجاناً خلال 48 ساعة."
-          },
-          {
-            title: "استرداد الأموال",
-            content: "إذا لم تقتنعوا بعد إعادة التنظيف، نسترد المبلغ كاملاً دون أسئلة."
-          },
-          {
-            title: "آلية تفعيل الضمان",
-            content: "يمكن تفعيل الضمان بالتواصل مع خدمة العملاء وتوضيح سبب عدم الرضا."
-          }
-        ]
-      },
-      responsibilities: {
-        title: "5. مسؤولياتنا",
-        items: [
-          {
-            title: "الالتزام بالمواعيد",
-            content: "نلتزم بالحضور في الموعد المحدد بدقة."
-          },
-          {
-            title: "فريق مؤهل",
-            content: "نوفر فريقاً مدرباً ومرخصاً وموثقاً رسمياً."
-          },
-          {
-            title: "المواد والمعدات",
-            content: "نستخدم مواد تنظيف عالية الجودة ومعدات احترافية."
-          },
-          {
-            title: "التأمين",
-            content: "نوفر تأميناً ضد أي أضرار قد تحدث أثناء تقديم الخدمة."
-          }
-        ]
-      },
-      clientResponsibilities: {
-        title: "6. مسؤوليات العميل",
-        items: [
-          {
-            title: "توفير الوصول",
-            content: "يجب تأمين وصول فريقنا إلى المناطق المطلوب تنظيفها."
-          },
-          {
-            title: "الإفصاح",
-            content: "يرجى إبلاغنا بأي أسطح أو مواد حساسة تتطلب عناية خاصة."
-          },
-          {
-            title: "الأغراض الثمينة",
-            content: "نوصي بتأمين المقتنيات الثمينة قبل موعد التنظيف."
-          },
-          {
-            title: "الحيوانات الأليفة",
-            content: "يرجى تأمين الحيوانات الأليفة خلال فترة التنظيف."
-          }
-        ]
-      },
-      amendments: {
-        title: "7. التعديلات على الشروط والأحكام",
-        content: "نحتفظ بحق تعديل هذه الشروط والأحكام في أي وقت. سيتم إعلامكم بأي تغييرات من خلال موقعنا الإلكتروني أو عبر البريد الإلكتروني."
-      },
-      quote: {
-        text: "نسعى لبناء علاقة شفافة ومستدامة معكم، تقوم على الثقة المتبادلة والاحترام",
-        attribution: "إدارة المشهد الأنيق"
-      }
-    }
+    bookingDetails: {
+        serviceTitle: "خدمة التنظيف العميق",
+        ratingText: "(679k تقييم)",
+        workersQuestion: "كم عدد العمال المطلوب؟",
+        hoursQuestion: "كم عدد الساعات التي يجب أن يبقوا فيها؟",
+        hoursRecommended: "الأكثر مبيعاً",
+        serviceFrequencyQuestion: "ما هو معدل تكرار التنظيف المطلوب؟",
+        oneTimeVisit: "زيارة واحدة",
+        oneTimeVisitDescription: "حجز جلسة تنظيف لمرة واحدة",
+        bronzeOffer: "العرض البرونزي",
+        bronzeOfferDiscount: "خصم 15% لكل زيارة",
+        bronzeOfferDescription1: "يشمل العرض زيارة واحدة أسبوعياً لمدة 4 ساعات",
+        bronzeOfferDescription2: "عاملة تنظيف واحدة و 4 زيارات في الشهر",
+        bronzeOfferDescription3: "إجمالي عدد الساعات هو 16 شهرياً",
+        bronzeOfferDescription4: "يتم تطبيق رسوم إضافية على الساعات والعمال الإضافيين",
+        silverOffer: "العرض الفضي",
+        silverOfferDiscount: "خصم 16% لكل زيارة",
+        silverOfferDescription1: "يشمل العرض زيارتين أسبوعياً لمدة 8 ساعات",
+        silverOfferDescription2: "عاملة تنظيف واحدة و 8 زيارات في الشهر",
+        silverOfferDescription3: "إجمالي عدد الساعات هو 16 شهرياً",
+        silverOfferDescription4: "يتم تطبيق رسوم إضافية على الساعات والعمال الإضافيين",
+        goldOffer: "العرض الذهبي",
+        goldOfferBestSeller: "الأكثر مبيعاً",
+        goldOfferDescription1: "يشمل العرض 3 زيارات أسبوعياً لمدة 12 ساعة",
+        goldOfferDescription2: "عاملة تنظيف واحدة و 12 زيارة في الشهر",
+        goldOfferDescription3: "إجمالي عدد الساعات هو 48 شهرياً",
+        goldOfferDescription4: "يتم تطبيق رسوم إضافية على الساعات والعمال الإضافيين",
+        whyChooseUsTitle: "لماذا تختار خدماتنا؟",
+        qualityGuarantee: "ضمان الجودة 100%",
+        professionalTeam: "فريق محترف ومؤهل", 
+        punctuality: "التزام بالمواعيد",
+        customerRating: "تقييم 4.9/5 من العملاء"
+    },
+    locationSelection: {
+        title: "اختيار الموقع",
+        searchPlaceholder: "ابحث عن موقع على الخريطة...",
+        selectedLocationLabel: "الموقع المختار:",
+        cityLabel: "المدينة:",
+        buildingApartmentLabel: "اسم البناء ورقم الشقة:",
+        buildingApartmentPlaceholder: "اسم البناء, رقم الشقة..."
+    },
+    userInfo: {
+        title: "معلومات المستخدم",
+        nameLabel: "الاسم:",
+        namePlaceholder: "الاسم الأول اسم العائلة",
+        phoneLabel: "رقم الهاتف:",
+        phonePlaceholder: "050 123 4567"
+    },
+    dateTimePayment: {
+        title: "التاريخ, الوقت و الدفع",
+        chooseArrivalTime: "اختر وقت الوصول",
+        monthLabel: "الشهر",
+        preferredArrivalTime: "وقت الوصول المفضل",
+        serviceTime: "وقت الخدمة:",
+        bookingSummaryTitle: "ملخص الحجز",
+        bookingType: "نوع الحجز",
+        numberOfWorkers: "عدد العمال",
+        numberOfHours: "عدد الساعات",
+        location: "الموقع",
+        arrivalTime: "وقت الوصول",
+        date: "التاريخ",
+        totalPrice: "السعر الإجمالي",
+        creditCardInfo: "معلومات بطاقة الائتمان",
+        selectDateAndTimeMessage: "الرجاء تحديد التاريخ والوقت.",
+        importantAlertTitle: "تنبيه هام:",
+        importantAlertMessage: "مواعيدنا تنفذ بسرعة! عملاؤنا يحجزون مواعيدهم قبل 3-5 أيام مقدماً.",
+        contactCustomerService: "سيتم التواصل معاكم من قبل خدمة العملاء لتثبيت المواعيد القادمة"
+
+    },
+    summary: {
+        bookingSummary: "ملخص الحجز"
+    },
+    button: {
+        next: "التالي",
+        previous: "رجوع",
+        back: "رجوع",
+        confirmBooking: "تأكيد الحجز"
+    },
+    alert: {
+        locationNotesRequired: "الرجاء إدخال اسم البناء وؤقم الشقة .",
+        citySelectionRequired: "الرجاء اختيار مدينة ضمن الخدمة دبي عجمان الشارقة ام القيوين",
+        enterPersonalInfo: "الرجاء إدخال معلوماتك الشخصية",
+        invalidPhoneNumber: "الرجاء إدخال رقم هاتف صحيح",
+        invalidName: "الرجاء إدخال اسم صحيح."
+    },
+    timeSlots: {
+        morning: "الفترة الصباحية من 11:00-11:30 الى 15:00-15:30",
+        evening: "الفترة المسائية من 16:00-16:30 الى 20:00-20:30",
+        availableLimitedTime: "متاح لفترة محدودة",
+        workersRemaining: "متبقي {workerCount} عمال فقط!",
+        allWorkersBooked: "تم حجز جميع العمال",
+        unavailableForBooking: "غير متاح للحجز",
+        serviceTimeSelected: "تم اختيار موعد الخدمة:",
+        contactForOffers: "سيتم التواصل معاكم من قبل خدمة العملاء لتثبيت المواعيد القادمة"
+    },
+    daysOfWeek: [ 'السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+    monthsOfYear: [
+        'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+        'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+      ],
+      dayNames: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+      serviceAreaText: "نخدمك في كل إمارات الدولة | شركة مرخصة "
   }
 };
 
- 
 
 // Menu items with icons
 const menuItems = [
@@ -341,14 +276,14 @@ interface OfferTimeSlot {
     date: string;
     timeSlot: string;
 }
- 
+
 
 const langImages = {
   EN: '/english.png',
   AR: '/arabic.png'
 };
 
-  
+
 const TabsPage = () => {
     // const router = useRouter(); // Duplicate declaration removed
     const [hours, setHours] = useState(4);
@@ -359,15 +294,8 @@ const TabsPage = () => {
   const [serviceType, setServiceType] = useState< string>('one-time');
 const [totalPrice, setTotalPrice] = useState(85);
 const [selectedCity, setSelectedCity] = useState("");
- 
 
 
- 
- 
-
-
-
- 
 
 
 
@@ -377,8 +305,6 @@ const [selectedCity, setSelectedCity] = useState("");
 
 // إعادة تعيين حقول النموذج
 
- 
-
 
 
 const [locationUrl, setLocationUrl] = useState("");
@@ -386,21 +312,21 @@ const [locationUrl, setLocationUrl] = useState("");
 const [currentTab, setCurrentTab] = useState(0);
 
  const calculateTotalPrice = ({hours, workers, currentBasePrice}: {hours: number; workers: number,currentBasePrice: number}) => {
-   
+
     if (serviceType === 'one-time') {
         // Calculate price for one-time service
         // Example base rate per hour
 
-        
+
         let extra = (hours - 4) * 20;
 
         if (hours <4) {
-            
+
           extra = 0;
       }
-       
+
         if (workers > 0) {
-            
+
             setTotalPrice((currentBasePrice * workers) + (extra * workers));
         }
 
@@ -410,7 +336,7 @@ const [currentTab, setCurrentTab] = useState(0);
 
         setTotalPrice(340);}
         else  {
-          
+
             setTotalPrice((340+ (hours - 4) *4* 20)*workers);
         }
     } else if (serviceType === 'package-8') {
@@ -418,7 +344,7 @@ const [currentTab, setCurrentTab] = useState(0);
 
         setTotalPrice(680);}
         else  {
-          
+
             setTotalPrice((680+ (hours - 4) * 8*20)*workers);
         }
     } else if (serviceType === 'package-12') {
@@ -426,7 +352,7 @@ const [currentTab, setCurrentTab] = useState(0);
 
         setTotalPrice(1000);}
         else  {
-          
+
             setTotalPrice((1000+ (hours - 4) * 12*20)*workers);
         }
     }
@@ -451,50 +377,73 @@ useEffect(() => {
 }, [basePrice, workers, hours,serviceType,locationUrl]); // Run when basePrice, workers, or hours change
 
 const [showSummaryDetails, setShowSummaryDetails] = useState(false);
+    // Get current language content based on the lang state
+ 
+    const [lang, setLang] = useState<"AR" | "EN">(() => {
+      if (typeof window !== "undefined") {
+        const storedValue = localStorage.getItem("lang");
+        if (storedValue === "AR" || storedValue === "EN") {
+          return storedValue as "AR" | "EN"; // استخدم القيمة المخزنة
+        }
+      }
+      return "AR"; // القيمة الافتراضية
+    });
+
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        localStorage.setItem("lang", lang); // تحديث التخزين عند تغيير اللغة
+      }
+    }, [lang]); // تحديث فقط عند تغيير `lang`
+  
+   
+  
+    const t = lang === "EN" ? content.en : content.ar;
+    
 
 // Modified renderBookingSummary function - will be rendered at the bottom of the page
 const renderBookingSummary = () => {
   if (!showSummaryDetails) {
     return null;
   }
-  
+
+
   // Return the expanded view as a fixed position panel at the bottom
   console.log("totalPrice", totalPrice);
   return (
     <div className="summary-overlay">
       <div dir="ltr" className="summary-panel bg-gradient-to-br from-blue-50 to-white rounded-t-xl p-6 shadow-lg border border-gray-100">
         <div className="flex justify-between items-center mb-4">
-          <button 
-            onClick={() => setShowSummaryDetails(false)} 
+          <button
+            onClick={() => setShowSummaryDetails(false)}
             className="text-gray-500 hover:text-gray-700"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
           </button>
-          <h3 className="text-xl font-bold text-center text-gray-800 border-b pb-2">ملخص الحجز</h3>
+          <h3 className="text-xl font-bold text-center text-gray-800 border-b pb-2">{t.summary.bookingSummary}</h3>
         </div>
-        
+
         <div className="space-y-3 text-right w-full mx-auto">
-        
+
         </div>
       </div>
     </div>
   );
-}; 
+};
     const handleserviceTypeSelect = (type: string) => {
- 
+
         setServiceType(type);
-        
+
             setHours(4);
             setWorkers(1);
-            
-        
-        
+
+
+
         // Set base price based on booking type
         switch(type) {
             case 'one-time':
-             
+
                 setTotalPrice(85);
                 setBasePrice(85);
                 break;
@@ -510,36 +459,36 @@ const renderBookingSummary = () => {
                 setSelectedOffer(offers[2].id);
                 setTotalPrice(1000);
                 break;
-      
+
         }
     };
- 
+
     const renderBookingDetails = () => {
-     
-   
+
+
         return (
-          <div>
+          <div >
    <div className="border-b pb-3 mb-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold text-gray-800">خدمة التنظيف العميق</h1>
+          <h1 className="text-xl font-bold text-gray-800">{t.bookingDetails.serviceTitle}</h1>
           <div className="flex items-center gap-1 text-sm">
-            <span className="text-gray-600">(679k تقييم)</span>
+            <span className="text-gray-600">{t.bookingDetails.ratingText}</span>
             <span className="font-semibold">4.8/5</span>
             <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
           </div>
         </div>
       </div>
- 
- 
+
+
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-right  mb-3">كم عدد العمال المطلوب؟</h2>
+        <h2 className="text-lg font-semibold  mb-3">{t.bookingDetails.workersQuestion}</h2>
         <div className="flex justify-between px-8 gap-2">
           {[1, 2, 3, 4].map((w) => (
             <button
               key={w}
               className={`py-3 px-4 rounded-full flex justify-center items-center w-16 h-16 ${
-                workers === w 
-                  ? 'bg-teal-600 text-white ring-2 ring-teal-300' 
+                workers === w
+                  ? 'bg-teal-600 text-white ring-2 ring-teal-300'
                   : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
               }`}
               onClick={() => setWorkers(w)}
@@ -552,244 +501,223 @@ const renderBookingSummary = () => {
 
            {/* Hours selection */}
 <div className="mb-6">
-  <h2 className="text-lg font-semibold text-right mb-3">كم عدد الساعات التي يجب أن يبقوا فيها؟</h2>
+  <h2 className="text-lg font-semibold   mb-3">{t.bookingDetails.hoursQuestion}</h2>
   <div className="grid grid-cols-4 gap-2">
     {[1, 2, 3, 4, 5, 6, 7, 8].map((h) => (
       <button
         key={h}
         className={`relative py-3 px-2 rounded-lg border text-center transition-all duration-200 ${
-          hours === h 
-            ? 'bg-teal-100 border-teal-600 text-teal-800 shadow-md' 
+          hours === h
+            ? 'bg-teal-100 border-teal-600 text-teal-800 shadow-md'
             : 'bg-gray-50 border-gray-200 hover:border-gray-300 hover:bg-gray-100'
         }`}
         onClick={() => setHours(h)}
       >
         <div className="text-lg font-medium">{h}</div>
-       
-        
+
+
         {/* علامة الصح عند الاختيار */}
-        {hours === h && (
+        {hours === h &&   t.direction === "rtl" && (
           <div className="absolute -top-2 -left-2 bg-teal-500 text-white text-xs p-1 rounded-full w-6 h-6 flex items-center justify-center shadow-md">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
         )}
-        
+           {/* علامة الصح عند الاختيار */}
+           {hours === h &&   t.direction === "ltr" && (
+          <div className="absolute -top-2 -right-2 bg-teal-500 text-white text-xs p-1 rounded-full w-6 h-6 flex items-center justify-center shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        )}
+
         {/* العلامة الموصى بها */}
-        {hours === h && h === 4 && (
+        {hours === h && h === 4 && t.direction === "rtl" && (
           <div className="absolute -top-2 -right-2 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-md">
-           الأكثر مبيعاً
+           {t.bookingDetails.hoursRecommended}
+          </div>
+        )}
+         {hours === h && h === 4 && t.direction === "ltr" && (
+          <div className="absolute -top-2 -left-2 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-md">
+           {t.bookingDetails.hoursRecommended}
           </div>
         )}
       </button>
     ))}
   </div>
 </div>
-                
+
 {/* Service frequency */}
 <div className="mb-6">
-  <h2 className="text-xl font-bold text-right mb-4">ما هو معدل تكرار التنظيف المطلوب؟</h2>
+  <h2 className="text-xl font-bold  mb-4">{t.bookingDetails.serviceFrequencyQuestion}</h2>
   <div className="space-y-6">
     {/* زيارة واحدة */}
-    <div 
+    <div
       className={`rounded-lg border-2 p-5 cursor-pointer transition-all duration-300 hover:shadow-md ${
         serviceType === 'one-time' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
       }`}
       onClick={() => handleserviceTypeSelect('one-time')}
     >
       <div className="flex justify-between items-center mb-2">
-        <div className="font-bold text-gray-800 text-lg">زيارة واحدة</div>
+        <div className="font-bold text-gray-800 text-lg">{t.bookingDetails.oneTimeVisit}</div>
         {serviceType === 'one-time' && <Check className="w-6 h-6 text-teal-600" />}
       </div>
       <div className="flex items-center text-gray-700 mt-3">
         <CalendarDays className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-        <div>حجز جلسة تنظيف لمرة واحدة</div>
+        <div>{t.bookingDetails.oneTimeVisitDescription}</div>
       </div>
     </div>
-    
+
     {/* العرض البرونزي */}
-    <div 
+    <div
       className={`rounded-lg border-2 p-5 cursor-pointer relative transition-all duration-300 hover:shadow-md ${
         serviceType === 'package-4' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
       }`}
       onClick={() => handleserviceTypeSelect('package-4')}
     >
       <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md">
-        خصم 15% لكل زيارة
+        {t.bookingDetails.bronzeOfferDiscount}
       </div>
       <div className="flex justify-between items-center mb-3">
-        <div className="font-bold text-gray-800 text-lg">العرض البرونزي</div>
+        <div className="font-bold text-gray-800 text-lg">{t.bookingDetails.bronzeOffer}</div>
         {serviceType === 'package-4' && <Check className="w-6 h-6 text-teal-600" />}
       </div>
 
       <div className="space-y-2 mt-3">
         <div className="flex items-center text-gray-700">
           <CalendarDays className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>يشمل العرض زيارة واحدة أسبوعياً لمدة 4 ساعات</div>
+          <div>{t.bookingDetails.bronzeOfferDescription1}</div>
         </div>
-        
+
         <div className="flex items-center text-gray-700">
           <User className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>عاملة تنظيف واحدة و 4 زيارات في الشهر</div>
+          <div>{t.bookingDetails.bronzeOfferDescription2}</div>
         </div>
-        
+
         <div className="flex items-center text-gray-700">
           <Clock className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>إجمالي عدد الساعات هو 16 شهرياً</div>
+          <div>{t.bookingDetails.bronzeOfferDescription3}</div>
         </div>
-        
+
         <div className="flex items-center text-gray-700">
           <AlertCircle className="w-5 h-5 text-orange-500 ml-2 flex-shrink-0" />
-          <div>يتم تطبيق رسوم إضافية على الساعات والعمال الإضافيين</div>
+          <div>{t.bookingDetails.bronzeOfferDescription4}</div>
         </div>
       </div>
     </div>
 
     {/* العرض الفضي */}
-    <div 
+    <div
       className={`rounded-lg border-2 p-5 cursor-pointer relative transition-all duration-300 hover:shadow-md ${
         serviceType === 'package-8' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
       }`}
       onClick={() => handleserviceTypeSelect('package-8')}
     >
       <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md">
-        خصم 16% لكل زيارة
+        {t.bookingDetails.silverOfferDiscount}
       </div>
       <div className="flex justify-between items-center mb-3">
-        <div className="font-bold text-gray-800 text-lg">العرض الفضي</div>
+        <div className="font-bold text-gray-800 text-lg">{t.bookingDetails.silverOffer}</div>
         {serviceType === 'package-8' && <Check className="w-6 h-6 text-teal-600" />}
       </div>
 
       <div className="space-y-2 mt-3">
         <div className="flex items-center text-gray-700">
           <CalendarDays className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>يشمل العرض زيارتين أسبوعياً لمدة 8 ساعات</div>
+          <div>{t.bookingDetails.silverOfferDescription1}</div>
         </div>
-        
+
         <div className="flex items-center text-gray-700">
           <User className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>عاملة تنظيف واحدة و 8 زيارات في الشهر</div>
+          <div>{t.bookingDetails.silverOfferDescription1}</div>
         </div>
-        
+
         <div className="flex items-center text-gray-700">
           <Clock className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>إجمالي عدد الساعات هو 32 شهرياً</div>
+          <div>{t.bookingDetails.silverOfferDescription1}</div>
         </div>
-        
+
         <div className="flex items-center text-gray-700">
           <AlertCircle className="w-5 h-5 text-orange-500 ml-2 flex-shrink-0" />
-          <div>يتم تطبيق رسوم إضافية على الساعات والعمال الإضافيين</div>
+          <div>{t.bookingDetails.silverOfferDescription4}</div>
         </div>
       </div>
     </div>
 
     {/* العرض الذهبي */}
-    <div 
+    <div
       className={`rounded-lg border-2 p-5 cursor-pointer relative transition-all duration-300 hover:shadow-md ${
         serviceType === 'package-12' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
       }`}
       onClick={() => handleserviceTypeSelect('package-12')}
     >
       <div className="absolute -top-3 -right-3 bg-orange-500 text-white px-3 py-1 rounded-full font-bold shadow-lg animate-bounce">
-        الأكثر مبيعاً
+        {t.bookingDetails.goldOfferBestSeller}
       </div>
       <div className="flex justify-between items-center mb-3">
-        <div className="font-bold text-gray-800 text-lg">العرض الذهبي</div>
+        <div className="font-bold text-gray-800 text-lg">{t.bookingDetails.goldOffer}</div>
         {serviceType === 'package-12' && <Check className="w-6 h-6 text-teal-600" />}
       </div>
 
       <div className="space-y-2 mt-3">
         <div className="flex items-center text-gray-700">
           <CalendarDays className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>يشمل العرض 3 زيارات أسبوعياً لمدة 12 ساعة</div>
+          <div>{t.bookingDetails.goldOfferDescription1}</div>
         </div>
-        
+
         <div className="flex items-center text-gray-700">
           <User className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>عاملة تنظيف واحدة و 12 زيارة في الشهر</div>
+          <div>{t.bookingDetails.goldOfferDescription1}</div>
         </div>
-        
+
         <div className="flex items-center text-gray-700">
           <Clock className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>إجمالي عدد الساعات هو 48 شهرياً</div>
+          <div>{t.bookingDetails.goldOfferDescription1}</div>
         </div>
-        
+
         <div className="flex items-center text-gray-700">
           <AlertCircle className="w-5 h-5 text-orange-500 ml-2 flex-shrink-0" />
-          <div>يتم تطبيق رسوم إضافية على الساعات والعمال الإضافيين</div>
+          <div>{t.bookingDetails.goldOfferDescription4}</div>
         </div>
       </div>
     </div>
   </div>
 </div>
-         {/*   
-          {(serviceType === 'package-12' || serviceType === 'package-4') && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold text-right mb-2">في أي أيام الأسبوع تريد الخدمة؟</h2>
-          <div className="grid grid-cols-4 gap-3">
-            {[
-                            { id: 'sat', label: 'السبت', available: true },
-
-              { id: 'sun', label: 'الأحد', available: true },
-              { id: 'mon', label: 'الإثنين', available: true },
-              { id: 'tue', label: 'الثلاثاء', available: true },
-              { id: 'wed', label: 'الأربعاء', available: true },
-              { id: 'thu', label: 'الخميس', available: true },
-              { id: 'fri', label: 'الجمعة', available: false },
-            ].map((day) => (
-              <div key={day.id} className={`flex items-center ${!day.available ? 'opacity-50' : ''}`}>
-                <input
-                  type="radio"
-                  id={day.id}
-                  name="day-selection"
-                  checked={selectedDay === day.id}
-                  onChange={() => day.available && handleDaySelection(day.id)}
-                  disabled={!day.available}
-                  className="h-4 w-4 text-teal-600 border-gray-300 rounded-full focus:ring-teal-500"
-                />
-                <label 
-                  htmlFor={day.id} 
-                  className={`mr-2 text-sm ${!day.available ? 'text-gray-400 line-through' : 'text-gray-700'}`}
-                >
-                  {day.label}
-                  {!day.available && <span className="mr-1 text-xs text-red-500">(غير متاح)</span>}
-                </label>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
- */}
          
-         <div dir='ltr' className="bg-blue-50 p-4 rounded-lg mb-6">
-           <h3 className="text-lg font-semibold text-right mb-2">لماذا تختار خدماتنا؟</h3>
-           <ul className="space-y-2 text-right">
-             <li className="flex justify-end items-center gap-2">
-               <span>ضمان الجودة 100%</span>
-               <Shield className="text-blue-600" size={18} />
+
+         <div  className="bg-blue-50 p-4 rounded-lg mb-6">
+           <h3 className="text-lg font-semibold  mb-2">{t.bookingDetails.whyChooseUsTitle}</h3>
+           <ul className="space-y-2">
+             <li className="flex justify-start items-center gap-2">
+             <Shield className="text-blue-600" size={18} />
+               <span>{t.bookingDetails.qualityGuarantee}</span>
+               
              </li>
-             <li className="flex justify-end items-center gap-2">
-               <span>فريق محترف ومؤهل</span>
-               <Award className="text-blue-600" size={18} />
+             <li className="flex justify-start  items-center gap-2">
+             <Award className="text-blue-600" size={18} />
+               <span>{t.bookingDetails.professionalTeam}</span>
+              
              </li>
-             <li className="flex justify-end items-center gap-2">
-               <span>التزام بالمواعيد</span>
-               <Clock className="text-blue-600" size={18} />
+             <li className="flex justify-start items-center gap-2">
+             <Clock className="text-blue-600" size={18} />
+               <span>{t.bookingDetails.punctuality}</span>
+            
              </li>
-             <li className="flex justify-end items-center gap-2">
-               <span>تقييم 4.9/5 من العملاء</span>
-               <Star className="text-yellow-500" size={18} />
+             <li className="flex justify-start items-center gap-2">
+             <Star className="text-yellow-500" size={18} />
+               <span>{t.bookingDetails.customerRating}</span>
+           
              </li>
            </ul>
          </div>
-         
+
        </div>
      );
    };
 
- 
-   
+
     // All state declarations remain the same
     const [user, setUser] = useState<{ name: string; phone: string; phoneVerified: boolean } | null>(null);
     const [mapLoaded, setMapLoaded] = useState(false);
@@ -802,19 +730,17 @@ const renderBookingSummary = () => {
     const markerRef = useRef<google.maps.Marker | null>(null)
     const router = useRouter();
 
-    
-   
- 
+
 
     // States for Time and Offer Selection remain the same
     const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
     const [selectedDate, setSelectedDate] = useState<string>('');
  const [loading, setLoading] = useState<boolean>(false);
- 
+
  const [availableCleanersM, setAvailableCleanersM] = useState<number>(15);
 const [availableCleanersE, setAvailableCleanersE] = useState<number>(15);
- 
- 
+
+
  const getcleaners = async (date: Date): Promise<void> => {
   if (!date) return;
 
@@ -860,16 +786,13 @@ const [availableCleanersE, setAvailableCleanersE] = useState<number>(15);
 console.log("cleanersE", availableCleanersE);
   } catch (error) {
     console.error("Failed to fetch reservations:", error);
-    alert("فشل في جلب الحجوزات. يرجى المحاولة مرة أخرى لاحقًا.");
+    alert("Failed to fetch reservations. Please try again later.");
   } finally {
     setLoading(false);
   }
 };
 
 
-    
-    
-    
     // States for offer times remain the same
     const [offerTimeSlots, setOfferTimeSlots] = useState<OfferTimeSlot[]>([]);
     let items: string[] = [];
@@ -878,8 +801,8 @@ console.log("selectedTimeSlot", selectedTimeSlot);
     // Available time slots
     //const availableTimeSlots = [
        // "الفترة الصباحية من 11:00-11:30 الى 15:00-15:30","الفترة المسائية من 16:00-16:30 الى 20:00-20:30"  ];
- 
-    
+
+
     // Offers
     const offers = [
         { id: 'offer1', label: '4 hours X 4 times in a month one cleaner 340 AED', times: 4, price: 340 },
@@ -913,13 +836,13 @@ console.log("selectedTimeSlot", selectedTimeSlot);
     const loadinfo = () => {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
 
-       
+
             setUser(userData);
-     
+
     };
 
     const handleSave = () => {
-     
+
    // Save user info in localStorage
    const userdata = {
     name: user?.name || name, // Use the name from response or input
@@ -929,7 +852,7 @@ console.log("selectedTimeSlot", selectedTimeSlot);
   localStorage.setItem("user", JSON.stringify(userdata));
 
 } ;
-    
+
     // Create a custom control for the current location button
     const createCurrentLocationButton = () => {
         // Function implementation remains the same, just change the type
@@ -945,7 +868,7 @@ console.log("selectedTimeSlot", selectedTimeSlot);
         controlUI.style.marginRight = '10px';
         controlUI.style.marginTop = '10px';
         controlUI.style.textAlign = 'center';
-        controlUI.title = 'الموقع الحالي';
+        controlUI.title = 'Current Location';
         controlDiv.appendChild(controlUI);
 
         // Set CSS for the control interior
@@ -959,7 +882,7 @@ console.log("selectedTimeSlot", selectedTimeSlot);
         controlText.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#4285F4"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994.994 0 0 0 13 3.06V1h-2v2.06A8.994.994 0 0 0 3.06 11H1v2h2.06A8.994.994 0 0 0 11 20.94V23h2v-2.06A8.994.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>';
         controlUI.appendChild(controlText);
 
-        
+
 
         return controlDiv;
     };
@@ -973,16 +896,16 @@ console.log("selectedTimeSlot", selectedTimeSlot);
             zoom: 10,
             center: initialPosition,
             mapTypeControl: false,
-            streetViewControl: false, 
+            streetViewControl: false,
             fullscreenControl: false,
             zoomControl: true,
-            
+
 
 
           });
           // Store map instance in ref for later access
           mapInstanceRef.current = map;
-      
+
           // Add a marker for the selected location
           const marker = new google.maps.Marker({
             position: initialPosition,
@@ -990,25 +913,25 @@ console.log("selectedTimeSlot", selectedTimeSlot);
             draggable: true,
           });
           markerRef.current = marker;
-      
+
           // Add the current location button to the map
           const locationButton = createCurrentLocationButton();
           map.controls[google.maps.ControlPosition.TOP_RIGHT].push(locationButton);
-      
+
           // ----------------------------
           // Create and add the Autocomplete input element
           // ----------------------------
           const input = document.createElement('input');
           input.type = 'text';
-          input.placeholder = ' ابحث عن موقع على الخريطة...';
+          input.placeholder =  t.locationSelection.searchPlaceholder;
           input.style.cssText = 'width: 300px; margin: 10px; padding: 5px; height: 50px; font-size: 18px;  border-radius: 5px;  margin-left: 10px; margin-top: 10px;  ';
           // You can add the input to the map controls (e.g., TOP_LEFT)
           map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
-      
+
           // Initialize the autocomplete widget with the input element
           const autocomplete = new google.maps.places.Autocomplete(input);
           autocomplete.bindTo('bounds', map);
-      
+
           // Listen for place changes and update the map and marker accordingly
           autocomplete.addListener('place_changed', () => {
             const place = autocomplete.getPlace();
@@ -1035,17 +958,17 @@ console.log("selectedTimeSlot", selectedTimeSlot);
               lng: place.geometry.location.lng(),
             });
           });
-      
+
           // ----------------------------
           // Geolocation: Get device's current location if permission is granted
           // ----------------------------
-         
-      
+
+
           // ----------------------------
           // Update selected location when marker is dragged
           // ----------------------------
           google.maps.event.addListener(marker, 'dragend', () => {
-            
+
             const position = marker.getPosition();
             if (position) {
               setSelectedLocation({
@@ -1059,7 +982,7 @@ console.log("selectedTimeSlot", selectedTimeSlot);
               });
             }
           });
-      
+
           // ----------------------------
           // Update marker position when map is clicked
           // ----------------------------
@@ -1077,13 +1000,13 @@ console.log("selectedTimeSlot", selectedTimeSlot);
               });
             }
           });
-      
+
           setMapLoaded(true);
           loadAddress();
-       
+
         }
-      }, [currentTab]);
-      
+      }, [currentTab, t.locationSelection.searchPlaceholder]);
+
 const converttime = (i: number) => {
   if (offerTimeSlots[i].timeSlot==='11:00 AM - 11:30 AM') {
     return "MORNING";
@@ -1116,19 +1039,19 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date:new Date( offerTimeSlots[i].date) , // Convert to DateTime, handle empty string
                 timePeriod:converttime(i),
-                    
+
                 extraHours:hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
-        
+
                 workerCount: workers,
                 price: totalPrice,
             } ));
-        
-        
+
+
           }
         return items;}
           else{
             console.log("one items.push  is running" );
-            
+
             items.push(JSON.stringify({
                 name: user?.name || '',  // Use name from user object
                 phone: user?.phone || '',  // Use phone from user object
@@ -1148,12 +1071,12 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
                 timePeriod:selectedTime=== '11:00 AM - 11:30 AM'
-                ? "MORNING" 
+                ? "MORNING"
                 : selectedTime === '4:00 PM - 4:30 PM'
-                ? "EVENING" 
+                ? "EVENING"
                 : "MORNING" , // Default to MORNING if neither or both are selected. Important
                 extraHours: hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
-        
+
                 workerCount: workers,
                 price: totalPrice,
             } ));
@@ -1180,19 +1103,19 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
                 const normalizedCityName = cityName.toLowerCase();
                 if (normalizedCityName.includes("dubai") || normalizedCityName.includes("دبي")) {
                     setSelectedCity("Dubai");
-                    
+
                     calculateTotalPrice({ hours, workers ,currentBasePrice: 100});
                 } else if (normalizedCityName.includes("sharjah") || normalizedCityName.includes("الشارقة")) {
                     setSelectedCity("Sharjah");
-                    
+
                     calculateTotalPrice({ hours, workers ,currentBasePrice: 85});
                 } else if (normalizedCityName.includes("ajman") || normalizedCityName.includes("عجمان")) {
                     setSelectedCity("Ajman");
-                   
+
                     calculateTotalPrice({ hours, workers ,currentBasePrice: 85});
                 } else if (normalizedCityName.includes("umm al quwain") || normalizedCityName.includes("أم القيوين")) {
                     setSelectedCity("Umm Al Quwain");
-                   
+
                     calculateTotalPrice({ hours, workers,currentBasePrice: 85 });
                 }else{
                     setSelectedCity("");
@@ -1205,7 +1128,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
             // Generate Google Maps URL for the location
             const locationLink = `https://www.google.com/maps?q=${location.lat},${location.lng}`;
             setLocationUrl(locationLink);
-            
+
         }
     });
 };
@@ -1213,7 +1136,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
 const loadAddress = () => {
   const storedAddress = localStorage.getItem("userAddress");
   const parsedAddress = storedAddress ? JSON.parse(storedAddress) : {};
-  
+
   // Initialize with default values first
   setAddressDetails(parsedAddress.addressDetails || "");
   setLocationNotes(parsedAddress.locationNotes || "");
@@ -1226,20 +1149,20 @@ const loadAddress = () => {
       const url = new URL(parsedAddress.locationUrl);
       const params = new URLSearchParams(url.search);
       const coordinates = params.get("q");
-      
+
       if (coordinates) {
         const [lat, lng] = coordinates.split(",").map(Number);
-        
+
         // Only update if both coordinates are valid numbers
         if (!isNaN(lat) && !isNaN(lng)) {
           setSelectedLocation({ lat, lng });
-          
+
           // Update map and marker if references exist
           if (markerRef.current && mapInstanceRef.current) {
             markerRef.current.setPosition({ lat, lng });
             mapInstanceRef.current.setCenter({ lat, lng });
           }
-          
+
           getAddressFromCoordinates({ lat, lng });
         }
       }
@@ -1264,14 +1187,15 @@ const opject = {
 
   if (locationNotes.trim() !== "") {
     localStorage.setItem("userAddress", JSON.stringify(opject));
-     
+
   }
 };
     const handleNext = async () => {
+
         // Add validation for location tab
    if (currentTab === 0) {
 
-loadAddress(); 
+loadAddress();
    }
         if (currentTab === 1 ){
 
@@ -1281,52 +1205,50 @@ loadAddress();
 
         }
 
-         
-        
+
         if (currentTab === 2 ){
-         
+
           if(!user){
-            alert("   الرجاء إدخال معلوماتك الشخصية");
+            alert(t.alert.enterPersonalInfo);
             return;
           }
-           
+
 if (user?.phone.substring(0, 2) !== "05") {
-  alert("الرجاء إدخال رقم هاتف صحيح");
+  alert(t.alert.invalidPhoneNumber);
   return;
-} 
+}
           if (user?.phone.length !== 10) {
-            alert("الرجاء إدخال رقم هاتف صحيح");
+            alert(t.alert.invalidPhoneNumber);
             return;
           }
-        
+
           if (user?.name.length < 3) {
-            alert("الرجاء إدخال اسم صحيح");
+            alert(t.alert.invalidName);
             return;
           }
           if (user?.name.length > 50) {
-            alert("الرجاء إدخال اسم صحيح");
+            alert(t.alert.invalidName);
             return;
           }
           if (user?.name.indexOf(" ") === -1) {
-            alert("الرجاء إدخال اسم صحيح");
+            alert(t.alert.invalidName);
             return;
           }
           if (user?.name.indexOf("  ") !== -1) {
-            alert("الرجاء إدخال اسم صحيح");
+            alert(t.alert.invalidName);
             return;
           }
           if (user?.name.split(" ").length < 2)  {
-            alert("الرجاء إدخال اسم صحيح");
+            alert(t.alert.invalidName);
             return;
           }
-          
+
         handleSave();
- 
 
 
         try {
           // Send the booking data to the API endpoint
-           
+
           const response = await fetch('/api/uncompleted', {
               method: 'POST',
               headers: {
@@ -1348,51 +1270,52 @@ if (user?.phone.substring(0, 2) !== "05") {
                                 : selectedOffer === 'package-12'
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
-              
-                    
+
+
                 extraHours:hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
-        
+
                 workerCount: workers,
-                 
+
             } ) ,
           });
-        
+
           if (response.ok) {
-           
+
          console.log("response.ok", response.ok);
-   
-          }          
+
+          }
           else {
               const errorData = await response.json();
+              console.log("errorData", errorData);
               if (errorData.error?.includes("Unique")) {
                 console.log("Unique");
               }
               else {
-                alert(`حدث خطأ أثناء تأكيد الحجز: ${errorData.error || 'Unknown error'}`);
+                alert(`Error confirming booking: ${errorData.error || 'Unknown error'}`);
                 console.error('API Error:', errorData);
-               
+
                 return;
               }
-             
+
           }
         }
          catch (error) {
-          alert('حدث خطأ أثناء الاتصال بالخادم.');
+          alert('An error occurred while connecting to the server.');
           console.error('Fetch Error:', error);
-          
+
           return;
         }
 
 
         }
         if (currentTab === 1 && (!locationNotes || locationNotes.trim() === "")) {
-            alert("الرجاء إدخال اسم البناء وؤقم الشقة ");
-           
+            alert(t.alert.locationNotesRequired);
+
             return;
         }
 
         if (currentTab === 1 && !selectedCity) {
-            alert("الرجاء اختيار مدينة ضمن الخدمة دبي عجمان الشارقة ام القيوين");
+            alert(t.alert.citySelectionRequired);
             return;
         }
 
@@ -1412,7 +1335,7 @@ if (user?.phone.substring(0, 2) !== "05") {
         }
 
         //Validation for time and date
-       
+
 
         if (currentTab < 3) {
             setCurrentTab(currentTab + 1);
@@ -1428,8 +1351,6 @@ if (user?.phone.substring(0, 2) !== "05") {
             setCurrentTab(currentTab - 1);
         }
     };
-     
-   
 
 
 
@@ -1438,19 +1359,15 @@ if (user?.phone.substring(0, 2) !== "05") {
 
 
 
-    
- 
 
-    // Function to check if a date is a working day (Saturday to Thursday)
-    
     const now = new Date();
     const hoursDate = now.getHours();
     console.log("Current Hour:", hoursDate);
-    
+
     let times: { time: string; disabled: boolean }[] = [];
-    
+
     const formattedDate = now.toISOString().split('T')[0];
-    
+
     if (  date !== "") {
         times = [
             { time: '9:00 AM - 9:30 AM', disabled: false },
@@ -1458,44 +1375,41 @@ if (user?.phone.substring(0, 2) !== "05") {
             { time: '1:00 PM - 1:30 PM', disabled: false },
             { time: '4:00 PM - 4:30 PM', disabled: false },
         ];
-    
+
         if (date === formattedDate) {
             times = times.filter(slot => {
                 let slotHour = parseInt(slot.time.split(':')[0]); // استخراج الساعة من النص
-    
+
                 if (slot.time.includes('PM') && slotHour !== 12) {
                     slotHour += 12; // تحويل الأوقات PM إلى تنسيق 24 ساعة
                 }
-    
+
                 return slotHour > hoursDate; // الاحتفاظ فقط بالأوقات القادمة
             });
-    
+
             // طباعة الأوقات المتاحة بعد التصفية
             console.log("Available Time Slots:", times);
         }
     }
-    
+
     // تصفية الأوقات بناءً على الساعة الحالية
-   
-    
-          
+
+
           // أسماء الأيام والشهور بالعربية - نبدأ بالأحد لتتوافق مع ترتيب الأيام في التقويم
-          let dayNames = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+
+          let dayNames = t.dayNames;
           const today = new Date();
           today.setDate(today.getDate()+1 );
           const dayIndex = today.getDay();
-          
+
           const startIndex = dayNames.indexOf(dayNames[dayIndex]);
 
           dayNames= [...dayNames.slice(startIndex), ...dayNames.slice(0, startIndex)]
-  
-          const monthNames = [
-            'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-            'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
-          ];
-        
 
-    
+          let monthNames = [];
+          monthNames = t.monthsOfYear;
+
+
     const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
     interface DisplayDay {
       date: Date;
@@ -1506,7 +1420,7 @@ if (user?.phone.substring(0, 2) !== "05") {
       isToday: boolean;
       isDisabled: boolean;
     }
-    
+
     const [displayDays, setDisplayDays] = useState<DisplayDay[]>([]);
     const [currentMonth, setCurrentMonth] = useState('');
 
@@ -1525,16 +1439,18 @@ if (user?.phone.substring(0, 2) !== "05") {
             const yesterday = new Date();
             tomorrow.setDate(today.getDate() + 1);
             yesterday.setDate(today.getDate() - 1);
+            monthNames= t.monthsOfYear;
+            console.log("monthNames", monthNames);
             setCurrentMonth(monthNames[startDate.getMonth()]);
-        
+
             for (let i = 0; i < 7; i++) {
                 const currentDate = new Date(startDate);
                 currentDate.setDate(startDate.getDate() + i);
-        
+
                 const dayIndex = currentDate.getDay(); // 0 للأحد، 1 للإثنين، ..., 6 للسبت
                 const isBeforeTomorrow = currentDate < yesterday;
                 const isThursdayOrFriday =  dayIndex === 5; // الخميس = 4، الجمعة = 5
-        
+
                 days.push({
                     date: currentDate,
                     day: currentDate.getDate(),
@@ -1545,31 +1461,31 @@ if (user?.phone.substring(0, 2) !== "05") {
                     isDisabled: isBeforeTomorrow || isThursdayOrFriday, // تعطيل الأيام قبل الغد والخميس والجمعة
                 });
             }
-        
+
             setDisplayDays(days);
         };
-        
 
- 
+
  // تهيئة التقويم عند التحميل
  useEffect(() => {
     // نبدأ من اليوم الحالي
     const today = new Date();
-    
-    const firstDayOfWeek = new Date(today); 
-    
-    
-    
+
+    const firstDayOfWeek = new Date(today);
+
+
+
     setCurrentWeekStart(firstDayOfWeek);
   }, []);
 
   // تحديث عرض الأيام عند تغيير بداية الأسبوع
   useEffect(() => {
     updateDisplayDays();
-  }, [currentWeekStart]);
+  }, [currentWeekStart,lang,currentTab]);
 
     const renderDateTimeSelection = () => {
-        
+
+
         // دالة للتحقق مما إذا كان التاريخ هو اليوم
         interface DisplayDay {
           date: Date;
@@ -1581,23 +1497,23 @@ if (user?.phone.substring(0, 2) !== "05") {
           isDisabled: boolean;
         }
 
-      
+
         // دالة للانتقال إلى الأسبوع السابق
         const goToPreviousWeek = () => {
           const prevWeek = new Date(currentWeekStart);
           prevWeek.setDate(prevWeek.getDate() - 7);
           setCurrentWeekStart(prevWeek);
         };
-      
+
         // دالة للانتقال إلى الأسبوع التالي
         const goToNextWeek = () => {
           const nextWeek = new Date(currentWeekStart);
           nextWeek.setDate(nextWeek.getDate() + 7);
           setCurrentWeekStart(nextWeek);
         };
-      
+
         // دالة لتحديد التاريخ عند النقر
-      
+
 
 
 const handleDateSelection = (day: DisplayDay) => {
@@ -1611,45 +1527,51 @@ const handleDateSelection = (day: DisplayDay) => {
 
     }
   };
-  
-    
-      
+
+
         return (
           <div className="rtl-direction">
-            <h2 className="text-xl font-bold text-center mb-4">اختر وقت الوصول</h2>
-            
+            <h2 className="text-xl font-bold text-center mb-4">{t.dateTimePayment.chooseArrivalTime}</h2>
+
             <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
               <div className="flex justify-between items-center mb-2">
-                <button 
+                <button
                   className="bg-gray-100 hover:bg-gray-200 p-2 rounded-md"
                   onClick={goToPreviousWeek}
                   disabled={currentWeekStart <= new Date()}
-                >
-                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                  </svg>
+                >{ lang==="AR" ?
+                  <ChevronRight className="h-5 w-5" />
+                  :
+                  <ChevronLeft className="h-5 w-5" />
+
+                }
+                  
+               
                 </button>
-                
+
                 <h3 className="text-right font-medium">{currentMonth}</h3>
-                
-                <button 
+
+                <button
                   className="bg-gray-100 hover:bg-gray-200 p-2 rounded-md"
                   onClick={goToNextWeek}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M7.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
-                  </svg> 
+                  { lang==="EN" ?
+                  <ChevronRight className="h-5 w-5" />
+                  :
+                  <ChevronLeft className="h-5 w-5" />
 
-                 
+                }
+
+
                 </button>
               </div>
-              
+
               <div className="grid grid-cols-7 gap-2 text-center mb-2">
                 {dayNames.map((dayName) => (
                   <div key={dayName} className="text-xs py-1">{dayName}</div>
                 ))}
               </div>
-              
+
               <div className="grid grid-cols-7 gap-2 text-center">
               {displayDays.map((day) => (
     <div
@@ -1663,7 +1585,7 @@ const handleDateSelection = (day: DisplayDay) => {
           ? 'bg-blue-600 text-white' // اليوم المحدد
           : day.isToday
           ? 'bg-blue-100' // اليوم الحالي
-         
+
           : 'hover:bg-gray-100' // الأيام العادية
       }`}
       onClick={() => handleDateSelection(day)}
@@ -1672,8 +1594,8 @@ const handleDateSelection = (day: DisplayDay) => {
     </div>
                 ))}
               </div>
-              
-              
+
+
             </div>
             {(date !== "" && !loading &&(availableCleanersE !==15 ||availableCleanersM !==15  ) )&& (
   <div
@@ -1691,8 +1613,8 @@ const handleDateSelection = (day: DisplayDay) => {
   >
     {(() => {
       const selectedDate = new Date(date);
-      const dayName = selectedDate.toLocaleDateString("ar-EG", { weekday: "long" });
-      const formattedDate = selectedDate.toLocaleDateString("ar-EG", {
+      const dayName = selectedDate.toLocaleDateString(lang, { weekday: "long" });
+      const formattedDate = selectedDate.toLocaleDateString(lang, {
         day: "numeric",
         month: "long"
       });
@@ -1702,23 +1624,21 @@ const handleDateSelection = (day: DisplayDay) => {
       if (availableCleanersE === 0 && availableCleanersM === 0) {
         percentage = 100; // إذا كانت القيم تساوي 0، يتم ضبط النسبة إلى 100%
       }
-      
-      return `تنبيه: تم حجز اكثر من ${percentage}% من مواعيد يوم ${dayName} ${formattedDate}`;    })()}
+
+      return `Warning: More than ${percentage}% of appointments for ${dayName} ${formattedDate} have been booked`;    })()}
   </div>
 )}
 
 
-        
-         
-         
+
             <div className="mb-8">
-              
-              <h3 className="text-lg font-semibold text-center mb-3">وقت الوصول المفضل</h3>
+
+              <h3 className="text-lg font-semibold text-center mb-3">{t.dateTimePayment.preferredArrivalTime}</h3>
 
               { loading &&(
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 60">
-  
+
   <circle cx="40" cy="30" r="5" fill="#333">
     <animate
       attributeName="opacity"
@@ -1728,7 +1648,7 @@ const handleDateSelection = (day: DisplayDay) => {
       repeatCount="indefinite"
     />
   </circle>
-  
+
   <circle cx="60" cy="30" r="5" fill="#333">
     <animate
       attributeName="opacity"
@@ -1738,7 +1658,7 @@ const handleDateSelection = (day: DisplayDay) => {
       repeatCount="indefinite"
     />
   </circle>
-  
+
   <circle cx="80" cy="30" r="5" fill="#333">
     <animate
       attributeName="opacity"
@@ -1748,23 +1668,24 @@ const handleDateSelection = (day: DisplayDay) => {
       repeatCount="indefinite"
     />
   </circle>
-  
+
  </svg>
 
+
               )
-              
-              
+
+
               }
 { !loading && (
   <div className="max-w-2xl mx-auto">
-     
+
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {times.map((item) => {
         // تحديد توفر العمال بناءً على الفترات الزمنية المحددة
         let isAvailable = false;
         let workerCount = 0;
         let timeSlot = "";
-        
+
         if (item.time === '11:00 AM - 11:30 AM') {
           workerCount = availableCleanersM;
           isAvailable = availableCleanersM > workers;
@@ -1774,45 +1695,45 @@ const handleDateSelection = (day: DisplayDay) => {
           isAvailable = availableCleanersE > workers;
           timeSlot = "EVENING";
         }
-        
+
         const isDisabled = item.disabled || !isAvailable;
         const isSelected = selectedTime === item.time;
-        
+
         // تحديد حالة ونص الحالة بناءً على التوفر
         let statusText = '';
         let statusClass = '';
         let statusIcon = null;
-        
+
         if (item.disabled) {
-          statusText = 'غير متاح للحجز';
+          statusText = t.timeSlots.unavailableForBooking;
           statusClass = 'bg-gray-100 text-gray-500';
         } else if (!isAvailable) {
-          statusText = 'تم حجز جميع العمال';
+          statusText = t.timeSlots.allWorkersBooked;
           statusClass = 'bg-red-100 text-red-700';
           statusIcon = '⛔';
         } else if (workerCount <= 3) {
-          statusText = `متبقي ${workerCount} عمال فقط!`;
+          statusText = t.timeSlots.workersRemaining.replace("{workerCount}", String(workerCount)) ;
           statusClass = 'bg-yellow-100 text-yellow-700 animate-pulse';
           statusIcon = '⚠️';
         } else {
-          statusText = `متاح لفترة محدودة`;
+          statusText = t.timeSlots.availableLimitedTime;
           statusClass = 'bg-green-100 text-green-700';
           statusIcon = '✅';
         }
-        
+
         return (
           <button
             key={item.time}
             className={`relative p-4 rounded-lg border transition-all ${
-              isDisabled 
-                ? 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed' 
+              isDisabled
+                ? 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'
                 : isSelected
                   ? 'bg-blue-50 border-blue-500 shadow-md'
                   : 'border-gray-300 hover:bg-blue-50 hover:border-blue-400'
             }`}
             onClick={() => {
               if (isDisabled) return;
-              
+
               setSelectedTime(item.time);
               setSelectedTimeSlot(timeSlot);
             }}
@@ -1827,12 +1748,12 @@ const handleDateSelection = (day: DisplayDay) => {
                 </svg>
               </div>
             )}
-            
+
             {/* عرض الوقت */}
             <div className="text-lg font-medium mb-3 text-center">
               {item.time}
             </div>
-            
+
             {/* مؤشر الحالة */}
             <div className={`${statusClass} px-3 py-1.5 rounded-md text-sm text-center flex items-center justify-center`}>
               {statusIcon && <span className="ml-1">{statusIcon}</span>}
@@ -1842,20 +1763,19 @@ const handleDateSelection = (day: DisplayDay) => {
         );
       })}
     </div>
-    
+
     {selectedTime && (
       <div className="mt-5 p-3 bg-blue-50 border border-blue-200 rounded-lg text-center">
         <p className="text-blue-800">
-          تم اختيار موعد الخدمة: <strong>{selectedTime}</strong>
+          {t.timeSlots.serviceTimeSelected} <strong>{selectedTime}</strong>
         </p>
         { serviceType !== 'one-time' && (
 
 
 <div className="offer-time-slots">
-<h3> سيتم التواصل معاكم من قبل خدمة العملاء لتثبيت المواعيد القادمة </h3>
+<h3> {t.timeSlots.contactForOffers} </h3>
 
 
- 
 </div>
         )
 
@@ -1864,8 +1784,8 @@ const handleDateSelection = (day: DisplayDay) => {
     )}
   </div>
 )}
-              
-              
+
+
             </div>
           </div>
         );
@@ -1873,58 +1793,64 @@ const handleDateSelection = (day: DisplayDay) => {
 
 
 
-   
-  
     const testfunc = (): boolean => {
       console.log("tester value", selectedTime);
-      
+
       if (selectedTime && selectedDate) {
         return true;
       }
       return false;
-      
-      
+
+
     };
 
   // Progress indicator component to show which step the user is on
 const ProgressIndicator = () => {
-  const steps = ['تفاصيل الحجز', 'الموقع', 'معلومات المستخدم', ' التاريخ و الدفع'];
-  
+
+  const steps = [t.bookingDetails.serviceTitle, t.locationSelection.title, t.userInfo.title, t.dateTimePayment.title];
+
+
   return (
-      <div className="progress-container ">
-          <div className="progress-steps">
-              {steps.map((step, index) => (
-                  <div 
-                      key={index} 
-                      className={`progress-step ${currentTab >= index ? 'active' : ''} ${currentTab === index ? 'current' : ''}`}
-                      onClick={() => index < currentTab && setCurrentTab(index)}
-                  >
-                      <div className="step-circle">
-                          {currentTab > index ? (
-                              <div className="step-check">✓</div>
-                          ) : (
-                              <div className="step-number">{index + 1}</div>
-                          )}
-                      </div>
-                      <div className="step-label ">{step}</div>
-                      {index < steps.length - 1 && (
-                          <div className={`step-connector  ${currentTab > index ? 'active' : ''}`}></div>
-                      )}
-                  </div>
-              ))}
-          </div>
+    <div className="progress-container" dir={t.direction || "ltr"}>
+      <div className="progress-bar">
+        {/* Add the progress fill based on current step */}
+        <div 
+          className="progress-fill" 
+          style={{ width: `${(currentTab / (steps.length - 1)) * 100}%` }}
+        ></div>
       </div>
+      
+      <div className="progress-steps">
+        {steps.map((step, index) => (
+          <div
+            key={index}
+            className={`progress-step ${currentTab >= index ? 'active' : ''} ${currentTab === index ? 'current' : ''}`}
+            onClick={() => index < currentTab && setCurrentTab(index)}
+            title={step} // Add title for accessibility
+          >
+            <div className="step-circle">
+              {currentTab > index ? (
+                <div className="step-check">✓</div>
+              ) : (
+                <div className="step-number">{index + 1}</div>
+              )}
+            </div>
+            <div   className="text-xs text-gray-500 text-center transition-all duration-300 max-w-[1000px]  text-ellipsis whitespace-nowrap"
+            >{step}</div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
-  const [showMenu, setShowMenu] = useState(false);
-  const [lang, setLang] = useState("AR"); // Default to Arabic
-  console.log("lang", lang);
-  const [currentPath, setCurrentPath] = useState('/terms');
- 
-  // Get current language content
-  const t = lang === "EN" ? content.en : content.ar;
+
+  const [currentPath, setCurrentPath] = useState('/');
+  const [showMenu, setShowMenu] = useState(false); // Add this line to define showMenu state
+
+
   const isRTL = lang === "AR";
+  const isLTR = lang === "EN";
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -1953,11 +1879,9 @@ const ProgressIndicator = () => {
     setCurrentPath(path);
     setShowMenu(false);
   };
-    const textar  = "نخدمك في كل إمارات الدولة | شركة مرخصة "  ;
-     const texten= "We serve you across all Emirates of the country | A licensed company";
      return (
- 
-       <div className={isRTL ? "rtl" : "ltr"} dir={t.direction}>
+
+       <div className={`${isRTL ? "rtl" : ""} ${isLTR ? "ltr" : ""}`} dir={t.direction}>
    <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 text-white p-1 relative overflow-hidden z-50">
            <div className="absolute inset-0 opacity-10" />
            <div className={`max-w-7xl mx-auto flex items-center justify-center`}>
@@ -1966,15 +1890,15 @@ const ProgressIndicator = () => {
                  {isRTL ? (
                    <>
                      <span className="inline-flex items-center">
-                     {textar}
+                     {t.serviceAreaText}
                        <Image src="/arabic.png" alt="Flag of the United Arab Emirates" width={12} height={12} className="mr-2" />
-                       
+
                      </span>
                    </>
                  ) : (
                    <>
                      <span className="inline-flex items-center text-[105%] mb-2">
-                       {texten}
+                       {t.serviceAreaText}
                        <Image src="/arabic.png" alt="Flag of the United Arab Emirates" width={12} height={12} className="ml-2 " />
                      </span>
                    </>
@@ -1983,93 +1907,102 @@ const ProgressIndicator = () => {
              </div>
            </div>
          </div>
-   
-         {/* Header - Simple design with logo left and menu right */}
-         <header dir="ltr" className="bg-white sticky top-0 z-40 border-b shadow-sm">
-           <div className="max-w-7xl mx-auto px-4 py-4">
-             <div className="flex justify-between items-center">
-               {/* Logo on the left */}
-               <div className="flex items-center">
-                 <div className="order-first">
-                   <img 
-                     onClick={() => navigateTo('/')} 
-                     src="/logo.png" 
-                     alt={isRTL ? "المشهد الأنيق" : "Elegant Scene"} 
-                     className="h-12 cursor-pointer" 
-                   />
-                 </div>
-               </div>
-               
-               {/* Language and menu button on the right */}
-               <div className="flex items-center gap-3 ">
-                 <div className="flex gap-3 mr-2">
-                   {['EN', 'AR'].map((langCode) => {
-                     const langKey = langCode.toUpperCase() as keyof typeof langImages;
-                     return (
-                      <button 
-                      key={langCode}
-                      onClick={() => setLang(langCode)}
-                      className={`flex items-right w-full   hover:bg-gray-50 transition-colors ${
-                        lang === langCode ? 'ring-1 ring-gray-400' : 'opacity-70 hover:opacity-100'
-                      }`}
-                    ><div className="w-8 h-8 rounded  overflow-hidden">
-                      <img 
-                        src={langImages[langKey]}
-                        alt={langKey} 
-                        className="w-full h-full object-cover"
-                      />
-                          </div>
-                    </button>
-                     );
-                   })}
-                 </div>
-                 <button 
-                   className="p-2 hover:bg-gray-100 rounded-lg menu-button"
-                   onClick={handleMenuToggle}
-                 >
-                   <Menu className="w-6 h-6 text-gray-700" /> 
-                 </button>
-               </div>
-             </div>
-             
-             {/* Simplified Menu */}
-             {showMenu && (
-               <nav className="menu-container">
-                 <div className="absolute right-2 w-64 z-50 mt-2">
-                   <ul className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-                     {menuItems.map((item, index) => {
-                       const Icon = item.icon;
-                       const isActive = currentPath === item.path;
-                       
-                       return (
-                         <li key={item.key}>
-                           <button 
-                             onClick={() => navigateTo(item.path)}
-                             className={`w-full text-right py-3 px-4 transition-colors ${
-                               isActive 
-                                 ? 'bg-gray-100 text-gray-900 font-medium' 
-                                 : 'hover:bg-gray-50 text-gray-700'
-                             } ${index !== 0 ? 'border-t border-gray-100' : ''}`}
-                           >
-                             <div className={`flex items-center ${isRTL ? 'flex-row-reverse' : 'flex-row-reverse'}`}>
-                               <Icon className={`h-4 w-4 ${isRTL ? 'ml-3' : 'ml-3'} ${
-                                 isActive ? 'text-gray-700' : 'text-gray-500'
-                               }`} />
-                               <span>
-                                 {t.header[item.key as keyof typeof t.header]}
-                               </span>
-                             </div>
-                           </button>
-                         </li>
-                       );
-                     })}
-                   </ul>
-                 </div>
-               </nav>
-             )}
-           </div>
-         </header>
 
+       {/* Header - Simple design with logo left and menu right */}
+            <header dir="ltr" className="bg-white sticky top-0 z-40 border-b shadow-sm">
+              <div className="max-w-7xl mx-auto px-4 py-4">
+                <div className="flex justify-between items-center">
+                  {/* Logo on the left */}
+                  <div className="flex items-center">
+                    <div className="order-first">
+                      <img
+                        onClick={() => navigateTo('/')}
+                        src="/logo.png"
+                        alt={isRTL ? "المشهد الأنيق" : "Elegant Scene"}
+                        className="h-12 cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center cursor-pointer"
+             onClick={() => window.open('https://wa.me/+971553465021', '_blank')}>
+          <div className="mr-2">
+            {/* WhatsApp Icon in SVG format */}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="#25D366">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+          </div>
+          <span className={`font-medium text-sm ${isRTL ? "mr-1" : "ml-1"}`}>
+            {isRTL ? "اتصل بنا" : "Contact Us"}
+          </span>
+        </div>
+                  {/* Language and menu button on the right */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-3 mr-2">
+                      {['EN', 'AR'].map((langCode) => {
+                        const langKey = langCode.toUpperCase() as keyof typeof langImages;
+                        return (
+                          <button
+                            key={langCode}
+                            onClick={() => setLang(langCode as "AR" | "EN")}
+                            className={`relative rounded-full overflow-hidden w-8 h-8 ${
+                              lang === langCode ? 'ring-2 ring-gray-400' : 'opacity-70 hover:opacity-100'
+                            }`}
+                          >
+                            <img
+                              src={langImages[langKey]}
+                              alt={langKey}
+                              className="w-full h-full object-cover"
+                            />
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button
+                      className="p-2 hover:bg-gray-100 rounded-lg menu-button"
+                      onClick={handleMenuToggle}
+                    >
+                      <Menu className="w-6 h-6 text-gray-700" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Simplified Menu */}
+                {showMenu && (
+                  <nav className="menu-container">
+                    <div className="absolute right-2 w-64 z-50 mt-2">
+                      <ul className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+                        {menuItems.map((item, index) => {
+                          const Icon = item.icon;
+                          const isActive = currentPath === item.path;
+
+                          return (
+                            <li key={item.key}>
+                              <button
+                                onClick={() => navigateTo(item.path)}
+                                className={`w-full text-right py-3 px-4 transition-colors ${
+                                  isActive
+                                    ? 'bg-gray-100 text-gray-900 font-medium'
+                                    : 'hover:bg-gray-50 text-gray-700'
+                                } ${index !== 0 ? 'border-t border-gray-100' : ''}`}
+                              >
+                                <div className={`flex items-center ${isRTL ? 'flex-row-reverse' : 'flex-row-reverse'}`}>
+                                  <Icon className={`h-4 w-4 ${isRTL ? 'ml-3' : 'ml-3'} ${
+                                    isActive ? 'text-gray-700' : 'text-gray-500'
+                                  }`} />
+                                  <span>
+                                    {t.header[item.key as keyof typeof t.header]}
+                                  </span>
+                                </div>
+                              </button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </nav>
+                )}
+              </div>
+            </header>
 
             {/* Load Google Maps JavaScript API */}
             <Script
@@ -2079,12 +2012,12 @@ const ProgressIndicator = () => {
 
             <div   className="container">
                 <ProgressIndicator />
-                 
+
                 <div className="tabs">
 
                     <div className={`tab ${currentTab === 0 ? 'active' : ''}`}>
 
-                   
+
                        {  renderBookingDetails()}
 
 
@@ -2092,88 +2025,82 @@ const ProgressIndicator = () => {
                     </div>
 
                     <div className={`tab ${currentTab === 1 ? 'active' : ''}`}>
-                        <h2>اختيار الموقع</h2>
+                        <h2>{t.locationSelection.title}</h2>
                         {(currentTab === 1 )  && (
             <>
-           
-      
-      <div className="location-container">
-                              
-       
+
+
+      <div  className="location-container">
+
+
                               <div className="map-container" ref={mapRef}></div>
-                              
-                              <label>الموقع المختار:</label>
+
+                              <label>{t.locationSelection.selectedLocationLabel}</label>
                                   <textarea
                                       value={addressDetails + "\n " + locationUrl}
                                        rows={1}
                                       readOnly
                                   />
-                              
+
                               <div className="form-group">
-                                  <label>المدينة:</label>
+                                  <label>{t.locationSelection.cityLabel}</label>
                                   <input type="text" value={selectedCity} readOnly />
-                                   
-                                  
-                              
-                              
-                              
-                                  <label>اسم البناء ورقم الشقة:</label>
+
+
+
+                                  <label>{t.locationSelection.buildingApartmentLabel}</label>
                                   <textarea
                                       value={locationNotes}
                                       onChange={(e) => setLocationNotes(e.target.value)}
+                                      placeholder={t.locationSelection.buildingApartmentPlaceholder}
                                       rows={3}
                                   />
-                              
-                                  
-                               
+
+
                               </div>
                               </div>
-                             
-       
-      
-      
+
+
           </>
             )}
 
-                  
+
 
                     </div>
 
                     <div className={`tab ${currentTab === 2 ? 'active' : ''}`}>
 
 
-                    <h2>معلومات المستخدم</h2>
-                         
+                    <h2>{t.userInfo.title}</h2>
+
                             <div className="form-group">
-                                <label>الاسم:</label>
-                                <input  placeholder="First Name Last Name"  value={ user?.name || name}  onChange={(e) => {
+                                <label>{t.userInfo.nameLabel}</label>
+                                <input  placeholder={t.userInfo.namePlaceholder}  value={ user?.name || name}  onChange={(e) => {
                                     if (user) {
                                         user.name = e.target.value;
                                     }
                                     setName(e.target.value);
                                     handleSave();
                                 }} />
-                                <label>رقم الهاتف:</label>
-                                <input type="tel" placeholder="050 123 4567"  value={user?.phone || phone}   onChange={(e) => {
+                                <label>{t.userInfo.phoneLabel}</label>
+                                <input type="tel" placeholder={t.userInfo.phonePlaceholder}  value={user?.phone || phone}   onChange={(e) => {
                                     if (user) {
                                         user.phone = e.target.value;
                                     }
-                                    
+
                                     setPhone(e.target.value);
                                     handleSave();
                                 }}     />
-                               
-                                
-                            </div>
-                     
 
-                      
-                        
+
+                            </div>
+
+
                     </div>
 
                     <div className={`tab ${currentTab === 3 ? 'active' : ''}`}>
-                        <h2>الدفع</h2>
-         
+                        <h2>{t.dateTimePayment.title}</h2>
+
 <div
   style={{
     marginTop: "25px",
@@ -2195,7 +2122,7 @@ const ProgressIndicator = () => {
 }}
 >⚡</div>
             <div>
-                <strong>تنبيه هام:</strong> مواعيدنا تنفذ بسرعة! عملاؤنا يحجزون مواعيدهم قبل 3-5 أيام مقدماً.
+                <strong>{t.dateTimePayment.importantAlertTitle}</strong> {t.dateTimePayment.importantAlertMessage}
             </div>
         </div>
                         {renderDateTimeSelection()}
@@ -2204,19 +2131,16 @@ const ProgressIndicator = () => {
 
                         {currentTab === 3 && (
                             <div className="form-group">
-                                
-                               
 
-                                
+
 
                                 {serviceType != 'one-time' && (
                                     <>
-                                        
-                                      
-                                         
+
+
                                             </>
-                                
-                               
+
+
                                 )}
                             </div>
                         )}
@@ -2229,8 +2153,8 @@ const ProgressIndicator = () => {
 
                         {testfunc() ? (
                                 <div className="payment-info">
-                                  
-                                    <h3>معلومات بطاقة الائتمان</h3>
+
+                                    <h3>{t.dateTimePayment.creditCardInfo}</h3>
 
 
 
@@ -2242,12 +2166,12 @@ const ProgressIndicator = () => {
           currency: "aed",
         }}
       >
-        <CheckoutPage amount={totalPrice}   language="ar"  bookingData={createBookingdata()} />
+        <CheckoutPage amount={totalPrice}   language={lang.toLowerCase() as "ar" | "en"}  bookingData={createBookingdata()} />
       </Elements>
                                 </div>
-                            
+
                         ) : (
-                            <div className="error-message">الرجاء تحديد التاريخ والوقت.</div>
+                            <div className="error-message">{t.dateTimePayment.selectDateAndTimeMessage}</div>
                         )}
                     </div>
                 </div>
@@ -2257,17 +2181,16 @@ const ProgressIndicator = () => {
 
              <div className=" pt-16 navigation">
 
-  
-  
-  
-  
+
+
+
   <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
         <div className="max-w-md mx-auto">
           {/* Collapsible price details */}
           {showSummaryDetails && (
             <div className="p-4 bg-white border-b">
               <div className="mb-2 flex justify-between items-center">
-                <button 
+                <button
                   onClick={() => setShowSummaryDetails(false)}
                   className="text-gray-500 hover:text-gray-700"
                 >
@@ -2275,90 +2198,94 @@ const ProgressIndicator = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
-                <h3 className="text-lg font-bold text-gray-800 text-center">تفاصيل الحجز</h3>
+                <h3 className="text-lg font-bold text-gray-800 text-center">{t.summary.bookingSummary}</h3>
               </div>
-         
+
               <div className="space-y-2 text-sm text-right">
               {serviceType && (
            <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="font-medium text-gray-800">
-                {serviceType === 'one-time' ? 'زيارة  واحدة' : 
-                 serviceType === 'package-4' ? 'العرض البرونزي' : 
-                 serviceType === 'package-8' ? 'العرض الفضي ' : 'العرض الذهبي'}
+                {serviceType === 'one-time' ? t.bookingDetails.oneTimeVisit :
+                 serviceType === 'package-4' ? t.bookingDetails.bronzeOffer :
+                 serviceType === 'package-8' ? t.bookingDetails.silverOffer : t.bookingDetails.goldOffer}
               </span>
-              <span className="text-gray-800 font-bold ">نوع الحجز</span>
+              <span className="text-gray-800 font-bold ">{t.dateTimePayment.bookingType}</span>
             </div>
           )}
-          
+
           {workers > 0 && (
              <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="text-gray-800">{workers} </span>
-              <span className="text-gray-800 font-bold ">عدد العمال</span>
+              <span className="text-gray-800 font-bold ">{t.dateTimePayment.numberOfWorkers}</span>
             </div>
           )}
-          
+
           {hours > 0 && (
              <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="text-gray-600">{hours} </span>
-              <span className="text-gray-800 font-bold  ">عدد الساعات</span>
+              <span className="text-gray-800 font-bold  ">{t.dateTimePayment.numberOfHours}</span>
             </div>
           )}
-          
+
           {selectedCity && (
            <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="text-gray-600 w-[40%] text-left ">{addressDetails + "\n " + locationUrl}</span>
-              <span className="text-gray-800 font-bold ">الموقع</span>
+              <span className="text-gray-800 font-bold ">{t.dateTimePayment.location}</span>
             </div>
           )}
 
           {selectedTime && (
            <div className="flex justify-between items-center py-2 border-b border-gray-100">
               <span className="text-gray-800">{selectedTime}</span>
-              <span className="text-gray-800 font-bold ">وقت الوصول</span>
-            </div>
-          )}
-          
-          {date && (
-            <div className="flex justify-between items-center py-2 border-b border-gray-100">
-              <span className="text-gray-800">{date}</span>
-              <span className="text-gray-800 font-bold ">التاريخ</span>
-            </div>
-          )}
-          
-          {totalPrice > 0 && (
-             <div className="flex justify-between items-center py-2 border-b border-gray-100">
-              <span className="text-lg font-bold text-blue-600">{totalPrice} درهم</span>
-              <span className="text-gray-800 font-bold ">السعر الإجمالي</span>
+              <span className="text-gray-800 font-bold ">{t.dateTimePayment.arrivalTime}</span>
             </div>
           )}
 
-                
+          {date && (
+            <div className="flex justify-between items-center py-2 border-b border-gray-100">
+              <span className="text-gray-800">{date}</span>
+              <span className="text-gray-800 font-bold ">{t.dateTimePayment.date}</span>
+            </div>
+          )}
+
+          {totalPrice > 0 && (
+             <div className="flex justify-between items-center py-2 border-b border-gray-100">
+
+{lang==="AR" ? (
+                <span className="text-lg font-bold text-blue-600">{totalPrice} درهم</span>
+) : (              <span className="text-lg font-bold text-blue-600">{totalPrice} AED</span>
+)}
+              <span className="text-gray-800 font-bold ">{t.dateTimePayment.totalPrice}</span>
+            </div>
+          )}
+
+
               </div>
             </div>
           )}
-          
+
           {/* Fixed price bar */}
           <div className="p-4 bg-white flex justify-between items-center">
               {currentTab > 0 && (
             <button  onClick={handlePrev} className="bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1 text-sm">
-                   <ChevronRight className="w-4 h-4 rtl:rotate-180" />
-            <span>رجوع</span>
+                   <ChevronLeft className="w-4 h-4 rtl:rotate-180" />
+            <span>{t.button.previous}</span>
 
           </button>
   )}
-            <button 
+            <button
               onClick={() => setShowSummaryDetails(!showSummaryDetails)}
               className="flex items-center justify-center gap-1 px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
             >
               <span className="text-gray-700 text-sm">AED {totalPrice}</span>
               <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${showSummaryDetails ? 'rotate-180' : ''}`} />
             </button>
-          
+
             {currentTab < 3 && (
             <button  onClick={handleNext} className="bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg font-semibold transition-colors flex items-center justify-center gap-1 text-sm">
-              <span>التالي</span>
-              <ChevronLeft className="w-4 h-4 rtl:rotate-180" />
-          
+              <span>{t.button.next}</span>
+              <ChevronRight className="w-4 h-4 rtl:rotate-180" />
+
             </button>
             )}
 
@@ -2372,45 +2299,44 @@ const ProgressIndicator = () => {
                 /* Base Styles */
 
 
-                
-.btn-summary {
-  background-color: #f0f8ff;
-  color: #333;
-  border: 1px solid #4e73df;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-width: 120px;
-  margin: 0 10px;
-  transition: all 0.3s ease;
-}
+                .btn-summary {
+                  background-color: #f0f8ff;
+                  color: #333;
+                  border: 1px solid #4e73df;
+                  padding: 12px 16px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  min-width: 120px;
+                  margin: 0 10px;
+                  transition: all 0.3s ease;
+                }
 
-.btn-summary:hover {
-  background-color: #e6f0ff;
-}
+                .btn-summary:hover {
+                  background-color: #e6f0ff;
+                }
 
-.price-text {
-  font-weight: bold;
-  color: #4e73df;
-}
+                .price-text {
+                  font-weight: bold;
+                  color: #4e73df;
+                }
 
-.arrow-icon {
-  margin-right: 8px;
-  font-size: 12px;
-  transition: transform 0.3s ease;
-}
+                .arrow-icon {
+                  margin-right: 8px;
+                  font-size: 12px;
+                  transition: transform 0.3s ease;
+                }
 
-.arrow-icon.up {
-  transform: rotate(180deg);
-}
+                .arrow-icon.up {
+                  transform: rotate(180deg);
+                }
 
-.navigation {
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+                .navigation {
+                  margin-top: 20px;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                }
                 .container {
                     width: 100%;
                     max-width: 600px;
@@ -2422,13 +2348,20 @@ const ProgressIndicator = () => {
                     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                     direction: rtl;
                 }
+                .ltr .container {
+                    direction: ltr;
+                }
+                .rtl .container {
+                    direction: rtl;
+                }
+
 
                 /* Progress Indicator */
                 .progress-container {
                     margin: 0 10px 25px 10px;
                     padding-bottom: 5px;
                 }
-                
+
                 .progress-bar {
                     height: 4px;
                     background-color: #e0e0e0;
@@ -2437,38 +2370,38 @@ const ProgressIndicator = () => {
                     position: relative;
                     z-index: 1;
                 }
-                
+
                 .progress-fill {
                     height: 100%;
                     background-color: #4e73df;
                     border-radius: 2px;
                     transition: width 0.3s ease;
                 }
-                
+
                 .progress-steps {
                     display: flex;
                     justify-content: space-between;
                     position: relative;
                     padding: 0 10px;
                 }
-                
+
                 .progress-step {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     z-index: 2;
                     flex: 1;
-                     
+
                     transition: all 0.3s;
                     position: relative;
                     cursor: pointer;
                 }
-                
+
                 .progress-step.current .step-circle {
                     transform: scale(1.15);
                     box-shadow: 0 0 0 4px rgba(78, 115, 223, 0.15);
                 }
-                
+
                 .step-circle {
                     width: 30px;
                     height: 30px;
@@ -2482,23 +2415,23 @@ const ProgressIndicator = () => {
                     position: relative;
                     transition: all 0.3s ease;
                 }
-                
+
                 .progress-step.active .step-circle {
                     border-color: #4e73df;
                     background-color: #fff;
                 }
-                
+
                 .step-number {
                     font-size: 14px;
                     font-weight: bold;
                     color: #777;
                     transition: all 0.3s ease;
                 }
-                
+
                 .progress-step.active .step-number {
                     color: #4e73df;
                 }
-                
+
                 .step-label {
                     font-size: 11px;
                     color: #777;
@@ -2509,7 +2442,7 @@ const ProgressIndicator = () => {
                     text-overflow: ellipsis;
                     white-space: nowrap;
                 }
-                
+
                 .progress-step.active .step-label {
                     color: #333;
                     font-weight: 500;
@@ -2599,6 +2532,12 @@ const ProgressIndicator = () => {
                     background-position: left 12px center;
                     padding-left: 30px;
                 }
+                .rtl .select-field {
+                    background-position: right 12px center;
+                    padding-right: 30px;
+                    padding-left: 12px;
+                }
+
 
                 .select-field.small {
                     max-width: 100px;
@@ -2723,6 +2662,11 @@ const ProgressIndicator = () => {
                     margin-left: 10px;
                     position: relative;
                 }
+                .rtl .checkmark {
+                    margin-right: 10px;
+                    margin-left: 0;
+                }
+
 
                 .checkbox-container:hover input ~ .checkmark {
                     background-color: #ccc;
@@ -2768,6 +2712,11 @@ const ProgressIndicator = () => {
                     margin-bottom: 0;
                     font-size: 13px;
                 }
+                .rtl .extra-hours label {
+                    margin-right: 10px;
+                    margin-left: 0;
+                }
+
 
                 /* Counter Input for Cleaners */
                 .cleaner-section {
@@ -2786,7 +2735,7 @@ const ProgressIndicator = () => {
                 }
 
                 .counter-btn {
-                 
+
                     border-radius: 50%;
                     background-color: #4e73df;
                     color: white;
@@ -2807,7 +2756,7 @@ const ProgressIndicator = () => {
                     margin: 0 15px;
                     font-size: 18px;
                     font-weight: bold;
-                  
+
                     text-align: center;
                 }
 
@@ -3001,17 +2950,37 @@ const ProgressIndicator = () => {
                     margin-bottom: 10px;
                     font-size: 14px;
                 }
+                .rtl .summary-item {
+                    justify-content: space-between;
+                }
+                .ltr .summary-item {
+                    justify-content: space-between;
+                }
+
 
                 .summary-label {
                     color: #666;
                     flex: 1;
                 }
+                .rtl .summary-label {
+                    text-align: right;
+                }
+                 .ltr .summary-label {
+                    text-align: left;
+                }
+
 
                 .summary-value {
                     font-weight: 500;
                     color: #333;
                     flex: 1;
                     text-align: left;
+                }
+                 .rtl .summary-value {
+                    text-align: left;
+                }
+                 .ltr .summary-value {
+                    text-align: right;
                 }
 
                 .slots-summary {
@@ -3097,19 +3066,28 @@ const ProgressIndicator = () => {
                     justify-content: space-between;
                     gap: 10px;
                 }
+                .rtl .navigation {
+                    flex-direction: row-reverse;
+                }
+                 .ltr .navigation {
+                    flex-direction: row;
+                }
 
-                button {
-                    padding: 14px 20px;
+
+                .btn-prev,
+                .btn-next,
+                .btn-confirm {
+                    padding: 12px 24px;
                     border: none;
                     border-radius: 8px;
-                    cursor: pointer;
                     font-size: 16px;
                     font-weight: 500;
-                    transition: all 0.3s ease;
+                    cursor: pointer;
+                    transition: background-color 0.3s;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    min-width: 8px;
+                    gap: 8px;
                 }
 
                 .btn-prev {
@@ -3169,10 +3147,6 @@ const ProgressIndicator = () => {
                         font-size: 14px;
                     }
 
-                    button {
-                        padding: 12px 16px;
-                        font-size: 14px;
-                    }
 
                     .map-container {
                         height: 200px;

@@ -26,7 +26,37 @@ const images = [
   { url: ' /images/22.jpg', alt: 'Story 22', title: 'شغل نظيف' }
 ];
 
-const StoriesGallery = () => {
+const imagesen = [
+  { url: ' /images/1.jpg', alt: 'Story 1', title: 'You Deserve It' },
+  { url: ' /images/2.jpg', alt: 'Story 2', title: 'Kind People' },
+  { url: ' /images/3.jpg', alt: 'Story 3', title: 'Review' },
+  { url: ' /images/4.jpg', alt: 'Story 4', title: 'Respectful' },
+  { url: ' /images/5.jpg', alt: 'Story 5', title: 'I Rely On You' },
+  { url: ' /images/6.jpg', alt: 'Story 6', title: 'High-Class Treatment' },
+  { url: ' /images/7.jpg', alt: 'Story 7', title: 'Excellent Service' },
+  { url: ' /images/8.jpg', alt: 'Story 8', title: 'Very Clean' },
+  { url: ' /images/9.jpg', alt: 'Story 9', title: 'Clever/Skilled' },
+  { url: ' /images/10.jpg', alt: 'Story 10', title: 'Personal Experience' },
+  { url: ' /images/11.jpg', alt: 'Story 11', title: 'Inquiries' },
+  { url: ' /images/12.jpg', alt: 'Story 12', title: 'Tidy Work' },
+  { url: ' /images/13.jpg', alt: 'Story 13', title: 'Credit to Face (Honorable)' },
+  { url: ' /images/14.jpg', alt: 'Story 14', title: 'Perfect/Wonderful' },
+  { url: ' /images/15.jpg', alt: 'Story 15', title: 'Their Work is Excellent' },
+  { url: ' /images/16.jpg', alt: 'Story 16', title: 'I Will Not Change From You' },
+  { url: ' /images/17.jpg', alt: 'Story 17', title: 'Clean and Fast' },
+  { url: ' /images/18.jpg', alt: 'Story 18', title: 'Attention and Follow-up' },
+  { url: ' /images/19.jpg', alt: 'Story 19', title: 'Trustworthy and Dedicated' },
+  { url: ' /images/20.jpg', alt: 'Story 20', title: 'The Saviors' },
+  { url: ' /images/21.jpg', alt: 'Story 21', title: 'Precise Details' },
+  { url: ' /images/22.jpg', alt: 'Story 22', title: 'Clean Work' }
+];
+
+ 
+const StoriesGallery = ({ 
+     lang = 'EN'
+}) => {
+
+ 
   const [currentStory, setCurrentStory] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeHintIndex, setActiveHintIndex] = useState(0);
@@ -171,7 +201,56 @@ const StoriesGallery = () => {
           <ChevronRight className="w-6 h-6 text-[#4B0082]" />
         </button>
 
-        <div
+       {lang==="EN" ? (<div
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex gap-4 overflow-x-auto hide-scrollbar pt-16 px-12"
+          style={{ scrollBehavior: 'smooth' }}
+        >
+          {imagesen.map((image, index) => (
+            <div
+              key={index}
+              className="story-item flex-shrink-0 cursor-pointer transform transition-transform hover:scale-105 flex flex-col items-center relative"
+              onClick={() => openStory(index)}
+            >
+              {activeHintIndex === index && !currentStory && !isScrolling && (
+                <div className="absolute -top-12  inset-x-0 flex justify-center transition-all duration-500">
+                  <div className="relative transform group-hover:-translate-y-1">
+                    <div className="relative bg-white border border-orange-100 rounded-lg shadow overflow-hidden">
+                      <div className="absolute inset-0 bg-orange-50 opacity-50 group-hover:opacity-70 transition-opacity"></div>
+                      <div className="relative flex items-center gap-2 px-3 py-2">
+                        <div className="relative">
+                          <div className="absolute w-1 h-1 bg-orange-500 rounded-full animate-ping opacity-75"></div>
+                          <div className="relative w-1 h-1 bg-orange-600 rounded-full"></div>
+                        </div>
+                        <span className="text-xs font-medium text-orange-700 whitespace-nowrap">
+                           {lang=="AR"?"انقر للمشاهدة":"Click to view"}
+                         </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-r from-[#0088CC] to-[#4B0082] shadow-golden-glow">
+
+                <div className="w-full h-full rounded-full overflow-hidden border-2 border-white">
+                  <img
+                    src={image.url}
+                    alt={image.alt}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+              
+              <p className="text-sm text-gray-700 mt-1"> {image.title}</p>
+
+            </div>
+
+          ))}
+        </div>):
+        (
+          <div
           ref={scrollRef}
           onScroll={handleScroll}
           className="flex gap-4 overflow-x-auto hide-scrollbar pt-16 px-12"
@@ -194,8 +273,8 @@ const StoriesGallery = () => {
                           <div className="relative w-1 h-1 bg-orange-600 rounded-full"></div>
                         </div>
                         <span className="text-xs font-medium text-orange-700 whitespace-nowrap">
-                          انقر للمشاهدة
-                        </span>
+                           {lang=="AR"?"انقر للمشاهدة":"Click to view"}
+                         </span>
                       </div>
                     </div>
                   </div>
@@ -212,12 +291,15 @@ const StoriesGallery = () => {
                   />
                 </div>
               </div>
-              <p className="text-sm text-gray-700 mt-1">{image.title}</p>
+              
+              <p className="text-sm text-gray-700 mt-1"> {image.title}</p>
 
             </div>
 
           ))}
         </div>
+
+        )}
       </div>
 
       {currentStory && (
