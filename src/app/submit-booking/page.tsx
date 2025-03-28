@@ -329,24 +329,22 @@ let searchParams: ReturnType<typeof useSearchParams> | null = null;
       }
     );
   };
-  if (isLoading) {
-    return 
-    (
-        <Suspense>
-        <Search />
-      </Suspense>
-    ) // Show loading spinner while loading
-}
+ 
 
   return (
     <>
 
       {/* Loading Spinner */}
       {isLoading && (
+      <div>
+        <Suspense>
+          <Search />
+        </Suspense>
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <div className="loading-text">{langDict[lang].loadingData}</div>
         </div>
+      </div>
       )}
 
       <div className="celebration-container" id="celebrationContainer"></div>
