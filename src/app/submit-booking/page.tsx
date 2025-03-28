@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react'
 
 // Define interface for booking data
 interface BookingData {
@@ -70,10 +71,21 @@ const langDict = {
 };
 
 
+  
+
 export default function BookingConfirmation() {
   // Load language from local storage or default to 'AR'
   const [lang, setLang] = useState<'EN' | 'AR'>('AR');
+let searchParams: ReturnType<typeof useSearchParams> | null = null;
 
+  function Search() {
+    searchParams = useSearchParams();
+   
+    return <input placeholder="Search..." />
+  }
+
+
+  
   useEffect(() => {
     const storedLang = localStorage.getItem('lang') as 'EN' | 'AR';
     if (storedLang) {
@@ -82,7 +94,7 @@ export default function BookingConfirmation() {
   }, []);
     const [isLoading, setIsLoading] = useState(true);
   const [bookingData, setBookingData] = useState<BookingData>(defaultBookingData);
-  const searchParams = useSearchParams();
+
 
   useEffect(() => {
     // Load language from local storage on mount
@@ -93,17 +105,21 @@ export default function BookingConfirmation() {
   }, []);
 
 
+
+
+  
+
   useEffect(() => {
     // Function to parse booking data from URL query parameters
     const parseBookingData = () => {
       // Get individual parameters from URL
-      const type = searchParams.get('type');
-      const workers = searchParams.get('workers');
-      const hours = searchParams.get('hours');
-      const location = searchParams.get('location');
-      const time = searchParams.get('time');
-      const date = searchParams.get('date');
-      const price = searchParams.get('price');
+      const type = searchParams ? searchParams.get('type') : null;
+      const workers = searchParams ? searchParams.get('workers') : null;
+      const hours = searchParams ? searchParams.get('hours') : null;
+      const location = searchParams ? searchParams.get('location') : null;
+      const time = searchParams ? searchParams.get('time') : null;
+      const date = searchParams ? searchParams.get('date') : null;
+      const price = searchParams ? searchParams.get('price') : null;
 
 
       // If we have at least some of the parameters, create a new booking data object
@@ -148,6 +164,9 @@ export default function BookingConfirmation() {
 
     parseBookingData();
   }, [searchParams]);
+
+
+
 
   const showSuccessPopup = (): void => {
     const popup = document.getElementById('successPopup');
@@ -310,9 +329,18 @@ export default function BookingConfirmation() {
       }
     );
   };
+  if (isLoading) {
+    return 
+    (
+        <Suspense>
+        <Search />
+      </Suspense>
+    ) // Show loading spinner while loading
+}
 
   return (
     <>
+
       {/* Loading Spinner */}
       {isLoading && (
         <div className="loading-container">
