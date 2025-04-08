@@ -56,12 +56,11 @@ const ReservationManager = () => {
 
   
 
-  // دالة للحصول على التاريخ الأولي (اليوم أو السبت القادم)
   const getInitialDate = () => {
     const today = new Date();
     const dayOfWeek = today.getDay();
-    if (dayOfWeek === 4 || dayOfWeek === 5) {
-      const daysUntilSaturday = dayOfWeek === 4 ? 2 : 1;
+    if (dayOfWeek === 5) { // اذا كان يوم جمعة يتم عرض السبت
+      const daysUntilSaturday =  1;
       const nextSaturday = new Date(today);
       nextSaturday.setDate(today.getDate() + daysUntilSaturday);
       return nextSaturday;
@@ -147,11 +146,11 @@ const ReservationManager = () => {
 
   const getWeekDates = (date: Date): Date[] => {
     const day = date.getDay();
-    const diff = day === 0 ? -1 : 6 - day;
+    const diff = day === 0 ? -1 : 6 - day; // حساب الفرق حتى يوم السبت
     const saturdayDate = new Date(date);
     saturdayDate.setDate(date.getDate() + diff);
     const weekDays: Date[] = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) { //  تم تغيير عدد الأيام هنا لإضافة يوم الخميس (6 أيام بدلاً من 5)
       const currentDate = new Date(saturdayDate);
       currentDate.setDate(saturdayDate.getDate() + i);
       weekDays.push(currentDate);
@@ -544,8 +543,8 @@ const ReservationManager = () => {
       return;
     }
 
-    if (dayOfWeek === 4 || dayOfWeek === 5) {
-      alert('لا يمكن إضافة حجوزات في أيام الخميس والجمعة.');
+    if (  dayOfWeek === 5) {
+      alert('لا يمكن إضافة حجوزات في أيام  الجمعة.');
       return;
     }
 
@@ -668,7 +667,7 @@ if (editingReservationId && newReservation.dates.length > 0) {
         </button>
       </div>
 
-      <div className="grid grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-6 gap-4 mb-8">
         {weekDates.map((date) => (
           <button
             key={date.toISOString()}
