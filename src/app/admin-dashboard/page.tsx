@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect, useRef  } from 'react';
- 
+
 import { ChevronRight, ChevronLeft, Calendar, Clock, MapPin, Phone, Mail,  DollarSign, Users, X, Edit, ChevronDown, ChevronUp, Plus, Save } from 'lucide-react';
 import { useRouter } from "next/navigation";
 
@@ -26,35 +26,36 @@ const ReservationManager = () => {
 
  const [logedin, setLogedin] = useState(false);
  const [admin, setAdmin] = useState(false);
+ const [loadingLoginCheck, setLoadingLoginCheck] = useState(true); // حالة تحميل للتحقق من تسجيل الدخول
   const router = useRouter();
-  
+
   // Get the 'book' parameter as a string and convert to boolean
   // UseEffect to check if the user is already logged in
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      
-     
+
       setLogedin(user.logedin || false);
+      if (user.logedin) {
+        if (user.type === "ADMIN") {
+          setAdmin(true);
+        }
+      }
+    } else {
+      // اذا لم يكن هناك مستخدم مسجل، انتقل إلى صفحة تسجيل الدخول
+      router.push(`/login`);
     }
+    setLoadingLoginCheck(false); // تم التحقق من تسجيل الدخول
   }, []);
 
-  // UseEffect to redirect the user once they are logged in
+  // UseEffect to redirect الغير مصرح به  once they are logged in
   useEffect(() => {
-    if (logedin) {
-      const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-       
-       
-   if (storedUser.type === "ADMIN") {
-      setAdmin(true);
-   } else {
-     router.push(`/login `);
-   }  
+    if (!loadingLoginCheck && logedin && !admin) {
+      router.push(`/login`); //  تأكد من التوجيه في حالة عدم وجود صلاحيات الأدمن
     }
-  }, [logedin]);
+  }, [logedin, admin, loadingLoginCheck, router]);
 
-  
 
   const getInitialDate = () => {
     const today = new Date();
@@ -113,10 +114,10 @@ const ReservationManager = () => {
   useEffect(() => {
     if (selectedDateRef.current) {
       fetchReservations(selectedDateRef.current);
-     
+
     } else {
       fetchReservations(initialDate);
-   
+
     }
      // جلب الحجوزات غير المكتملة عند تحميل الصفحة وفي كل تحديث
   }, [selectedDateRef]);
@@ -158,7 +159,7 @@ const ReservationManager = () => {
     return weekDays;
   };
 
- 
+
 
 
   const getArabicDayName = (date: Date): string => {
@@ -426,7 +427,7 @@ const ReservationManager = () => {
 
     setLoading(true);
     try {
- 
+
 
  // حلقة تكرارية على كل تاريخ وفترة زمنية في newReservation.dates
  for (const datePeriod of newReservation.dates) {
@@ -519,7 +520,7 @@ const ReservationManager = () => {
     });
   };
 
- 
+
 
   const handleTempDateChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTempDate(e.target.value);
@@ -610,6 +611,11 @@ if (editingReservationId && newReservation.dates.length > 0) {
       price: 0
     });
   };
+
+
+  if (loadingLoginCheck) {
+    return <div>جاري التحقق من تسجيل الدخول...</div>; // او اي مؤشر تحميل مناسب
+  }
 
 
   return (
@@ -1300,8 +1306,8 @@ if (editingReservationId && newReservation.dates.length > 0) {
       )}
     </div>
     ) : (
-      <>
-       </>
+     (router.push('/login'), // إعادة توجيه المستخدم إلى صفحة تسجيل الدخول
+      !loadingLoginCheck ? <div>يتم التحويل إلى صفحة تسجيل الدخول...</div> : null) // عرض رسالة بدلاً من لا شيء بعد التحقق
     )
   );
 };
