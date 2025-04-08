@@ -1137,7 +1137,7 @@ if (editingReservationId && newReservation.dates.length > 0) {
 
       {showNewReservationForm && (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto  p-8  h-full w-full z-50 flex justify-center items-center" dir="rtl">
-          <div className="bg-white rounded-lg p-4 sm:p-6 shadow-lg w-full max-w-lg mt-64 mb-16 " > {/* تقليل الـ padding للشاشات الصغيرة */}
+          <div className="bg-white rounded-lg p-4 sm:p-6 shadow-lg w-full max-w-lg mt-[100%] mb-16 " > {/* تقليل الـ padding للشاشات الصغيرة */}
             <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center">{editingReservationId ? 'تعديل حجز' : 'إضافة حجز جديد'}</h2> {/* تصغير حجم الخط والـ mb على الشاشات الصغيرة */}
 
             <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
