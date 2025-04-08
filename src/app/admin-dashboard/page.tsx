@@ -656,10 +656,11 @@ if (editingReservationId && newReservation.dates.length > 0) {
             key={date.toISOString()}
             onClick={() => selectDate(date)}
             className={`flex flex-col items-center p-2 sm:p-4 rounded-lg shadow-sm transition-colors text-sm sm:text-base 
-              selectedDate && date.toDateString() === selectedDate.toDateString()
+              ${selectedDate && date.toDateString() === selectedDate.toDateString()
                 ? 'bg-blue-500 text-white'
-                : 'bg-white hover:bg-gray-50'
-            } ${date.toDateString() === initialDate.toDateString() ? 'ring-2 ring-blue-500' : ''}`}
+                : 'bg-white hover:bg-gray-50'}
+              ${date.toDateString() === initialDate.toDateString() ? 'ring-2 ring-blue-500' : ''}`}
+            
           >
             <span className="font-bold">{getArabicDayName(date)}</span>
             <span className="text-xs sm:text-sm mt-1"> {/* تقليل حجم الخط على الشاشات الصغيرة */}
