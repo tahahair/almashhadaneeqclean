@@ -631,12 +631,12 @@ const renderBookingSummary = () => {
 
         <div className="flex items-center text-gray-700">
           <User className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>{t.bookingDetails.silverOfferDescription1}</div>
+          <div>{t.bookingDetails.silverOfferDescription2}</div>
         </div>
 
         <div className="flex items-center text-gray-700">
           <Clock className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>{t.bookingDetails.silverOfferDescription1}</div>
+          <div>{t.bookingDetails.silverOfferDescription3}</div>
         </div>
 
         <div className="flex items-center text-gray-700">
@@ -669,12 +669,12 @@ const renderBookingSummary = () => {
 
         <div className="flex items-center text-gray-700">
           <User className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>{t.bookingDetails.goldOfferDescription1}</div>
+          <div>{t.bookingDetails.goldOfferDescription2}</div>
         </div>
 
         <div className="flex items-center text-gray-700">
           <Clock className="w-5 h-5 text-teal-600 ml-2 flex-shrink-0" />
-          <div>{t.bookingDetails.goldOfferDescription1}</div>
+          <div>{t.bookingDetails.goldOfferDescription3}</div>
         </div>
 
         <div className="flex items-center text-gray-700">
