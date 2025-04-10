@@ -4,33 +4,36 @@ import React, { useState, useEffect, useRef,Suspense   } from 'react';
 import { ChevronRight, ChevronLeft, Calendar, Clock, MapPin, Phone, Mail,  DollarSign, Users, X, Edit, ChevronDown, ChevronUp, Plus, Save } from 'lucide-react';
 import { useRouter ,useSearchParams } from "next/navigation";
 
-
-function DateReader({ setInitialDate , setCurrentDate }: { setInitialDate: (date: Date) => void , setCurrentDate: (date: Date) => void }) {
+let globaldate= new Date();
+function DateReader({ setInitialDate, setCurrentDate }: { 
+  setInitialDate: (date: Date) => void, 
+  setCurrentDate: (date: Date) => void 
+}) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
     const dateParam = searchParams.get('date');
+    let targetDate = new Date();
+
     if (dateParam) {
-      // --- منطق تحويل النص من الرابط إلى كائن تاريخ ---
-      // مثال بسيط (قد تحتاج لتعديله حسب صيغة التاريخ DD-MM-YYYY)
-      const parts = dateParam.split('-'); // [DD, MM, YYYY]
-      if (parts.length === 3) {
-         // انتبه: شهر JS يبدأ من 0 (يناير=0)، لذا نطرح 1
-         const parsedDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-         if (!isNaN(parsedDate.getTime())) { // تحقق من صحة التاريخ
-           setInitialDate(parsedDate);
-           setCurrentDate(parsedDate);
-           return; // تم التعيين بنجاح
-         }
+      const [day, month, year] = dateParam.split('-').map(Number);
+      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+        const parsedDate = new Date(year, month - 1, day);
+        if (!isNaN(parsedDate.getTime())) {
+          targetDate = parsedDate;
+        }
       }
-      console.warn("Invalid date format in URL, using default.");
     }
-    // في حال عدم وجود بارامتر أو فشل التحويل، استخدم تاريخ اليوم كافتراضي
-    setInitialDate(new Date());
 
-  }, [searchParams, setInitialDate]); // الاعتماديات
+    // إعادة تعيين التاريخ مع تجاهل الوقت
+    targetDate.setHours(0, 0, 0, 0);
+    setInitialDate(targetDate);
+    setCurrentDate(targetDate);
+    globaldate = targetDate;
 
-  return null; // هذا المكون لا يعرض شيئاً بنفسه
+  }, [searchParams, setInitialDate, setCurrentDate]);
+
+  return null;
 }
 // --- نهاية المكون الداخلي ---
 
@@ -82,6 +85,7 @@ const ReservationManager = () => {
     }
   }, [logedin, admin, loadingLoginCheck, router]);
 
+  
 
   const getInitialDate = () => {
     const today = new Date();
@@ -92,7 +96,7 @@ const ReservationManager = () => {
       nextSaturday.setDate(today.getDate() + daysUntilSaturday);
       return nextSaturday;
     }
-    return today;
+    return globaldate || today;
   };
 
   const initialDate = getInitialDate();
@@ -131,21 +135,16 @@ const ReservationManager = () => {
     setWeekDates(dates);
   }, [currentDate]);
 
-  useEffect(() => {
-    selectedDateRef.current = selectedDate;
-  }, [selectedDate]);
+ 
+
 
   useEffect(() => {
-    if (selectedDateRef.current) {
-      fetchReservations(selectedDateRef.current);
-
-    } else {
-      fetchReservations(initialDate);
-
+    if (selectedDate) {
+      fetchReservations(selectedDate);
+      fetchUncompletedReservations(selectedDate);
     }
-     fetchUncompletedReservations(selectedDateRef.current);
-  }, [selectedDateRef]);
-
+  }, [selectedDate]);
+ 
   useEffect(() => {
     switch (newReservation.serviceType) {
       case 'OFFER_4':
@@ -644,8 +643,11 @@ if (editingReservationId && newReservation.dates.length > 0) {
 
         {/* نمرر دالة تحديث الحالة للمكون الداخلي */}
         <DateReader setInitialDate={setSelectedDate}  setCurrentDate={setCurrentDate}/>
+       
       </Suspense>
+    
        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6"> {/* تخطيط عمودي على الشاشات الصغيرة وأفقي على المتوسطة والكبيرة */}
+        
         <h1 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-0">{editingReservationId ? 'تعديل حجز' : 'نظام إدارة الحجوزات'}</h1> {/* تصغير حجم الخط على الشاشات الصغيرة */}
         <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4"> {/* تخطيط عمودي على الشاشات الصغيرة وأفقي على المتوسطة والكبيرة */}
           <div className="bg-gray-100 p-3 rounded-lg text-sm flex items-center ml-0 sm:ml-4"> {/* إزالة الهامش الأيسر على الشاشات الصغيرة */}
