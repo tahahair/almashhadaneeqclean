@@ -4,10 +4,12 @@ import React, { useState, useEffect, useRef,Suspense   } from 'react';
 import { ChevronRight, ChevronLeft, Calendar, Clock, MapPin, Phone, Mail,  DollarSign, Users, X, Edit, ChevronDown, ChevronUp, Plus, Save } from 'lucide-react';
 import { useRouter ,useSearchParams } from "next/navigation";
 
-let globaldate= new Date();
-function DateReader({ setInitialDate, setCurrentDate }: { 
+let golbaldate= new Date();
+
+function DateReader({ setInitialDate, setCurrentDate,setRun }: { 
   setInitialDate: (date: Date) => void, 
-  setCurrentDate: (date: Date) => void 
+  setCurrentDate: (date: Date) => void,
+  setRun: (run: boolean) => void
 }) {
   const searchParams = useSearchParams();
 
@@ -29,8 +31,8 @@ function DateReader({ setInitialDate, setCurrentDate }: {
     targetDate.setHours(0, 0, 0, 0);
     setInitialDate(targetDate);
     setCurrentDate(targetDate);
-    globaldate = targetDate;
-
+     golbaldate=targetDate;
+     setRun(false);
   }, [searchParams, setInitialDate, setCurrentDate]);
 
   return null;
@@ -85,7 +87,6 @@ const ReservationManager = () => {
     }
   }, [logedin, admin, loadingLoginCheck, router]);
 
-  
 
   const getInitialDate = () => {
     const today = new Date();
@@ -96,13 +97,13 @@ const ReservationManager = () => {
       nextSaturday.setDate(today.getDate() + daysUntilSaturday);
       return nextSaturday;
     }
-    return globaldate || today;
+    return today;
   };
 
   const initialDate = getInitialDate();
-
-  const [currentDate, setCurrentDate] = useState(globaldate);
-  const [selectedDate, setSelectedDate] = useState(globaldate);
+  const [run, setRun] = useState(true);
+  const [currentDate, setCurrentDate] = useState(initialDate);
+  const [selectedDate, setSelectedDate] = useState(golbaldate);
   const [weekDates, setWeekDates] = useState<Date[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [uncompletedReservations, setUncompletedReservations] = useState<UncompletedReservation[]>([]);
@@ -135,16 +136,12 @@ const ReservationManager = () => {
     setWeekDates(dates);
   }, [currentDate]);
 
- 
-
-
   useEffect(() => {
-    if (selectedDate) {
-      fetchReservations(selectedDate);
-      fetchUncompletedReservations(selectedDate);
-    }
+    selectedDateRef.current = selectedDate;
   }, [selectedDate]);
- 
+
+
+
   useEffect(() => {
     switch (newReservation.serviceType) {
       case 'OFFER_4':
@@ -249,10 +246,24 @@ const ReservationManager = () => {
     price: number;
   }
 
+  const selectDate2 = (date: Date) => {
+
+if (!run){
+  console.log('Selected date:', date);
+  fetchReservations(date);
+  fetchUncompletedReservations(date);
+  setRun(true);
+}
+ 
+    return "";
+  };
+
   const selectDate = (date: Date) => {
+    setRun(false);
     setSelectedDate(date);
     fetchReservations(date);
     fetchUncompletedReservations(date);
+   
   };
 
 
@@ -642,7 +653,7 @@ if (editingReservationId && newReservation.dates.length > 0) {
      <Suspense fallback={<div>Loading date preference...</div>}>
 
         {/* نمرر دالة تحديث الحالة للمكون الداخلي */}
-        <DateReader setInitialDate={setSelectedDate}  setCurrentDate={setCurrentDate}/>
+        <DateReader setInitialDate={setSelectedDate} setCurrentDate={setCurrentDate} setRun={setRun} />
        
       </Suspense>
     
@@ -719,10 +730,16 @@ if (editingReservationId && newReservation.dates.length > 0) {
         ))}
       </div>
 
-      {selectedDate ? (
+      
+      {selectedDate  ? (
+        
         <div className="bg-white rounded-lg shadow p-4 sm:p-6"> {/* تقليل الـ padding للشاشات الصغيرة */}
           <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-            حجوزات يوم {getArabicDayName(selectedDate)} {selectedDate.getDate()} {getArabicMonthName(selectedDate)}
+            حجوزات يوم {getArabicDayName(selectedDate)} {selectedDate.getDate()} 
+            
+            {getArabicMonthName(selectedDate)}
+            {selectDate2(selectedDate)}
+  
           </h2>
 
           {loading ? (
