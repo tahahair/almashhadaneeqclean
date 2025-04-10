@@ -39,7 +39,7 @@ export async function DELETE(req: Request) {
 
 
 // Get bookings by date (required) and optional timePeriod
-export async function GET(req: Request) {
+export async function GET(req: Request) {  
     try {
         const { searchParams } = new URL(req.url);
         const date = searchParams.get("date");

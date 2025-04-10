@@ -56,7 +56,7 @@ model Uncompleted {
   id        String @id @default(uuid())
   name      String @unique
   phone     String @unique
-  email     String @unique
+  email     String 
   city      String
   address   String
   locationUrl String?

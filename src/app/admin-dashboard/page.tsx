@@ -380,8 +380,13 @@ const ReservationManager = () => {
     }
   };
 
-  const editReservation = (reservation: Reservation) => {
-    setEditingReservationId(reservation.id);
+  const editReservation = (reservation: Reservation, type: string) => {
+    if (type === "UNCOMPLETED") {
+      setEditingReservationId(null);
+    }else{
+      setEditingReservationId(reservation.id);
+    }
+    
     setNewReservation({
       name: reservation.name,
       phone: reservation.phone,
@@ -429,7 +434,7 @@ const ReservationManager = () => {
   };
 
   let response;
-  if (editingReservationId) {
+  if (editingReservationId ) {
 
     response = await fetch('/api/booking', {
       method: 'PUT',
@@ -732,7 +737,7 @@ if (editingReservationId && newReservation.dates.length > 0) {
                                     className="text-blue-500 hover:text-blue-700 ml-2"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      editReservation(reservation);
+                                      editReservation(reservation, "COMPLETED");
                                     }}
                                   >
                                     <Edit size={16} />
@@ -883,7 +888,7 @@ if (editingReservationId && newReservation.dates.length > 0) {
                                     className="text-blue-500 hover:text-blue-700 ml-2"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      editReservation(reservation);
+                                      editReservation(reservation, "COMPLETED");
                                     }}
                                   >
                                     <Edit size={16} />
@@ -1035,7 +1040,8 @@ if (editingReservationId && newReservation.dates.length > 0) {
                                     className="text-blue-500 hover:text-blue-700 ml-2"
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      editReservation(reservation);
+                                       
+                                      editReservation(reservation,"UNCOMPLETED");
                                     }}
                                   >
                                     <Edit size={16} />
