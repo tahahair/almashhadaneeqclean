@@ -101,8 +101,8 @@ const ReservationManager = () => {
 
   const initialDate = getInitialDate();
 
-  const [currentDate, setCurrentDate] = useState(initialDate);
-  const [selectedDate, setSelectedDate] = useState(initialDate);
+  const [currentDate, setCurrentDate] = useState(globaldate);
+  const [selectedDate, setSelectedDate] = useState(globaldate);
   const [weekDates, setWeekDates] = useState<Date[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [uncompletedReservations, setUncompletedReservations] = useState<UncompletedReservation[]>([]);
