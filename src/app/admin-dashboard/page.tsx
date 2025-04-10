@@ -5,7 +5,7 @@ import { ChevronRight, ChevronLeft, Calendar, Clock, MapPin, Phone, Mail,  Dolla
 import { useRouter ,useSearchParams } from "next/navigation";
 
 
-function DateReader({ setInitialDate }: { setInitialDate: (date: Date) => void }) {
+function DateReader({ setInitialDate , setCurrentDate }: { setInitialDate: (date: Date) => void , setCurrentDate: (date: Date) => void }) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -19,6 +19,7 @@ function DateReader({ setInitialDate }: { setInitialDate: (date: Date) => void }
          const parsedDate = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
          if (!isNaN(parsedDate.getTime())) { // تحقق من صحة التاريخ
            setInitialDate(parsedDate);
+           setCurrentDate(parsedDate);
            return; // تم التعيين بنجاح
          }
       }
@@ -165,18 +166,21 @@ const ReservationManager = () => {
 
 
   const getWeekDates = (date: Date): Date[] => {
-    const day = date.getDay();
-    const diff = day === 0 ? -1 : 6 - day;
-    const saturdayDate = new Date(date);
-    saturdayDate.setDate(date.getDate() + diff);
+    const day = date.getDay(); // 0 (Sunday) to 6 (Saturday)
+    const diffToSaturday = (day + 1) % 7; // الفرق للوصول إلى السبت السابق أو الحالي
+    const saturday = new Date(date);
+    saturday.setDate(date.getDate() - diffToSaturday);
+  
     const weekDays: Date[] = [];
-    for (let i = 0; i < 6; i++) {
-      const currentDate = new Date(saturdayDate);
-      currentDate.setDate(saturdayDate.getDate() + i);
-      weekDays.push(currentDate);
+    for (let i = 0; i < 6; i++) { // من السبت إلى الخميس
+      const current = new Date(saturday);
+      current.setDate(saturday.getDate() + i);
+      weekDays.push(current);
     }
+  
     return weekDays;
   };
+  
 
 
   const getArabicDayName = (date: Date): string => {
@@ -637,8 +641,9 @@ if (editingReservationId && newReservation.dates.length > 0) {
       
     <div className="flex flex-col p-4 sm:p-6 text-right" dir="rtl"> {/* تقليل الـ padding للشاشات الصغيرة */}
      <Suspense fallback={<div>Loading date preference...</div>}>
+
         {/* نمرر دالة تحديث الحالة للمكون الداخلي */}
-        <DateReader setInitialDate={setSelectedDate} />
+        <DateReader setInitialDate={setSelectedDate}  setCurrentDate={setCurrentDate}/>
       </Suspense>
        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6"> {/* تخطيط عمودي على الشاشات الصغيرة وأفقي على المتوسطة والكبيرة */}
         <h1 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-0">{editingReservationId ? 'تعديل حجز' : 'نظام إدارة الحجوزات'}</h1> {/* تصغير حجم الخط على الشاشات الصغيرة */}
