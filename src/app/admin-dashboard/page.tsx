@@ -1,13 +1,210 @@
 "use client"
-import React, { useState, useEffect, useRef,Suspense   } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
+import { ChevronRight, ChevronLeft, Calendar, Clock, MapPin, Phone, Mail, DollarSign, Users, X, Edit, ChevronDown, ChevronUp, Plus, Save, Languages } from 'lucide-react'; // Added Languages icon
+import { useRouter, useSearchParams } from "next/navigation";
 
-import { ChevronRight, ChevronLeft, Calendar, Clock, MapPin, Phone, Mail,  DollarSign, Users, X, Edit, ChevronDown, ChevronUp, Plus, Save } from 'lucide-react';
-import { useRouter ,useSearchParams } from "next/navigation";
+let golbaldate = new Date();
 
-let golbaldate= new Date();
+// --- Translation Dictionary ---
+const translations = {
+  en: {
+    // General UI
+    loadingLoginCheck: "Checking login status...",
+    reservationSystemTitle: "Reservation Management System",
+    editReservationTitle: "Edit Reservation",
+    newBookingButton: "New Booking",
+    availableWorkersInfo: "Total Available Workers:",
+    workersPerPeriod: "19 workers per period (Morning/Evening)",
+    previousWeek: "Previous Week",
+    nextWeek: "Next Week",
+    selectDatePrompt: "Please select a date to view reservations",
+    loadingData: "Loading data...",
+    // Table & Reservation Details
+    morningPeriod: "Morning Period",
+    eveningPeriod: "Evening Period",
+    uncompletedReservations: "Uncompleted Reservations",
+    remainingWorkers: "Remaining Workers:",
+    noNewBookings: "(Cannot add new bookings)",
+    noBookingsMorning: "No reservations for the morning period",
+    noBookingsEvening: "No reservations for the evening period",
+    noUncompletedBookings: "No uncompleted reservations",
+    nameHeader: "Name",
+    phoneHeader: "Phone Number",
+    actionsHeader: "Actions",
+    emailLabel: "Email:",
+    cityLabel: "City:",
+    addressLabel: "Address:",
+    locationLinkLabel: "Location Link:",
+    openLocation: "Open Location",
+    serviceTypeLabel: "Service Type:",
+    extraHoursLabel: "Extra Hours:",
+    workerCountLabel: "Worker Count:",
+    priceLabel: "Price:",
+    currency: "AED", // Or your preferred currency symbol/code
+    notAvailable: "N/A",
+    confirmCall: "Confirm Call",
+    // Forms
+    addReservationTitle: "Add New Reservation",
+    editReservationFormTitle: "Edit Reservation",
+    customerNameLabel: "Customer Name*",
+    phoneLabel: "Phone Number*",
+    emailLabelOptional: "Email",
+    cityLabelMandatory: "City*",
+    addressLabelMandatory: "Address*",
+    locationUrlOptional: "Location URL (Optional)",
+    serviceTypeLabelForm: "Service Type",
+    addDatesAndPeriods: "Add Dates and Time Periods",
+    addDatePlaceholder: "Date",
+    addTimePeriodPlaceholder: "Time Period",
+    addButton: "Add",
+    selectedDatesAndPeriods: "Selected Dates and Periods:",
+    dateHeader: "Date",
+    timePeriodHeader: "Time Period",
+    removeButton: "Remove",
+    extraHoursLabelForm: "Extra Hours",
+    workerCountLabelForm: "Worker Count",
+    priceLabelForm: "Price",
+    cancelButton: "Cancel",
+    saveChangesButton: "Save Changes",
+    saveBookingButton: "Save Booking",
+    // Alerts & Confirmations
+    fillMandatoryFieldsError: "Please fill all mandatory fields (*)",
+    selectAtLeastOneDateError: "Please select at least one date",
+    fetchError: "Failed to fetch reservations. Please try again later.",
+    fetchUncompletedError: "Failed to fetch uncompleted reservations. Please try again later.",
+    updateCallStatusSuccess: "Reservation status updated to 'Called' successfully.",
+    updateCallStatusError: "Failed to update call status. Please try again later.",
+    deleteConfirm: "Are you sure you want to delete this reservation?",
+    deleteSuccess: "Reservation deleted successfully.",
+    deleteError: "Failed to delete reservation. Please try again later.",
+    addSuccess: "Reservation added successfully.",
+    editSuccess: "Reservation edited successfully.",
+    addEditError: "Failed to add/edit reservation. Please try again later.",
+    pastDateError: "Cannot add dates earlier than today.",
+    fridayError: "Cannot add reservations on Fridays.", // Assuming Friday is the weekend
+    duplicateDateError: "Cannot add the same date more than once.",
+    addDateWhileEditingError: "You cannot add new dates while editing an existing multi-date reservation.",
+    maxDatesError: (count: number) => `You cannot add more than ${count} dates for this offer.`,
+    redirectToLogin: "Redirecting to login page...",
+    // Date/Time Related
+    days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+    months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+    // Service Types
+    OFFER_4: 'Offer 4 Times',
+    OFFER_8: 'Offer 8 Times',
+    OFFER_12: 'Offer 12 Times',
+    ONE_TIME: 'One Time',
+    // Time Periods
+    MORNING: 'Morning',
+    EVENING: 'Evening',
+  },
+  ar: {
+    // General UI
+    loadingLoginCheck: "جاري التحقق من تسجيل الدخول...",
+    reservationSystemTitle: "نظام إدارة الحجوزات",
+    editReservationTitle: "تعديل حجز",
+    newBookingButton: "حجز جديد",
+    availableWorkersInfo: "إجمالي العمال المتاحين:",
+    workersPerPeriod: "19 عامل لكل فترة (صباحية/مسائية)",
+    previousWeek: "الأسبوع السابق",
+    nextWeek: "الأسبوع التالي",
+    selectDatePrompt: "الرجاء اختيار تاريخ لعرض الحجوزات",
+    loadingData: "جاري تحميل البيانات...",
+    // Table & Reservation Details
+    morningPeriod: "الفترة الصباحية",
+    eveningPeriod: "الفترة المسائية",
+    uncompletedReservations: "الحجوزات الغير مكتملة",
+    remainingWorkers: "العمال المتبقين:",
+    noNewBookings: "(لا يمكن إضافة حجوزات جديدة)",
+    noBookingsMorning: "لا توجد حجوزات في الفترة الصباحية",
+    noBookingsEvening: "لا توجد حجوزات في الفترة المسائية",
+    noUncompletedBookings: "لا توجد حجوزات غير مكتملة",
+    nameHeader: "الاسم",
+    phoneHeader: "رقم الهاتف",
+    actionsHeader: "إجراءات",
+    emailLabel: "البريد الإلكتروني:",
+    cityLabel: "المدينة:",
+    addressLabel: "العنوان:",
+    locationLinkLabel: "رابط الموقع:",
+    openLocation: "فتح الموقع",
+    serviceTypeLabel: "نوع الخدمة:",
+    extraHoursLabel: "ساعات إضافية:",
+    workerCountLabel: "عدد العمال:",
+    priceLabel: "السعر:",
+    currency: "درهم",
+    notAvailable: "غير متوفر",
+    confirmCall: "تأكيد الاتصال",
+    // Forms
+    addReservationTitle: "إضافة حجز جديد",
+    editReservationFormTitle: "تعديل حجز",
+    customerNameLabel: "اسم العميل*",
+    phoneLabel: "رقم الهاتف*",
+    emailLabelOptional: "البريد الإلكتروني",
+    cityLabelMandatory: "المدينة*",
+    addressLabelMandatory: "العنوان*",
+    locationUrlOptional: "رابط الموقع (اختياري)",
+    serviceTypeLabelForm: "نوع الخدمة",
+    addDatesAndPeriods: "إضافة تواريخ وفترات زمنية",
+    addDatePlaceholder: "التاريخ",
+    addTimePeriodPlaceholder: "الفترة الزمنية",
+    addButton: "إضافة",
+    selectedDatesAndPeriods: "التواريخ والفترات المحددة:",
+    dateHeader: "التاريخ",
+    timePeriodHeader: "الفترة الزمنية",
+    removeButton: "إزالة",
+    extraHoursLabelForm: "ساعات إضافية",
+    workerCountLabelForm: "عدد العمال",
+    priceLabelForm: "السعر",
+    cancelButton: "إلغاء",
+    saveChangesButton: "حفظ التعديلات",
+    saveBookingButton: "حفظ الحجز",
+    // Alerts & Confirmations
+    fillMandatoryFieldsError: "الرجاء ملء جميع الحقول الإلزامية (*)",
+    selectAtLeastOneDateError: "الرجاء اختيار تاريخ واحد على الأقل",
+    fetchError: "فشل في جلب الحجوزات. يرجى المحاولة مرة أخرى لاحقًا.",
+    fetchUncompletedError: "فشل في جلب الحجوزات الغير مكتملة. يرجى المحاولة مرة أخرى لاحقًا.",
+    updateCallStatusSuccess: "تم تحديث حالة الحجز إلى \"تم الاتصال\" بنجاح.",
+    updateCallStatusError: "فشل في تحديث حالة الاتصال. يرجى المحاولة مرة أخرى لاحقًا.",
+    deleteConfirm: "هل أنت متأكد من حذف هذا الحجز؟",
+    deleteSuccess: "تم حذف الحجز بنجاح.",
+    deleteError: "فشل في حذف الحجز. يرجى المحاولة مرة أخرى لاحقًا.",
+    addSuccess: "تم إضافة الحجز بنجاح.",
+    editSuccess: "تم تعديل الحجز بنجاح.",
+    addEditError: (action: string) => `فشل في ${action} الحجز. يرجى المحاولة مرة أخرى لاحقًا.`,
+    pastDateError: "لا يمكن إضافة تواريخ سابقة لليوم الحالي.",
+    fridayError: "لا يمكن إضافة حجوزات في أيام الجمعة.",
+    duplicateDateError: "لا يمكن إضافة نفس التاريخ أكثر من مرة.",
+    addDateWhileEditingError: "لا يمكنك إضافة تواريخ جديدة أثناء تعديل حجز قائم متعدد التواريخ.",
+    maxDatesError: (count: number) => `لا يمكنك إضافة أكثر من ${count} تواريخ لهذا العرض.`,
+    redirectToLogin: "يتم التحويل إلى صفحة تسجيل الدخول...",
+    // Date/Time Related
+    days: ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+    months: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+    // Service Types (Keys match the code values)
+    OFFER_4: 'عرض 4 مرات',
+    OFFER_8: 'عرض 8 مرات',
+    OFFER_12: 'عرض 12 مرة',
+    ONE_TIME: 'مرة واحدة',
+    // Time Periods (Keys match the code values)
+    MORNING: 'صباحي',
+    EVENING: 'مسائي',
+  },
+};
 
-function DateReader({ setInitialDate, setCurrentDate,setRun }: { 
-  setInitialDate: (date: Date) => void, 
+type Language = keyof typeof translations; // 'en' | 'ar'
+type TranslationKeys = keyof typeof translations.en & keyof typeof translations.ar;
+
+// --- Service Type and Time Period Definitions (Adjusted for Translation) ---
+// Keys remain constant for logic, values come from translations
+const ServiceTypeKeys = ['OFFER_4', 'OFFER_8', 'OFFER_12', 'ONE_TIME'] as const;
+type ServiceTypeKey = typeof ServiceTypeKeys[number];
+
+const TimePeriodKeys = ['MORNING', 'EVENING'] as const;
+type TimePeriodKey = typeof TimePeriodKeys[number];
+
+// --- DateReader Component (No Language Change Needed Here Directly) ---
+function DateReader({ setInitialDate, setCurrentDate, setRun }: {
+  setInitialDate: (date: Date) => void,
   setCurrentDate: (date: Date) => void,
   setRun: (run: boolean) => void
 }) {
@@ -26,84 +223,28 @@ function DateReader({ setInitialDate, setCurrentDate,setRun }: {
         }
       }
     }
-
-    // إعادة تعيين التاريخ مع تجاهل الوقت
     targetDate.setHours(0, 0, 0, 0);
     setInitialDate(targetDate);
     setCurrentDate(targetDate);
-     golbaldate=targetDate;
-     setRun(false);
-  }, [searchParams, setInitialDate, setCurrentDate]);
+    golbaldate = targetDate;
+    setRun(false);
+  }, [searchParams, setInitialDate, setCurrentDate, setRun]); // Added setRun to dependency array
 
   return null;
 }
-// --- نهاية المكون الداخلي ---
 
-
-// أنواع الخدمات
-const ServiceType: { [key: string]: string } = {
-  OFFER_4: 'عرض 4 مرات',
-  OFFER_8: 'عرض 8 مرات',
-  OFFER_12: 'عرض 12 مرة',
-  ONE_TIME: 'مرة واحدة'
-};
-
-// أنواع الفترات الزمنية
-const TimePeriod = {
-  MORNING: 'صباحي',
-  EVENING: 'مسائي'
-};
-
-
+// --- Main Component ---
 const ReservationManager = () => {
-
-
- const [logedin, setLogedin] = useState(false);
- const [admin, setAdmin] = useState(false);
- const [loadingLoginCheck, setLoadingLoginCheck] = useState(true);
+  // --- State ---
+  const [language, setLanguage] = useState<Language>('ar'); // Default to Arabic
+  const [logedin, setLogedin] = useState(false);
+  const [admin, setAdmin] = useState(false);
+  const [loadingLoginCheck, setLoadingLoginCheck] = useState(true);
   const router = useRouter();
 
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const user = JSON.parse(storedUser);
-
-      setLogedin(user.logedin || false);
-      if (user.logedin) {
-        if (user.type === "ADMIN") {
-          setAdmin(true);
-        }
-      }
-    } else {
-      router.push(`/login`);
-    }
-    setLoadingLoginCheck(false);
-  }, []);
-
-  useEffect(() => {
-    if (!loadingLoginCheck && logedin && !admin) {
-      router.push(`/login`);
-    }
-  }, [logedin, admin, loadingLoginCheck, router]);
-
-
-  const getInitialDate = () => {
-    const today = new Date();
-    const dayOfWeek = today.getDay();
-    if (dayOfWeek === 5) {
-      const daysUntilSaturday =  1;
-      const nextSaturday = new Date(today);
-      nextSaturday.setDate(today.getDate() + daysUntilSaturday);
-      return nextSaturday;
-    }
-    return today;
-  };
-
-  const initialDate = getInitialDate();
   const [run, setRun] = useState(true);
-  const [currentDate, setCurrentDate] = useState(initialDate);
-  const [selectedDate, setSelectedDate] = useState(golbaldate);
+  const [currentDate, setCurrentDate] = useState<Date>(() => getInitialDate());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // Initialize as null
   const [weekDates, setWeekDates] = useState<Date[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [uncompletedReservations, setUncompletedReservations] = useState<UncompletedReservation[]>([]);
@@ -118,7 +259,7 @@ const ReservationManager = () => {
     city: '',
     address: '',
     locationUrl: '',
-    serviceType: 'OFFER_4',
+    serviceType: 'OFFER_4', // Default key
     dates: [],
     extraHours: 0,
     workerCount: 1,
@@ -127,73 +268,233 @@ const ReservationManager = () => {
   const [availableDatesCount, setAvailableDatesCount] = useState(4);
   const selectedDateRef = useRef(selectedDate);
 
-  const [tempDate, setTempDate] = useState(initialDate.toISOString().split('T')[0]);
-  const [tempTimePeriod, setTempTimePeriod] = useState('MORNING');
+  const [tempDate, setTempDate] = useState(new Date().toISOString().split('T')[0]);
+  const [tempTimePeriod, setTempTimePeriod] = useState<TimePeriodKey>('MORNING'); // Use key
 
+  // --- Translation Helper ---
+  const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: any): string => {
+    const langDict = translations[language];
+    // Type guard to ensure the key exists in the chosen language dictionary
+    if (key in langDict) {
+        const translation = (langDict as any)[key];
+        if (typeof translation === 'function') {
+            return translation(args); // Handle functions like maxDatesError
+        }
+        return translation;
+    }
+     // Fallback for keys that might only exist in one language (or error)
+    console.warn(`Translation key "${key}" not found for language "${language}". Falling back to English.`);
+    const fallbackLangDict = translations.en;
+     if (key in fallbackLangDict) {
+        const fallbackTranslation = (fallbackLangDict as any)[key];
+         if (typeof fallbackTranslation === 'function') {
+            return fallbackTranslation(args);
+        }
+        return fallbackTranslation;
+     }
+    return key; // Return the key itself if not found anywhere
+  };
 
+  // --- Effects ---
+
+  // Load language from localStorage on initial mount
+  useEffect(() => {
+    const storedLanguage = localStorage.getItem("appLanguage") as Language | null;
+    if (storedLanguage && (storedLanguage === 'en' || storedLanguage === 'ar')) {
+      setLanguage(storedLanguage);
+    }
+    // Ensure initial date is set *after* potential language load
+    setSelectedDate(golbaldate);
+    setCurrentDate(golbaldate); // Sync currentDate too if needed
+
+    // Login check
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const user = JSON.parse(storedUser);
+      setLogedin(user.logedin || false);
+      if (user.logedin && user.type === "ADMIN") {
+        setAdmin(true);
+      } else if (!user.logedin || user.type !== "ADMIN") {
+        router.push(`/login`);
+      }
+    } else {
+      router.push(`/login`);
+    }
+    setLoadingLoginCheck(false);
+
+  }, [router]); // Run only once on mount
+
+  // Save language to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem("appLanguage", language);
+    // Update document direction
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = language;
+  }, [language]);
+
+  // Redirect if not admin after login check
+  useEffect(() => {
+    if (!loadingLoginCheck && logedin && !admin) {
+      router.push(`/login`);
+    }
+  }, [logedin, admin, loadingLoginCheck, router]);
+
+  // Update week dates when currentDate changes
   useEffect(() => {
     const dates = getWeekDates(currentDate);
     setWeekDates(dates);
-  }, [currentDate]);
+  }, [currentDate, language]); // Add language dependency if getWeekDates uses it (it doesn't currently)
 
+  // Update selectedDateRef when selectedDate changes
   useEffect(() => {
     selectedDateRef.current = selectedDate;
-  }, [selectedDate]);
+    // Fetch data when selectedDate changes (and is not null)
+    if (selectedDate && !run) { // Fetch only if run is false (meaning it wasn't set by DateReader initially)
+        fetchReservations(selectedDate);
+        fetchUncompletedReservations(selectedDate);
+    }
+  }, [selectedDate, run]); // Add run dependency
 
+   // Fetch initial data once DateReader sets the date and run becomes false
+   useEffect(() => {
+       if (!run && selectedDate) {
+           fetchReservations(selectedDate);
+           fetchUncompletedReservations(selectedDate);
+       }
+   }, [run, selectedDate]); // Depend on run and selectedDate
 
-
+  // Update available dates count based on service type
   useEffect(() => {
     switch (newReservation.serviceType) {
-      case 'OFFER_4':
-        setAvailableDatesCount(4);
-        break;
-      case 'OFFER_8':
-        setAvailableDatesCount(8);
-        break;
-      case 'OFFER_12':
-        setAvailableDatesCount(12);
-        break;
-      default:
-        setAvailableDatesCount(1);
-        break;
+      case 'OFFER_4': setAvailableDatesCount(4); break;
+      case 'OFFER_8': setAvailableDatesCount(8); break;
+      case 'OFFER_12': setAvailableDatesCount(12); break;
+      default: setAvailableDatesCount(1); break;
     }
-    setNewReservation(prev => ({ ...prev, dates: [] }));
-  }, [newReservation.serviceType]);
+    // Reset dates only if service type changes *and* it's not the initial load or editing
+    if (!editingReservationId) { // Avoid resetting dates when editing form loads
+        setNewReservation(prev => ({ ...prev, dates: [] }));
+    }
+  }, [newReservation.serviceType, editingReservationId]);
 
+  // --- Date/Time Functions ---
+
+  function getInitialDate() {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    // Friday is 5
+    if (dayOfWeek === 5) {
+      const nextSaturday = new Date(today);
+      nextSaturday.setDate(today.getDate() + 1);
+      nextSaturday.setHours(0, 0, 0, 0);
+      return nextSaturday;
+    }
+    today.setHours(0, 0, 0, 0);
+    return today;
+  };
 
   const getWeekDates = (date: Date): Date[] => {
     const day = date.getDay(); // 0 (Sunday) to 6 (Saturday)
-    const diffToSaturday = (day + 1) % 7; // الفرق للوصول إلى السبت السابق أو الحالي
+    // Adjust calculation for Saturday (6) start
+    const diffToSaturday = day === 6 ? 0 : day + 1;
     const saturday = new Date(date);
     saturday.setDate(date.getDate() - diffToSaturday);
-  
+    saturday.setHours(0, 0, 0, 0); // Normalize time
+
     const weekDays: Date[] = [];
-    for (let i = 0; i < 6; i++) { // من السبت إلى الخميس
+    for (let i = 0; i < 6; i++) { // Saturday (0) to Thursday (5)
       const current = new Date(saturday);
       current.setDate(saturday.getDate() + i);
       weekDays.push(current);
     }
-  
     return weekDays;
   };
-  
 
-
-  const getArabicDayName = (date: Date): string => {
-    const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-    return days[date.getDay()];
+  const getDayName = (date: Date): string => {
+    return t('days')[date.getDay()];
   };
 
   interface DateWithMonth {
     getMonth: () => number;
   }
+  const getMonthName = (date: DateWithMonth): string => {
+    return t('months')[date.getMonth()];
+  };
 
-  const getArabicMonthName = (date: DateWithMonth): string => {
-    const months: string[] = [
-      'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-      'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
-    ];
-    return months[date.getMonth()];
+  const formatDateForDisplay = (date: Date): string => {
+    if (!date) return '';
+    const options: Intl.DateTimeFormatOptions = {
+        day: 'numeric',
+        month: 'long', // Use 'long' for full month name
+        // year: 'numeric' // Optional: Add year if needed elsewhere
+    };
+    // Use BCP 47 language tags
+    const locale = language === 'ar' ? 'ar-SA' : 'en-US';
+    // Ensure Gregorian calendar for Arabic dates if needed, though usually default
+    return new Intl.DateTimeFormat(locale, { ...options, calendar: 'gregory' }).format(date);
+  };
+
+  const formatDateForInput = (date: Date | string): string => {
+      if (!date) return '';
+      try {
+          const d = typeof date === 'string' ? new Date(date) : date;
+          if (isNaN(d.getTime())) return ''; // Invalid date check
+          // Format as YYYY-MM-DD
+          const year = d.getFullYear();
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+      } catch (e) {
+          console.error("Error formatting date for input:", e);
+          return '';
+      }
+  };
+
+
+  // --- Data Fetching & Actions ---
+
+  interface BaseReservation {
+    id: number;
+    name: string;
+    phone: string;
+    email?: string;
+    city: string;
+    address: string;
+    locationUrl?: string;
+    serviceType: ServiceTypeKey; // Use key
+    extraHours: number;
+    workerCount: number;
+    price: number;
+  }
+
+  interface Reservation extends BaseReservation {
+      dates: { date: string; timePeriod: TimePeriodKey }[]; // API likely returns string date
+      timePeriod?: TimePeriodKey; // For single-day view
+  }
+
+  interface UncompletedReservation extends BaseReservation {
+      dates: { date: string; timePeriod: TimePeriodKey }[];
+      timePeriod?: TimePeriodKey;
+      called?: boolean; // Add this if your API includes it
+  }
+
+  interface NewReservation {
+    name: string;
+    phone: string;
+    email: string;
+    city: string;
+    address: string;
+    locationUrl: string;
+    serviceType: ServiceTypeKey; // Use key
+    dates: { date: Date; timePeriod: TimePeriodKey }[]; // Store Date objects locally
+    extraHours: number;
+    workerCount: number;
+    price: number;
+  }
+
+   // --- Navigation and Selection ---
+   const toggleLanguage = () => {
+    setLanguage(prevLang => (prevLang === 'ar' ? 'en' : 'ar'));
   };
 
   const goToNextWeek = () => {
@@ -209,229 +510,127 @@ const ReservationManager = () => {
   };
 
   const changeMonth = () => {
+    // Simple month change (might need refinement based on exact desired behavior)
     const newMonth = (currentDate.getMonth() + 1) % 12;
     const newDate = new Date(currentDate);
     newDate.setMonth(newMonth);
+    // Adjust day if new month has fewer days (e.g., changing from Mar 31st)
+    if (newDate.getMonth() !== newMonth) {
+        newDate.setDate(0); // Go to last day of previous month (which is the target month)
+    }
     setCurrentDate(newDate);
   };
 
-  interface Reservation {
-    id: number;
-    name: string;
-    phone: string;
-    email?: string;
-    city: string;
-    address: string;
-    locationUrl?: string;
-    serviceType: string;
-    dates: { date: Date; timePeriod: string }[];
-    extraHours: number;
-    workerCount: number;
-    price: number;
-    timePeriod?: string;
-  }
-
-
-  interface NewReservation {
-    name: string;
-    phone: string;
-    email: string;
-    city: string;
-    address: string;
-    locationUrl: string;
-    serviceType: string;
-    dates: { date: Date; timePeriod: keyof typeof TimePeriod }[];
-    extraHours: number;
-    workerCount: number;
-    price: number;
-  }
-
-  const selectDate2 = (date: Date) => {
-
-if (!run){
-  console.log('Selected date:', date);
-  fetchReservations(date);
-  fetchUncompletedReservations(date);
-  setRun(true);
-}
- 
-    return "";
-  };
-
   const selectDate = (date: Date) => {
-    setRun(false);
-    setSelectedDate(date);
-    fetchReservations(date);
-    fetchUncompletedReservations(date);
-   
+      setRun(false); // Indicate manual selection
+      setSelectedDate(date);
+      // Fetching will be triggered by the useEffect watching selectedDate and run
   };
 
-
-  interface Reservation {
-    id: number;
-    name: string;
-    phone: string;
-    email?: string;
-    city: string;
-    address: string;
-    locationUrl?: string;
-    serviceType: string;
-    dates: { date: Date; timePeriod: string }[];
-    extraHours: number;
-    workerCount: number;
-    price: number;
-    timePeriod?: string;
-  }
 
   const fetchReservations = async (date: Date): Promise<void> => {
     if (!date) return;
-
     setLoading(true);
     try {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const formattedDate = `${year}-${month}-${day}`;
-
+      const formattedDate = formatDateForInput(date);
       const response = await fetch(`/api/booking?date=${formattedDate}`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data: Reservation[] = await response.json();
-      console.log('Fetched reservations:', data);
-      setReservations(data);
+      // Ensure dates are Date objects if needed downstream, though API likely returns strings
+       setReservations(data.map(r => ({
+           ...r,
+           // Optional: Parse date strings back to Date objects if necessary
+           // dates: r.dates.map(d => ({ ...d, date: new Date(d.date) }))
+       })));
       setExpandedRows({});
     } catch (error) {
       console.error("Failed to fetch reservations:", error);
-      alert("فشل في جلب الحجوزات. يرجى المحاولة مرة أخرى لاحقًا.");
+      alert(t('fetchError'));
       setReservations([]);
     } finally {
       setLoading(false);
     }
   };
 
-
-  interface UncompletedReservation {
-    id: number;
-    name: string;
-    phone: string;
-    email?: string;
-    city: string;
-    address: string;
-    locationUrl?: string;
-    serviceType: string;
-    dates: { date: Date; timePeriod: string }[];
-    extraHours: number;
-    workerCount: number;
-    price: number;
-    timePeriod?: string;
-  }
-
   const fetchUncompletedReservations = async (date: Date): Promise<void> => {
+    if (!date) return;
     setLoading(true);
-    const currentDateString = date.toISOString().split('T')[0];
-    console.log('currentDateString:', currentDateString);
-    const link = '/api/uncompleted?date=' + currentDateString;
+    const currentDateString = formatDateForInput(date);
+    const link = `/api/uncompleted?date=${currentDateString}`;
     try {
       const response = await fetch(link);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data: UncompletedReservation[] = await response.json();
-      console.log('Fetched uncompleted reservations:', data);
-      setUncompletedReservations(data);
+       setUncompletedReservations(data.map(r => ({
+           ...r,
+           // Optional: Parse date strings back to Date objects if necessary
+           // dates: r.dates.map(d => ({ ...d, date: new Date(d.date) }))
+       })));
     } catch (error) {
       console.error("Failed to fetch uncompleted reservations:", error);
-      alert("فشل في جلب الحجوزات الغير مكتملة. يرجى المحاولة مرة أخرى لاحقًا.");
+      alert(t('fetchUncompletedError'));
       setUncompletedReservations([]);
     } finally {
       setLoading(false);
     }
   };
 
-
   const markAsCalled = async (id: number): Promise<void> => {
     setLoading(true);
     try {
       const response = await fetch(`/api/uncompleted`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, called: true }),
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      // Re-fetch to ensure data consistency, especially if 'called' status affects listing
+      if (selectedDateRef.current) {
+          fetchUncompletedReservations(selectedDateRef.current);
+          alert(t('updateCallStatusSuccess'));
       }
-
-      setUncompletedReservations(prev =>
-        prev.map(res => res.id === id ? { ...res, called: true } : res)
-      );
-      alert('تم تحديث حالة الحجز إلى "تم الاتصال" بنجاح');
-      fetchUncompletedReservations(selectedDateRef.current);
     } catch (error) {
       console.error("Failed to update called status:", error);
-      alert("فشل في تحديث حالة الاتصال. يرجى المحاولة مرة أخرى لاحقًا.");
+      alert(t('updateCallStatusError'));
     } finally {
       setLoading(false);
-      fetchUncompletedReservations(selectedDateRef.current);
     }
   };
 
-
-  interface ExpandedRowsState {
-    [key: number]: boolean;
-  }
-
   const toggleRowExpansion = (id: number): void => {
-    setExpandedRows((prev: ExpandedRowsState) => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
+    setExpandedRows(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  interface DeleteReservationResponse {
-    ok: boolean;
-    status: number;
-  }
-
   const deleteReservation = async (id: number): Promise<void> => {
-    if (window.confirm('هل أنت متأكد من حذف هذا الحجز؟')) {
+    if (window.confirm(t('deleteConfirm'))) {
       setLoading(true);
       try {
-        const response: DeleteReservationResponse = await fetch('/api/booking', {
+        const response = await fetch('/api/booking', { // Assuming same endpoint for delete
           method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id }),
         });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        // Re-fetch data for the current day after deletion
+        if (selectedDateRef.current) {
+            fetchReservations(selectedDateRef.current);
+            fetchUncompletedReservations(selectedDateRef.current); // Also refresh uncompleted
+            alert(t('deleteSuccess'));
         }
-
-        setReservations(prev => prev.filter(res => res.id !== id));
-        alert('تم حذف الحجز بنجاح');
       } catch (error) {
         console.error("Failed to delete reservation:", error);
-        alert("فشل في حذف الحجز. يرجى المحاولة مرة أخرى لاحقًا.");
+        alert(t('deleteError'));
       } finally {
         setLoading(false);
       }
     }
   };
 
-  const editReservation = (reservation: Reservation, type: string) => {
-    if (type === "UNCOMPLETED") {
-      setEditingReservationId(null);
-    }else{
-      setEditingReservationId(reservation.id);
-    }
-    
+  // --- Form Handling ---
+
+   const editReservation = (reservation: Reservation | UncompletedReservation, type: "COMPLETED" | "UNCOMPLETED") => {
+    setEditingReservationId(type === "UNCOMPLETED" ? null : reservation.id); // Only set ID for completed edits
+
     setNewReservation({
       name: reservation.name,
       phone: reservation.phone,
@@ -439,8 +638,12 @@ if (!run){
       city: reservation.city,
       address: reservation.address,
       locationUrl: reservation.locationUrl || '',
-      serviceType: reservation.serviceType,
-      dates: reservation.dates ? reservation.dates.map((d: { date: string | number | Date; timePeriod: string; }) => ({date: new Date(d.date), timePeriod: d.timePeriod as keyof typeof TimePeriod})) : [],
+      serviceType: reservation.serviceType, // Key
+       // Parse dates from string (API) to Date objects (Form state)
+       dates: reservation.dates ? reservation.dates.map(d => ({
+           date: new Date(d.date), // Parse string date
+           timePeriod: d.timePeriod // Key
+       })) : [],
       extraHours: reservation.extraHours,
       workerCount: reservation.workerCount,
       price: reservation.price
@@ -450,89 +653,82 @@ if (!run){
 
   const handleAddReservation = async () => {
     if (!newReservation.name || !newReservation.phone || !newReservation.city || !newReservation.address) {
-      alert('الرجاء ملء جميع الحقول الإلزامية');
+      alert(t('fillMandatoryFieldsError'));
       return;
     }
     if (newReservation.dates.length === 0) {
-      alert('الرجاء اختيار تاريخ واحد على الأقل');
+      alert(t('selectAtLeastOneDateError'));
       return;
     }
 
     setLoading(true);
+    const isEditing = !!editingReservationId;
+
     try {
+        // For editing, we usually PUT the whole object or PATCH specific fields.
+        // For adding with multiple dates, we might need multiple POSTs or a single POST with an array.
+        // Assuming the API handles adding/editing based on method and ID presence.
+        // If adding multiple dates requires separate POSTs, loop here.
+        // If API accepts an array of dates for POST, structure payload accordingly.
+
+        // *** Simplified Example: Assuming API handles one date per request for POST/PUT ***
+        // *** Adjust based on your actual API design ***
+
+        const results = [];
+        for (const datePeriod of newReservation.dates) {
+            const reservationPayload = {
+                name: newReservation.name,
+                phone: newReservation.phone,
+                email: newReservation.email,
+                city: newReservation.city,
+                address: newReservation.address,
+                locationUrl: newReservation.locationUrl,
+                serviceType: newReservation.serviceType,
+                date: datePeriod.date.toISOString(), // Send ISO string to API
+                timePeriod: datePeriod.timePeriod,
+                extraHours: newReservation.extraHours,
+                workerCount: newReservation.workerCount,
+                price: newReservation.price
+            };
+
+            let response;
+            if (isEditing) {
+                // Assuming PUT replaces the *entire* reservation for that specific date instance
+                // Or if editing general info, maybe only send one PUT request outside the loop
+                response = await fetch('/api/booking', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: editingReservationId, ...reservationPayload }),
+                });
+            } else {
+                 // Assuming POST creates a new reservation for each date
+                response = await fetch('/api/booking', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reservationPayload),
+                });
+            }
+
+            if (!response.ok) {
+                 // Handle potential partial failures if looping
+                throw new Error(`HTTP error! status: ${response.status} for date ${formatDateForInput(datePeriod.date)}`);
+            }
+             results.push(await response.json()); // Collect results if needed
+        }
 
 
- for (const datePeriod of newReservation.dates) {
-  const reservationPayload = {
-    name: newReservation.name,
-    phone: newReservation.phone,
-    email: newReservation.email,
-    city: newReservation.city,
-    address: newReservation.address,
-    locationUrl: newReservation.locationUrl,
-    serviceType: newReservation.serviceType,
-    date: datePeriod.date.toISOString(),
-    timePeriod: datePeriod.timePeriod,
-    extraHours: newReservation.extraHours,
-    workerCount: newReservation.workerCount,
-    price: newReservation.price
-  };
-
-  let response;
-  if (editingReservationId ) {
-
-    response = await fetch('/api/booking', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id: editingReservationId, ...reservationPayload }),
-    });
-  } else {
-    response = await fetch('/api/booking', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(reservationPayload),
-    });
-  }
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-      const responseData = await response.json();
-
-      if (editingReservationId) {
-        setReservations(prevReservations =>
-          prevReservations.map(res => res.id === editingReservationId ? { ...res, ...newReservation, id: editingReservationId } : res)
-        );
-        alert('تم تعديل الحجز بنجاح');
-      } else {
-        setReservations(prevReservations => [...prevReservations, { ...newReservation, id: responseData.id }]);
-        alert('تم إضافة الحجز بنجاح');
+      // After successful operations:
+      alert(isEditing ? t('editSuccess') : t('addSuccess'));
+      if (selectedDateRef.current) {
+        fetchReservations(selectedDateRef.current); // Refresh current view
+        fetchUncompletedReservations(selectedDateRef.current); // Also refresh uncompleted list
       }
-    }
-      fetchReservations(selectedDateRef.current);
-      setNewReservation({
-        name: '',
-        phone: '',
-        email: '',
-        city: '',
-        address: '',
-        locationUrl: '',
-        serviceType: 'OFFER_4',
-        dates: [],
-        extraHours: 0,
-        workerCount: 1,
-        price: 0
-      });
-      setShowNewReservationForm(false);
-      setEditingReservationId(null);
+      closeNewReservationForm();
+
     } catch (error) {
-      console.log('New reservation:', newReservation);
       console.error("Failed to add/edit reservation:", error);
-      alert(`فشل في ${editingReservationId ? 'تعديل' : 'إضافة'} الحجز. يرجى المحاولة مرة أخرى لاحقًا.`);
+      console.log('Payload:', newReservation); // Log for debugging
+      alert(t('addEditError', { action: isEditing ? t('editReservationTitle') : t('addReservationTitle') }));
     } finally {
       setLoading(false);
     }
@@ -541,78 +737,109 @@ if (!run){
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     const { name, value } = e.target;
-    let processedValue: string | number = value;
+    let processedValue: string | number | ServiceTypeKey = value;
+
     if (name === 'extraHours' || name === 'workerCount' || name === 'price') {
       processedValue = parseFloat(value) || 0;
     }
-    setNewReservation({
-      ...newReservation,
-      [name]: processedValue
-    });
-  };
+     // Handle serviceType specifically to ensure the key is stored
+     if (name === 'serviceType') {
+        processedValue = value as ServiceTypeKey; // Cast to the specific type
+    }
 
+    setNewReservation(prev => ({
+      ...prev,
+      [name]: processedValue
+    }));
+  };
 
   const handleTempDateChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTempDate(e.target.value);
   };
 
   const handleTempTimePeriodChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
-    setTempTimePeriod(e.target.value);
+    setTempTimePeriod(e.target.value as TimePeriodKey); // Cast to key type
   };
 
-
   const addDatePeriod = () => {
-    const selectedDate = new Date(tempDate);
-    const dayOfWeek = selectedDate.getDay();
+    if (!tempDate) return; // Ensure a date is selected
+
+    const selected = new Date(tempDate + "T03:00:00Z"); // Add time/zone to avoid date shifts
+
+    if (isNaN(selected.getTime())) {
+        alert("Invalid date selected."); // Basic validation
+        return;
+    }
+
+    const dayOfWeek = selected.getDay();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    selectedDate.setHours(3, 0, 0, 0);
 
-    if (selectedDate < today) {
-      alert('لا يمكن إضافة تواريخ سابقة لليوم الحالي.');
+    if (selected < today) {
+      alert(t('pastDateError'));
       return;
     }
 
-    if (  dayOfWeek === 5) {
-      alert('لا يمكن إضافة حجوزات في أيام  الجمعة.');
+    if (dayOfWeek === 5) { // Friday
+      alert(t('fridayError'));
       return;
     }
 
-    const isDuplicate = newReservation.dates.some(d => {
-      const existingDate = new Date(d.date);
-      existingDate.setHours(3, 0, 0, 0);
-      return existingDate.getTime() === selectedDate.getTime();
-    });
+     const isDuplicate = newReservation.dates.some(d =>
+        formatDateForInput(d.date) === formatDateForInput(selected) && d.timePeriod === tempTimePeriod
+    );
 
     if (isDuplicate) {
-      alert('لا يمكن إضافة نفس التاريخ أكثر من مرة.');
+      alert(t('duplicateDateError'));
       return;
     }
-if (editingReservationId && newReservation.dates.length > 0) {
-  alert('لا يمكنك إضافة تواريخ جديدة أثناء التعديل.');
-  return;
-}
+
+    // Prevent adding *new* dates when editing a multi-date reservation (usually you edit existing ones)
+    // Allow adding dates if it's a new reservation OR if editing a single-date one.
+     if (editingReservationId && newReservation.dates.length >= 1 && newReservation.serviceType !== 'ONE_TIME') {
+        // More complex logic might be needed depending on how edits should work for multi-date offers
+       alert(t('addDateWhileEditingError'));
+       return;
+     }
 
     if (newReservation.dates.length < availableDatesCount) {
       setNewReservation(prev => ({
         ...prev,
-        dates: [...prev.dates, { date: selectedDate, timePeriod: tempTimePeriod as keyof typeof TimePeriod }]
+        dates: [...prev.dates, { date: selected, timePeriod: tempTimePeriod }]
       }));
     } else {
-      alert(`لا يمكنك إضافة أكثر من ${availableDatesCount} تواريخ لهذا العرض.`);
+      alert(t('maxDatesError', { count: availableDatesCount }));
     }
   };
 
-
   const removeDatePeriod = (index: number): void => {
+      // Prevent removal if editing and it's the last/only date associated with the ID
+      if (editingReservationId && newReservation.dates.length === 1) {
+          alert("Cannot remove the only date while editing."); // Or provide a different workflow
+          return;
+      }
     const newDates = newReservation.dates.filter((_, i) => i !== index);
     setNewReservation(prev => ({ ...prev, dates: newDates }));
   };
 
 
-  const morningReservations = reservations.filter(res => res.timePeriod ===  "MORNING");
-  const eveningReservations = reservations.filter(res => res.timePeriod === "EVENING");
+  const closeNewReservationForm = () => {
+    setShowNewReservationForm(false);
+    setEditingReservationId(null);
+    // Reset form to defaults
+    setNewReservation({
+      name: '', phone: '', email: '', city: '', address: '', locationUrl: '',
+      serviceType: 'OFFER_4', // Default key
+      dates: [], extraHours: 0, workerCount: 1, price: 0
+    });
+     // Reset temp date/time selectors as well
+     setTempDate(new Date().toISOString().split('T')[0]);
+     setTempTimePeriod('MORNING');
+  };
 
+  // --- Calculated Values ---
+  const morningReservations = reservations.filter(res => res.timePeriod === "MORNING");
+  const eveningReservations = reservations.filter(res => res.timePeriod === "EVENING");
 
   const totalMorningWorkers = morningReservations.reduce((sum, res) => sum + res.workerCount, 0);
   const totalEveningWorkers = eveningReservations.reduce((sum, res) => sum + res.workerCount, 0);
@@ -620,740 +847,546 @@ if (editingReservationId && newReservation.dates.length > 0) {
   const remainingMorningWorkers = Math.max(0, 19 - totalMorningWorkers);
   const remainingEveningWorkers = Math.max(0, 19 - totalEveningWorkers);
 
-
-  const closeNewReservationForm = () => {
-    setShowNewReservationForm(false);
-    setEditingReservationId(null);
-    setNewReservation({
-      name: '',
-      phone: '',
-      email: '',
-      city: '',
-      address: '',
-      locationUrl: '',
-      serviceType: 'OFFER_4',
-      dates: [],
-      extraHours: 0,
-      workerCount: 1,
-      price: 0
-    });
-  };
-
-
+  // --- Render ---
   if (loadingLoginCheck) {
-    return <div>جاري التحقق من تسجيل الدخول...</div>;
+    return <div className="flex justify-center items-center h-screen">{t('loadingLoginCheck')}</div>;
   }
 
-
+  // Main component render logic (only if logged in and admin)
   return (
-    
     (logedin && admin) ? (
-      
-    <div className="flex flex-col p-4 sm:p-6 text-right" dir="rtl"> {/* تقليل الـ padding للشاشات الصغيرة */}
-     <Suspense fallback={<div>Loading date preference...</div>}>
+      <div className={`flex flex-col p-4 sm:p-6 text-${language === 'ar' ? 'right' : 'left'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+        <Suspense fallback={<div>Loading date preference...</div>}>
+          <DateReader setInitialDate={setSelectedDate} setCurrentDate={setCurrentDate} setRun={setRun} />
+        </Suspense>
 
-        {/* نمرر دالة تحديث الحالة للمكون الداخلي */}
-        <DateReader setInitialDate={setSelectedDate} setCurrentDate={setCurrentDate} setRun={setRun} />
-       
-      </Suspense>
-    
-       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6"> {/* تخطيط عمودي على الشاشات الصغيرة وأفقي على المتوسطة والكبيرة */}
-        
-        <h1 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-0">{editingReservationId ? 'تعديل حجز' : 'نظام إدارة الحجوزات'}</h1> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-        <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4"> {/* تخطيط عمودي على الشاشات الصغيرة وأفقي على المتوسطة والكبيرة */}
-          <div className="bg-gray-100 p-3 rounded-lg text-sm flex items-center ml-0 sm:ml-4"> {/* إزالة الهامش الأيسر على الشاشات الصغيرة */}
-            <div className="ml-0 sm:ml-4"> {/* إزالة الهامش الأيسر على الشاشات الصغيرة */}
-              <span className="block font-medium text-gray-800">إجمالي العمال المتاحين:</span>
-              <span className="block text-gray-600">19 عامل لكل فترة (صباحية/مسائية)</span>
+        {/* Header Area */}
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-4">
+          <h1 className="text-xl sm:text-2xl font-bold">
+             {editingReservationId && showNewReservationForm ? t('editReservationFormTitle') : t('reservationSystemTitle')}
+          </h1>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
+             {/* Language Switcher */}
+             <button
+                onClick={toggleLanguage}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-3 rounded-lg flex items-center justify-center text-sm"
+                aria-label={`Switch language to ${language === 'ar' ? 'English' : 'العربية'}`}
+             >
+                <Languages size={18} className="me-2" />
+                {language === 'ar' ? 'English' : 'العربية'}
+            </button>
+            {/* Worker Info */}
+            <div className="bg-gray-100 p-2 sm:p-3 rounded-lg text-xs sm:text-sm flex items-center w-full sm:w-auto justify-center">
+               <div className={`text-${language === 'ar' ? 'right' : 'left'} ${language === 'ar' ? 'ml-0 sm:ml-4' : 'mr-0 sm:mr-4'}`}>
+                <span className="block font-medium text-gray-800">{t('availableWorkersInfo')}</span>
+                <span className="block text-gray-600">{t('workersPerPeriod')}</span>
+              </div>
             </div>
+             {/* New Booking Button */}
+             <button
+              className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center justify-center w-full sm:w-auto text-sm sm:text-base"
+              onClick={() => {
+                  closeNewReservationForm(); // Reset form before showing
+                  setShowNewReservationForm(true);
+              }}
+            >
+              <Plus size={20} className="me-2" />
+              {t('newBookingButton')}
+            </button>
+          </div>
+        </div>
+
+        {/* Week Navigator */}
+        <div className="flex justify-between items-center mb-4 sm:mb-6 bg-gray-100 p-3 sm:p-4 rounded-lg">
+          <button
+            onClick={goToPreviousWeek}
+            className="p-2 bg-white rounded-full shadow hover:bg-gray-50"
+            aria-label={t('previousWeek')}
+          >
+            {language === 'ar' ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          </button>
+          <div className="flex flex-col items-center">
+            <button
+              onClick={changeMonth}
+              className="font-bold text-lg hover:underline"
+            >
+              {weekDates.length > 0 ? `${getMonthName(weekDates[0])} ${weekDates[0].getFullYear()}` : ''}
+            </button>
           </div>
           <button
-            className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg flex items-center justify-center w-full sm:w-auto" 
-            onClick={() => {
-              setNewReservation({
-                ...newReservation,
-                dates: [],
-                serviceType: 'OFFER_4'
-              });
-              setEditingReservationId(null);
-              setShowNewReservationForm(true);
-            }}
+            onClick={goToNextWeek}
+            className="p-2 bg-white rounded-full shadow hover:bg-gray-50"
+            aria-label={t('nextWeek')}
           >
-            <Plus size={20} className="ml-2" />
-            حجز جديد
-          </button>
-        </div>
-      </div>
-
-      <div className="flex justify-between items-center mb-4 sm:mb-6 bg-gray-100 p-3 sm:p-4 rounded-lg"> {/* تقليل الـ padding للشاشات الصغيرة */}
-        <button
-          onClick={goToPreviousWeek}
-          className="p-2 bg-white rounded-full shadow hover:bg-gray-50"
-        >
-          <ChevronRight size={20} />
-        </button>
-
-        <div className="flex flex-col items-center">
-          <button
-            onClick={changeMonth}
-            className="font-bold text-lg hover:underline"
-          >
-            {weekDates.length > 0 ? getArabicMonthName(weekDates[0]) : ''} {weekDates.length > 0 ? weekDates[0].getFullYear() : ''}
+             {language === 'ar' ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
           </button>
         </div>
 
-        <button
-          onClick={goToNextWeek}
-          className="p-2 bg-white rounded-full shadow hover:bg-gray-50"
-        >
-          <ChevronLeft size={20} />
-        </button>
-      </div>
-
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-4 mb-6 sm:mb-8"> {/* تقليل عدد الأعمدة والـ gap على الشاشات الصغيرة */}
-        {weekDates.map((date) => (
-          <button
-            key={date.toISOString()}
-            onClick={() => selectDate(date)}
-            className={`flex flex-col items-center p-2 sm:p-4 rounded-lg shadow-sm transition-colors text-sm sm:text-base 
-              ${selectedDate && date.toDateString() === selectedDate.toDateString()
-                ? 'bg-blue-500 text-white'
-                : 'bg-white hover:bg-gray-50'}
-              ${date.toDateString() === initialDate.toDateString() ? 'ring-2 ring-blue-500' : ''}`}
-            
-          >
-            <span className="font-bold">{getArabicDayName(date)}</span>
-            <span className="text-xs sm:text-sm mt-1"> {/* تقليل حجم الخط على الشاشات الصغيرة */}
-              {date.getDate()} {getArabicMonthName(date)}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      
-      {selectedDate  ? (
-        
-        <div className="bg-white rounded-lg shadow p-4 sm:p-6"> {/* تقليل الـ padding للشاشات الصغيرة */}
-          <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-            حجوزات يوم {getArabicDayName(selectedDate)} {selectedDate.getDate()} 
-            
-            {getArabicMonthName(selectedDate)}
-            {selectDate2(selectedDate)}
-  
-          </h2>
-
-          {loading ? (
-            <div className="text-center py-8">جاري تحميل البيانات...</div>
-          ) : (
-            <>
-              <div className="mb-6 sm:mb-8"> {/* تقليل الـ mb للشاشات الصغيرة */}
-                <div className="flex justify-between items-center bg-blue-50 p-2 rounded mb-2 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-                <div className="font-bold text-lg flex items-center">
-                  <Clock size={18} className="ml-2" />
-                  الفترة الصباحية
-                </div>
-                <div className="flex items-center text-xs sm:text-sm"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                  <div className={`px-2 sm:px-3 py-1 rounded-full text-sm 
-                    remainingMorningWorkers === 0 ? 'bg-red-100 text-red-800' :
-                    remainingMorningWorkers < 5 ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-green-100 text-green-800'
-                  }`}>
-                    <span className="font-medium">العمال المتبقين: {remainingMorningWorkers}</span>
-                    {remainingMorningWorkers === 0 &&
-                      <span className="mr-1 text-xs">(لا يمكن إضافة حجوزات جديدة)</span>
-                    }
-                  </div>
-                </div>
-              </div>
-
-                {morningReservations.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4 text-sm">لا توجد حجوزات في الفترة الصباحية</p> 
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-2 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500">الاسم</th> {/* تقليل الـ padding */}
-                          <th className="px-2 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500">رقم الهاتف</th> {/* تقليل الـ padding */}
-                          <th className="px-2 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500">إجراءات</th> {/* تقليل الـ padding */}
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {morningReservations.map((reservation) => (
-                          <React.Fragment key={reservation.id}>
-                            <tr
-                              className="hover:bg-gray-50 cursor-pointer"
-                              onClick={() => toggleRowExpansion(reservation.id)}
-                            >
-                              <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">{reservation.name}</td> {/* تقليل الـ padding */}
-                              <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap"> {/* تقليل الـ padding */}
-                                <a href={`tel:${reservation.phone}`} className="text-blue-500 hover:underline flex items-center" onClick={(e) => e.stopPropagation()}>
-                                  <Phone size={16} className="ml-1" />
-                                  {reservation.phone}
-                                </a>
-                              </td>
-                              <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap"> {/* تقليل الـ padding */}
-                                <div className="flex items-center justify-center sm:justify-start"> {/* توسيط الأيقونات على الشاشات الصغيرة */}
-                                  <button
-                                    className="text-blue-500 hover:text-blue-700 ml-2"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      editReservation(reservation, "COMPLETED");
-                                    }}
-                                  >
-                                    <Edit size={16} />
-                                  </button>
-                                  <button
-                                    className="text-red-500 hover:text-red-700"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      deleteReservation(reservation.id);
-                                    }}
-                                  >
-                                    <X size={16} />
-                                  </button>
-                                  {expandedRows[reservation.id] ?
-                                    <ChevronUp size={16} className="mr-2" /> :
-                                    <ChevronDown size={16} className="mr-2" />
-                                  }
-                                </div>
-                              </td>
-                            </tr>
-                            {expandedRows[reservation.id] && (
-                              <tr>
-                                <td colSpan={3} className="px-4 py-3 bg-gray-50"> {/* تقليل الـ padding */}
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4"> {/* تقليل الـ gap على الشاشات الصغيرة */}
-                                    <div className="flex items-start">
-                                      <Mail size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">البريد الإلكتروني:</span>
-                                        <p className="text-sm">{reservation.email || 'غير متوفر'}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <MapPin size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">المدينة:</span>
-                                        <p className="text-sm">{reservation.city}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <MapPin size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">العنوان:</span>
-                                        <p className="text-sm">{reservation.address}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    {reservation.locationUrl && (
-                                      <div className="flex items-start">
-                                        <MapPin size={16} className="mt-1 ml-2" />
-                                        <div>
-                                          <span className="text-sm text-gray-500">رابط الموقع:</span>
-                                          <p className="text-sm"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                            <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                                              فتح الموقع
-                                            </a>
-                                          </p>
-                                        </div>
-                                      </div>
-                                    )}
-                                    <div className="flex items-start">
-                                      <Calendar size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">نوع الخدمة:</span>
-                                        <p className="text-sm">{reservation.serviceType}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <Clock size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">ساعات إضافية:</span>
-                                        <p className="text-sm">{reservation.extraHours}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <Users size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">عدد العمال:</span>
-                                        <p className="text-sm">{reservation.workerCount}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <DollarSign size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">السعر:</span>
-                                        <p className="text-sm">{reservation.price} درهم</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
-                            )}
-                          </React.Fragment>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center bg-indigo-50 p-2 rounded mb-2 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-                <div className="font-bold text-lg flex items-center">
-                  <Clock size={18} className="ml-2" />
-                  الفترة المسائية
-                </div>
-                <div className="flex items-center text-xs sm:text-sm"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                  <div className={`px-2 sm:px-3 py-1 rounded-full text-sm 
-                    remainingEveningWorkers === 0 ? 'bg-red-100 text-red-800' :
-                    remainingEveningWorkers < 5 ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-green-100 text-green-800'
-                  }`}>
-                    <span className="font-medium">العمال المتبقين: {remainingEveningWorkers}</span>
-                    {remainingEveningWorkers === 0 &&
-                      <span className="mr-1 text-xs">(لا يمكن إضافة حجوزات جديدة)</span>
-                    }
-                  </div>
-                </div>
-              </div>
-
-                {eveningReservations.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4 text-sm">لا توجد حجوزات في الفترة المسائية</p> 
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-2 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500">الاسم</th> {/* تقليل الـ padding */}
-                          <th className="px-2 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500">رقم الهاتف</th> {/* تقليل الـ padding */}
-                          <th className="px-2 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500">إجراءات</th> {/* تقليل الـ padding */}
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {eveningReservations.map((reservation) => (
-                          <React.Fragment key={reservation.id}>
-                            <tr
-                              className="hover:bg-gray-50 cursor-pointer"
-                              onClick={() => toggleRowExpansion(reservation.id)}
-                            >
-                              <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">{reservation.name}</td> {/* تقليل الـ padding */}
-                              <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap"> {/* تقليل الـ padding */}
-                                <a href={`tel:${reservation.phone}`} className="text-blue-500 hover:underline flex items-center" onClick={(e) => e.stopPropagation()}>
-                                  <Phone size={16} className="ml-1" />
-                                  {reservation.phone}
-                                </a>
-                              </td>
-                              <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap"> {/* تقليل الـ padding */}
-                                <div className="flex items-center justify-center sm:justify-start"> {/* توسيط الأيقونات على الشاشات الصغيرة */}
-                                  <button
-                                    className="text-blue-500 hover:text-blue-700 ml-2"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      editReservation(reservation, "COMPLETED");
-                                    }}
-                                  >
-                                    <Edit size={16} />
-                                  </button>
-                                  <button
-                                    className="text-red-500 hover:text-red-700"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      deleteReservation(reservation.id);
-                                    }}
-                                  >
-                                    <X size={16} />
-                                  </button>
-                                  {expandedRows[reservation.id] ?
-                                    <ChevronUp size={16} className="mr-2" /> :
-                                    <ChevronDown size={16} className="mr-2" />
-                                  }
-                                </div>
-                              </td>
-                            </tr>
-                            {expandedRows[reservation.id] && (
-                              <tr>
-                                <td colSpan={3} className="px-4 py-3 bg-gray-50"> {/* تقليل الـ padding */}
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4"> {/* تقليل الـ gap على الشاشات الصغيرة */}
-                                    <div className="flex items-start">
-                                      <Mail size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">البريد الإلكتروني:</span>
-                                        <p className="text-sm">{reservation.email || 'غير متوفر'}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <MapPin size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">المدينة:</span>
-                                        <p className="text-sm">{reservation.city}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <MapPin size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">العنوان:</span>
-                                        <p className="text-sm">{reservation.address}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    {reservation.locationUrl && (
-                                      <div className="flex items-start">
-                                        <MapPin size={16} className="mt-1 ml-2" />
-                                        <div>
-                                          <span className="text-sm text-gray-500">رابط الموقع:</span>
-                                          <p className="text-sm"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                            <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                                              فتح الموقع
-                                            </a>
-                                          </p>
-                                        </div>
-                                      </div>
-                                    )}
-                                    <div className="flex items-start">
-                                      <Calendar size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">نوع الخدمة:</span>
-                                        <p className="text-sm">{reservation.serviceType}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <Clock size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">ساعات إضافية:</span>
-                                        <p className="text-sm">{reservation.extraHours}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <Users size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">عدد العمال:</span>
-                                        <p className="text-sm">{reservation.workerCount}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <DollarSign size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">السعر:</span>
-                                        <p className="text-sm">{reservation.price} ريال</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
-                            )}
-                          </React.Fragment>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-
-
-              <div className="mt-6 sm:mt-8"> {/* تقليل الـ mt للشاشات الصغيرة */}
-                <div className="flex justify-between items-center bg-orange-50 p-2 rounded mb-2 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-                  <div className="font-bold text-lg flex items-center">
-                    <Clock size={18} className="ml-2" />
-                    الحجوزات الغير مكتملة
-                  </div>
-                </div>
-
-                {loading ? (
-                  <div className="text-center py-8">جاري تحميل البيانات...</div>
-                ) : uncompletedReservations.length === 0 ? (
-                  <p className="text-gray-500 text-center py-4 text-sm">لا توجد حجوزات غير مكتملة</p> 
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-2 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500">الاسم</th> {/* تقليل الـ padding */}
-                          <th className="px-2 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500">رقم الهاتف</th> {/* تقليل الـ padding */}
-                          <th className="px-2 sm:px-6 py-2 sm:py-3 text-right text-xs font-medium text-gray-500">الإجراءات</th> {/* تقليل الـ padding */}
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {uncompletedReservations.map((reservation) => (
-                          <React.Fragment key={reservation.id}>
-                            <tr
-                              className="hover:bg-gray-50 cursor-pointer"
-                              onClick={() => toggleRowExpansion(reservation.id)}
-                            >
-                              <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">{reservation.name}</td> {/* تقليل الـ padding */}
-                              <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap"> {/* تقليل الـ padding */}
-                                <a href={`tel:${reservation.phone}`} className="text-blue-500 hover:underline flex items-center" onClick={(e) => e.stopPropagation()}>
-                                  <Phone size={16} className="ml-1" />
-                                  {reservation.phone}
-                                </a>
-                              </td>
-                              <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap"> {/* تقليل الـ padding */}
-                                <div className="flex items-center justify-center sm:justify-start"> {/* توسيط الأيقونات على الشاشات الصغيرة */}
-                                  <button
-                                    className="text-green-500 hover:text-green-700 ml-2 flex items-center" /* إضافة flex items-center لتوسيط الأيقونة والنص عمودياً */
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      markAsCalled(reservation.id);
-                                    }}
-                                  >
-                                    <Phone size={16} className="ml-1" />
-                                    تأكيد الاتصال
-                                  </button>
-                                  <button
-                                    className="text-blue-500 hover:text-blue-700 ml-2"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                       
-                                      editReservation(reservation,"UNCOMPLETED");
-                                    }}
-                                  >
-                                    <Edit size={16} />
-                                  </button>
-                                  <button
-                                    className="text-red-500 hover:text-red-700"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      deleteReservation(reservation.id);
-                                    }}
-                                  >
-                                    <X size={16} />
-                                  </button>
-                                  {expandedRows[reservation.id] ?
-                                    <ChevronUp size={16} className="mr-2" /> :
-                                    <ChevronDown size={16} className="mr-2" />
-                                  }
-                                </div>
-                              </td>
-                            </tr>
-                            {expandedRows[reservation.id] && (
-                              <tr>
-                                <td colSpan={3} className="px-4 py-3 bg-gray-50"> {/* تقليل الـ padding */}
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4"> {/* تقليل الـ gap على الشاشات الصغيرة */}
-                                    <div className="flex items-start">
-                                      <Mail size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">البريد الإلكتروني:</span>
-                                        <p className="text-sm">{reservation.email || 'غير متوفر'}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <MapPin size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">المدينة:</span>
-                                        <p className="text-sm">{reservation.city}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <MapPin size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">العنوان:</span>
-                                        <p className="text-sm">{reservation.address}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    {reservation.locationUrl && (
-                                      <div className="flex items-start">
-                                        <MapPin size={16} className="mt-1 ml-2" />
-                                        <div>
-                                          <span className="text-sm text-gray-500">رابط الموقع:</span>
-                                          <p className="text-sm"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                            <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
-                                              فتح الموقع
-                                            </a>
-                                          </p>
-                                        </div>
-                                      </div>
-                                    )}
-                                    <div className="flex items-start">
-                                      <Calendar size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">نوع الخدمة:</span>
-                                        <p className="text-sm">{reservation.serviceType}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <Clock size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">ساعات إضافية:</span>
-                                        <p className="text-sm">{reservation.extraHours}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                    <div className="flex items-start">
-                                      <Users size={16} className="mt-1 ml-2" />
-                                      <div>
-                                        <span className="text-sm text-gray-500">عدد العمال:</span>
-                                        <p className="text-sm">{reservation.workerCount}</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                                      </div>
-                                    </div>
-                                  </div>
-                                </td>
-                              </tr>
-                            )}
-                          </React.Fragment>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg shadow p-8 text-center">
-          <Calendar size={48} className="mx-auto mb-4 text-gray-400" />
-          <p className="text-gray-500 text-sm">الرجاء اختيار تاريخ لعرض الحجوزات</p> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-        </div>
-      )}
-
-      {showNewReservationForm && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto  p-8  pt-48 w-full z-50 flex justify-center items-center" dir="rtl">
-          <div className="bg-white rounded-lg p-4 sm:p-6 shadow-lg w-full max-w-lg mt-[120%]  mb-16 " > {/* تقليل الـ padding للشاشات الصغيرة */}
-            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center">{editingReservationId ? 'تعديل حجز' : 'إضافة حجز جديد'}</h2> {/* تصغير حجم الخط والـ mb على الشاشات الصغيرة */}
-
-            <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">اسم العميل*</label>
-              <input type="text" id="name" name="name" value={newReservation.name} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-            </div>
-            <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label htmlFor="phone" className="block text-gray-700 text-sm font-bold mb-2">رقم الهاتف*</label>
-              <input type="tel" id="phone" name="phone" value={newReservation.phone} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-            </div>
-            <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">البريد الإلكتروني</label>
-              <input type="email" id="email" name="email" value={newReservation.email} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-            </div>
-            <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label htmlFor="city" className="block text-gray-700 text-sm font-bold mb-2">المدينة*</label>
-              <input type="text" id="city" name="city" value={newReservation.city} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-            </div>
-            <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label htmlFor="address" className="block text-gray-700 text-sm font-bold mb-2">العنوان*</label>
-              <textarea id="address" name="address" value={newReservation.address} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm"></textarea> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-            </div>
-            <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label htmlFor="locationUrl" className="block text-gray-700 text-sm font-bold mb-2">رابط الموقع (اختياري)</label>
-              <input type="url" id="locationUrl" name="locationUrl" value={newReservation.locationUrl} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-            </div>
-
-            <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label htmlFor="serviceType" className="block text-gray-700 text-sm font-bold mb-2">نوع الخدمة</label>
-              <select
-                id="serviceType"
-                name="serviceType"
-                value={newReservation.serviceType}
-                onChange={handleFormChange}
-                className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /* تصغير حجم الخط على الشاشات الصغيرة */
-                disabled={!!editingReservationId}
-              >
-                {Object.keys(ServiceType).map((key) => (
-                  <option key={key} value={key}>{ServiceType[key as keyof typeof ServiceType]}</option>
-                ))}
-              </select>
-            </div>
-
-
-            <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label className="block text-gray-700 text-sm font-bold mb-2">إضافة تواريخ وفترات زمنية</label>
-              <div className="flex flex-col sm:flex-row items-center mb-2 space-y-2 sm:space-y-0 sm:space-x-2"> {/* تخطيط عمودي على الشاشات الصغيرة وأفقي على المتوسطة والكبيرة */}
-                <input
-                  type="date"
-                  className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /* تصغير حجم الخط على الشاشات الصغيرة */
-                  value={tempDate}
-                  onChange={handleTempDateChange}
-                  min={new Date().toISOString().split('T')[0]}
-                />
-                <select
-                  className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /* تصغير حجم الخط على الشاشات الصغيرة */
-                  value={tempTimePeriod}
-                  onChange={handleTempTimePeriodChange}
-                >
-                  {Object.keys(TimePeriod).map((key) => (
-                    <option key={key} value={key}>{TimePeriod[key as keyof typeof TimePeriod]}</option>
-                  ))}
-                </select>
+        {/* Week Dates Selection */}
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-4 mb-6 sm:mb-8">
+          {weekDates.map((date) => {
+             const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
+             const isToday = date.toDateString() === new Date().toDateString(); // Use plain new Date() for today's comparison
+             return (
                 <button
-                  onClick={addDatePeriod}
-                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm w-full sm:w-auto" /* تصغير حجم الخط وجعل الزر يأخذ العرض الكامل على الشاشات الصغيرة */
-                  type="button"
+                key={date.toISOString()}
+                onClick={() => selectDate(date)}
+                className={`flex flex-col items-center p-2 sm:p-3 rounded-lg shadow-sm transition-colors text-xs sm:text-sm 
+                ${isSelected ? 'bg-blue-500 text-white font-semibold' : 'bg-white hover:bg-gray-100 text-gray-700'}
+                ${isToday && !isSelected ? 'ring-2 ring-blue-300' : ''}
+                `}
                 >
-                  <Plus size={16} className="inline-block ml-2" />
-                  إضافة
+                <span className="font-medium">{getDayName(date)}</span>
+                <span className="text-xs sm:text-sm mt-1">
+                    {formatDateForDisplay(date)}
+                </span>
+                </button>
+             );
+            })}
+        </div>
+
+        {/* Reservations Display Area */}
+        {selectedDate ? (
+          <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">
+               {/* Reservations for {getDayName(selectedDate)} {formatDateForDisplay(selectedDate)} */}
+               {`${t('reservationSystemTitle')} - ${getDayName(selectedDate)} ${formatDateForDisplay(selectedDate)}`}
+            </h2>
+
+            {loading ? (
+              <div className="text-center py-8">{t('loadingData')}</div>
+            ) : (
+              <>
+                {/* Morning Reservations */}
+                <div className="mb-6 sm:mb-8">
+                   <div className="flex justify-between items-center bg-blue-50 p-2 rounded mb-2 sm:mb-4 text-sm sm:text-base">
+                     <div className={`font-bold flex items-center text-${language === 'ar' ? 'right' : 'left'}`}>
+                       <Clock size={18} className="me-2" />
+                       {t('morningPeriod')}
+                     </div>
+                     <div className="flex items-center text-xs sm:text-sm">
+                      <div className={`px-2 sm:px-3 py-1 rounded-full 
+                        ${remainingMorningWorkers === 0 ? 'bg-red-100 text-red-800' :
+                         remainingMorningWorkers < 5 ? 'bg-yellow-100 text-yellow-800' :
+                         'bg-green-100 text-green-800'}`}>
+                        <span className="font-medium">{t('remainingWorkers')} {remainingMorningWorkers}</span>
+                        {remainingMorningWorkers === 0 && <span className="ms-1 text-xs">({t('noNewBookings')})</span>}
+                      </div>
+                    </div>
+                   </div>
+                  {morningReservations.length === 0 ? (
+                    <p className="text-gray-500 text-center py-4 text-sm">{t('noBookingsMorning')}</p>
+                  ) : (
+                     <div className="overflow-x-auto">
+                         <table className={`min-w-full divide-y divide-gray-200 text-xs sm:text-sm text-${language === 'ar' ? 'right' : 'left'}`}>
+                             <thead className="bg-gray-50">
+                             <tr>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('nameHeader')}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('phoneHeader')}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('actionsHeader')}</th>
+                             </tr>
+                             </thead>
+                             <tbody className="bg-white divide-y divide-gray-200">
+                             {morningReservations.map((reservation) => (
+                                 <React.Fragment key={`${reservation.id}-morning`}>
+                                     <tr className="hover:bg-gray-50 cursor-pointer" onClick={() => toggleRowExpansion(reservation.id)}>
+                                         <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">{reservation.name}</td>
+                                         <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                                             <a href={`tel:${reservation.phone}`} className="text-blue-500 hover:underline flex items-center" onClick={(e) => e.stopPropagation()}>
+                                                 <Phone size={16} className="me-1" />
+                                                 {reservation.phone}
+                                             </a>
+                                         </td>
+                                         <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                                             <div className="flex items-center justify-center sm:justify-start gap-2">
+                                                 <button className="text-blue-500 hover:text-blue-700" onClick={(e) => { e.stopPropagation(); editReservation(reservation, "COMPLETED"); }} aria-label={t('editReservationTitle')}>
+                                                     <Edit size={16} />
+                                                 </button>
+                                                 <button className="text-red-500 hover:text-red-700" onClick={(e) => { e.stopPropagation(); deleteReservation(reservation.id); }} aria-label={t('deleteConfirm')}>
+                                                     <X size={16} />
+                                                 </button>
+                                                 {expandedRows[reservation.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                             </div>
+                                         </td>
+                                     </tr>
+                                     {/* Expanded Row */}
+                                     {expandedRows[reservation.id] && (
+                                         <tr>
+                                            <td colSpan={3} className="px-4 py-3 bg-gray-50 text-xs sm:text-sm">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
+                                                    {/* Details Fields */}
+                                                    <div className="flex items-start"><Mail size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('emailLabel')}</span> {reservation.email || t('notAvailable')}</div></div>
+                                                    <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('cityLabel')}</span> {reservation.city}</div></div>
+                                                    <div className="flex items-start md:col-span-2"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('addressLabel')}</span> {reservation.address}</div></div>
+                                                    {reservation.locationUrl && <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('locationLinkLabel')}</span> <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{t('openLocation')}</a></div></div>}
+                                                    <div className="flex items-start"><Calendar size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('serviceTypeLabel')}</span> {t(reservation.serviceType)}</div></div>
+                                                    <div className="flex items-start"><Clock size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('extraHoursLabel')}</span> {reservation.extraHours}</div></div>
+                                                    <div className="flex items-start"><Users size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('workerCountLabel')}</span> {reservation.workerCount}</div></div>
+                                                    <div className="flex items-start"><DollarSign size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('priceLabel')}</span> {reservation.price} {t('currency')}</div></div>
+                                                </div>
+                                            </td>
+                                         </tr>
+                                     )}
+                                 </React.Fragment>
+                             ))}
+                             </tbody>
+                         </table>
+                     </div>
+                  )}
+                </div>
+
+                {/* Evening Reservations (Similar structure to Morning) */}
+                <div>
+                   <div className="flex justify-between items-center bg-indigo-50 p-2 rounded mb-2 sm:mb-4 text-sm sm:text-base">
+                     <div className={`font-bold flex items-center text-${language === 'ar' ? 'right' : 'left'}`}>
+                       <Clock size={18} className="me-2" />
+                       {t('eveningPeriod')}
+                     </div>
+                      <div className="flex items-center text-xs sm:text-sm">
+                        <div className={`px-2 sm:px-3 py-1 rounded-full 
+                          ${remainingEveningWorkers === 0 ? 'bg-red-100 text-red-800' :
+                           remainingEveningWorkers < 5 ? 'bg-yellow-100 text-yellow-800' :
+                           'bg-green-100 text-green-800'}`}>
+                          <span className="font-medium">{t('remainingWorkers')} {remainingEveningWorkers}</span>
+                          {remainingEveningWorkers === 0 && <span className="ms-1 text-xs">({t('noNewBookings')})</span>}
+                        </div>
+                      </div>
+                   </div>
+                  {eveningReservations.length === 0 ? (
+                    <p className="text-gray-500 text-center py-4 text-sm">{t('noBookingsEvening')}</p>
+                  ) : (
+                     <div className="overflow-x-auto">
+                       {/* Table Structure identical to Morning, just map eveningReservations */}
+                        <table className={`min-w-full divide-y divide-gray-200 text-xs sm:text-sm text-${language === 'ar' ? 'right' : 'left'}`}>
+                             <thead className="bg-gray-50">
+                             <tr>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('nameHeader')}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('phoneHeader')}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('actionsHeader')}</th>
+                             </tr>
+                             </thead>
+                             <tbody className="bg-white divide-y divide-gray-200">
+                             {eveningReservations.map((reservation) => (
+                                 <React.Fragment key={`${reservation.id}-evening`}>
+                                     <tr className="hover:bg-gray-50 cursor-pointer" onClick={() => toggleRowExpansion(reservation.id)}>
+                                        <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">{reservation.name}</td>
+                                         <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                                             <a href={`tel:${reservation.phone}`} className="text-blue-500 hover:underline flex items-center" onClick={(e) => e.stopPropagation()}>
+                                                 <Phone size={16} className="me-1" />
+                                                 {reservation.phone}
+                                             </a>
+                                         </td>
+                                         <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                                             <div className="flex items-center justify-center sm:justify-start gap-2">
+                                                 <button className="text-blue-500 hover:text-blue-700" onClick={(e) => { e.stopPropagation(); editReservation(reservation, "COMPLETED"); }} aria-label={t('editReservationTitle')}>
+                                                     <Edit size={16} />
+                                                 </button>
+                                                 <button className="text-red-500 hover:text-red-700" onClick={(e) => { e.stopPropagation(); deleteReservation(reservation.id); }} aria-label={t('deleteConfirm')}>
+                                                     <X size={16} />
+                                                 </button>
+                                                 {expandedRows[reservation.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                             </div>
+                                         </td>
+                                     </tr>
+                                     {/* Expanded Row */}
+                                     {expandedRows[reservation.id] && (
+                                          <tr>
+                                            <td colSpan={3} className="px-4 py-3 bg-gray-50 text-xs sm:text-sm">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
+                                                    {/* Details Fields - Same as Morning */}
+                                                    <div className="flex items-start"><Mail size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('emailLabel')}</span> {reservation.email || t('notAvailable')}</div></div>
+                                                    <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('cityLabel')}</span> {reservation.city}</div></div>
+                                                    <div className="flex items-start md:col-span-2"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('addressLabel')}</span> {reservation.address}</div></div>
+                                                    {reservation.locationUrl && <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('locationLinkLabel')}</span> <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{t('openLocation')}</a></div></div>}
+                                                    <div className="flex items-start"><Calendar size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('serviceTypeLabel')}</span> {t(reservation.serviceType)}</div></div>
+                                                    <div className="flex items-start"><Clock size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('extraHoursLabel')}</span> {reservation.extraHours}</div></div>
+                                                    <div className="flex items-start"><Users size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('workerCountLabel')}</span> {reservation.workerCount}</div></div>
+                                                    <div className="flex items-start"><DollarSign size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('priceLabel')}</span> {reservation.price} {t('currency')}</div></div>
+                                                </div>
+                                            </td>
+                                         </tr>
+                                     )}
+                                 </React.Fragment>
+                             ))}
+                             </tbody>
+                         </table>
+                     </div>
+                  )}
+                </div>
+
+                 {/* Uncompleted Reservations */}
+                 <div className="mt-6 sm:mt-8">
+                   <div className="flex justify-between items-center bg-orange-50 p-2 rounded mb-2 sm:mb-4 text-sm sm:text-base">
+                     <div className={`font-bold flex items-center text-${language === 'ar' ? 'right' : 'left'}`}>
+                       <Clock size={18} className="me-2" />
+                       {t('uncompletedReservations')}
+                     </div>
+                     {/* Optional: Add count or other info here */}
+                   </div>
+                    {loading ? ( // Use loading state for this section too if fetchUncompleted is separate
+                       <div className="text-center py-8">{t('loadingData')}</div>
+                    ) : uncompletedReservations.length === 0 ? (
+                        <p className="text-gray-500 text-center py-4 text-sm">{t('noUncompletedBookings')}</p>
+                    ) : (
+                     <div className="overflow-x-auto">
+                        <table className={`min-w-full divide-y divide-gray-200 text-xs sm:text-sm text-${language === 'ar' ? 'right' : 'left'}`}>
+                             <thead className="bg-gray-50">
+                             <tr>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('nameHeader')}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('phoneHeader')}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('actionsHeader')}</th>
+                             </tr>
+                             </thead>
+                             <tbody className="bg-white divide-y divide-gray-200">
+                              {uncompletedReservations.map((reservation) => (
+                                 <React.Fragment key={`${reservation.id}-uncompleted`}>
+                                     <tr className="hover:bg-gray-50 cursor-pointer" onClick={() => toggleRowExpansion(reservation.id)}>
+                                        <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">{reservation.name}</td>
+                                         <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                                             <a href={`tel:${reservation.phone}`} className="text-blue-500 hover:underline flex items-center" onClick={(e) => e.stopPropagation()}>
+                                                 <Phone size={16} className="me-1" />
+                                                 {reservation.phone}
+                                             </a>
+                                         </td>
+                                         <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
+                                             <div className="flex items-center justify-center sm:justify-start gap-2 flex-wrap"> {/* Added flex-wrap */}
+                                                 {/* Confirm Call Button */}
+                                                  {!reservation.called && // Optionally hide if already called
+                                                    <button
+                                                        className="text-green-600 hover:text-green-800 flex items-center text-xs sm:text-sm p-1 rounded border border-green-300 hover:bg-green-50"
+                                                        onClick={(e) => { e.stopPropagation(); markAsCalled(reservation.id); }}
+                                                        aria-label={t('confirmCall')}
+                                                    >
+                                                        <Phone size={14} className="me-1" />
+                                                        {t('confirmCall')}
+                                                    </button>
+                                                  }
+                                                  {/* Edit Button (treats uncompleted as a template for a new booking) */}
+                                                 <button
+                                                    className="text-blue-500 hover:text-blue-700 p-1"
+                                                    onClick={(e) => { e.stopPropagation(); editReservation(reservation, "UNCOMPLETED"); }}
+                                                    aria-label={t('editReservationTitle')} // Or a different label like "Complete Booking"
+                                                 >
+                                                    <Edit size={16} />
+                                                 </button>
+                                                 {/* Delete Button */}
+                                                 <button
+                                                    className="text-red-500 hover:text-red-700 p-1"
+                                                    onClick={(e) => { e.stopPropagation(); deleteReservation(reservation.id); }} // Assuming delete works for uncompleted too
+                                                    aria-label={t('deleteConfirm')}
+                                                  >
+                                                    <X size={16} />
+                                                 </button>
+                                                 {/* Expand/Collapse Icon */}
+                                                 <span className="p-1">
+                                                    {expandedRows[reservation.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                                 </span>
+                                             </div>
+                                         </td>
+                                     </tr>
+                                     {/* Expanded Row for Uncompleted */}
+                                     {expandedRows[reservation.id] && (
+                                          <tr>
+                                            {/* Details are similar, but maybe fewer fields shown (e.g., no Price yet) */}
+                                            <td colSpan={3} className="px-4 py-3 bg-gray-50 text-xs sm:text-sm">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
+                                                    <div className="flex items-start"><Mail size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('emailLabel')}</span> {reservation.email || t('notAvailable')}</div></div>
+                                                    <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('cityLabel')}</span> {reservation.city}</div></div>
+                                                    <div className="flex items-start md:col-span-2"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('addressLabel')}</span> {reservation.address}</div></div>
+                                                    {reservation.locationUrl && <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('locationLinkLabel')}</span> <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{t('openLocation')}</a></div></div>}
+                                                    <div className="flex items-start"><Calendar size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('serviceTypeLabel')}</span> {t(reservation.serviceType)}</div></div>
+                                                    {/* May not have these details yet for uncompleted */}
+                                                    {/* <div className="flex items-start"><Clock size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('extraHoursLabel')}</span> {reservation.extraHours}</div></div> */}
+                                                    {/* <div className="flex items-start"><Users size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('workerCountLabel')}</span> {reservation.workerCount}</div></div> */}
+                                                </div>
+                                            </td>
+                                         </tr>
+                                     )}
+                                 </React.Fragment>
+                              ))}
+                             </tbody>
+                         </table>
+                     </div>
+                    )}
+                 </div>
+              </>
+            )}
+          </div>
+        ) : (
+           // Placeholder when no date is selected
+          <div className="bg-white rounded-lg shadow p-8 text-center">
+            <Calendar size={48} className="mx-auto mb-4 text-gray-400" />
+            <p className="text-gray-500 text-sm">{t('selectDatePrompt')}</p>
+          </div>
+        )}
+
+        {/* New/Edit Reservation Modal Form */}
+        {showNewReservationForm && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full z-50 flex justify-center items-start pt-16 pb-16">
+            {/* Added padding top/bottom to prevent cutoff */}
+            <div className={`bg-white rounded-lg p-4 sm:p-6 shadow-lg w-full max-w-lg my-auto text-${language === 'ar' ? 'right' : 'left'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
+              <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center">
+                  {editingReservationId ? t('editReservationFormTitle') : t('addReservationTitle')}
+              </h2>
+
+              {/* Form Fields */}
+                <div className="space-y-3 sm:space-y-4">
+                    {/* Basic Info */}
+                    <div>
+                        <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-1">{t('customerNameLabel')}</label>
+                        <input type="text" id="name" name="name" value={newReservation.name} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" required/>
+                    </div>
+                    <div>
+                        <label htmlFor="phone" className="block text-gray-700 text-sm font-bold mb-1">{t('phoneLabel')}</label>
+                        <input type="tel" id="phone" name="phone" value={newReservation.phone} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" required/>
+                    </div>
+                    <div>
+                        <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-1">{t('emailLabelOptional')}</label>
+                        <input type="email" id="email" name="email" value={newReservation.email} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
+                    </div>
+                    <div>
+                        <label htmlFor="city" className="block text-gray-700 text-sm font-bold mb-1">{t('cityLabelMandatory')}</label>
+                        <input type="text" id="city" name="city" value={newReservation.city} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" required/>
+                    </div>
+                    <div>
+                        <label htmlFor="address" className="block text-gray-700 text-sm font-bold mb-1">{t('addressLabelMandatory')}</label>
+                        <textarea id="address" name="address" value={newReservation.address} onChange={handleFormChange} rows={2} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" required></textarea>
+                    </div>
+                    <div>
+                        <label htmlFor="locationUrl" className="block text-gray-700 text-sm font-bold mb-1">{t('locationUrlOptional')}</label>
+                        <input type="url" id="locationUrl" name="locationUrl" value={newReservation.locationUrl} onChange={handleFormChange} placeholder="https://maps.google.com/..." className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
+                    </div>
+
+                    {/* Service Type */}
+                    <div>
+                        <label htmlFor="serviceType" className="block text-gray-700 text-sm font-bold mb-1">{t('serviceTypeLabelForm')}</label>
+                        <select
+                            id="serviceType"
+                            name="serviceType"
+                            value={newReservation.serviceType}
+                            onChange={handleFormChange}
+                            className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm bg-white" // Added bg-white for consistency
+                            disabled={!!editingReservationId} // Disable if editing (usually service type isn't changed post-creation)
+                        >
+                            {ServiceTypeKeys.map((key) => (
+                                <option key={key} value={key}>{t(key)}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Date/Time Period Selection */}
+                     <div>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">{t('addDatesAndPeriods')}</label>
+                        <div className="flex flex-col sm:flex-row items-center gap-2 mb-3">
+                            <input
+                                type="date"
+                                className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm flex-grow"
+                                value={tempDate}
+                                onChange={handleTempDateChange}
+                                min={formatDateForInput(new Date())} // Prevent past dates
+                                aria-label={t('addDatePlaceholder')}
+                            />
+                            <select
+                                className="shadow border rounded w-full sm:w-auto py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm bg-white"
+                                value={tempTimePeriod}
+                                onChange={handleTempTimePeriodChange}
+                                aria-label={t('addTimePeriodPlaceholder')}
+                            >
+                                {TimePeriodKeys.map((key) => (
+                                    <option key={key} value={key}>{t(key)}</option>
+                                ))}
+                            </select>
+                            <button
+                                onClick={addDatePeriod}
+                                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm w-full sm:w-auto flex items-center justify-center"
+                                type="button"
+                                // Disable add button logic if needed (e.g., during specific edits)
+                                disabled={editingReservationId && newReservation.dates.length >= 1 && newReservation.serviceType !== 'ONE_TIME'}
+                             >
+                                <Plus size={16} className="inline-block me-1" />
+                                {t('addButton')}
+                            </button>
+                        </div>
+
+                        {/* Display Selected Dates */}
+                        {newReservation.dates.length > 0 && (
+                            <div className="mt-3 border rounded p-2 bg-gray-50 max-h-32 overflow-y-auto">
+                                <h3 className="font-semibold mb-2 text-xs text-gray-600">{t('selectedDatesAndPeriods')}</h3>
+                                <ul className="space-y-1">
+                                  {newReservation.dates.map((datePeriod, index) => (
+                                    <li key={index} className="flex justify-between items-center text-xs border-b last:border-b-0 pb-1">
+                                        <span>
+                                            {formatDateForDisplay(datePeriod.date)} - {t(datePeriod.timePeriod)}
+                                        </span>
+                                        <button
+                                            onClick={() => removeDatePeriod(index)}
+                                            className="text-red-500 hover:text-red-700 p-1"
+                                            type="button"
+                                            aria-label={`${t('removeButton')} ${formatDateForDisplay(datePeriod.date)}`}
+                                            // Disable removal if editing the only date
+                                            disabled={editingReservationId && newReservation.dates.length === 1}
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </li>
+                                   ))}
+                                </ul>
+                            </div>
+                        )}
+                     </div>
+
+
+                    {/* Other Details */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label htmlFor="extraHours" className="block text-gray-700 text-sm font-bold mb-1">{t('extraHoursLabelForm')}</label>
+                            <input type="number" id="extraHours" name="extraHours" min="0" value={newReservation.extraHours} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
+                        </div>
+                        <div>
+                            <label htmlFor="workerCount" className="block text-gray-700 text-sm font-bold mb-1">{t('workerCountLabelForm')}</label>
+                            <input type="number" id="workerCount" name="workerCount" min="1" value={newReservation.workerCount} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
+                        </div>
+                        <div>
+                            <label htmlFor="price" className="block text-gray-700 text-sm font-bold mb-1">{t('priceLabelForm')}</label>
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                min="0"
+                                step="0.01"
+                                value={newReservation.price}
+                                onChange={handleFormChange}
+                                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm"
+                                // Maybe disable price editing too depending on workflow
+                                // disabled={!!editingReservationId}
+                             />
+                        </div>
+                    </div>
+                </div>
+
+
+              {/* Form Actions */}
+              <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
+                <button onClick={closeNewReservationForm} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm w-full sm:w-auto order-last sm:order-first" type="button">
+                  {t('cancelButton')}
+                </button>
+                <button
+                    onClick={handleAddReservation}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm w-full sm:w-auto flex items-center justify-center"
+                    type="button"
+                    disabled={loading} // Disable button while loading
+                 >
+                  <Save size={16} className="inline-block me-2" />
+                   {loading ? t('loadingData') : (editingReservationId ? t('saveChangesButton') : t('saveBookingButton'))}
                 </button>
               </div>
-
-
-              {newReservation.dates.length > 0 && (
-                <div className="mt-2 sm:mt-4"> {/* تقليل الـ mt للشاشات الصغيرة */}
-                  <h3 className="font-bold mb-2 text-sm">التواريخ والفترات المحددة:</h3> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                  <div className="overflow-x-auto"> {/* إضافة تمرير أفقي إذا لزم الأمر */}
-                    <table className="min-w-full text-xs sm:text-sm"> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-                      <thead>
-                        <tr>
-                          <th className="px-2 sm:px-4 py-1 sm:py-2 text-right text-xs">التاريخ</th> {/* تقليل الـ padding وحجم الخط */}
-                          <th className="px-2 sm:px-4 py-1 sm:py-2 text-right text-xs">الفترة الزمنية</th> {/* تقليل الـ padding وحجم الخط */}
-                          <th className="px-2 sm:px-4 py-1 sm:py-2 text-right text-xs"></th> {/* تقليل الـ padding وحجم الخط */}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {newReservation.dates.map((datePeriod, index) => (
-                          <tr key={index}>
-                            <td className="border px-2 sm:px-4 py-1 sm:py-2 text-xs">{datePeriod.date ? new Date(datePeriod.date).toLocaleDateString('ar-SA', { calendar: 'gregory' }) : 'غير محدد'}</td> {/* تقليل الـ padding وحجم الخط */}
-                            <td className="border px-2 sm:px-4 py-1 sm:py-2 text-xs">{TimePeriod[datePeriod.timePeriod as keyof typeof TimePeriod]}</td> {/* تقليل الـ padding وحجم الخط */}
-                            <td className="border px-2 sm:px-4 py-1 sm:py-2 text-xs"> {/* تقليل الـ padding وحجم الخط */}
-                              <button
-                                onClick={() => removeDatePeriod(index)}
-                                className="text-red-500 hover:text-red-700"
-                                type="button"
-                              >
-                                <X size={16} />
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-            </div>
-
-
-            <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label htmlFor="extraHours" className="block text-gray-700 text-sm font-bold mb-2">ساعات إضافية</label>
-              <input type="number" id="extraHours" name="extraHours" value={newReservation.extraHours} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-            </div>
-            <div className="mb-3 sm:mb-4"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label htmlFor="workerCount" className="block text-gray-700 text-sm font-bold mb-2">عدد العمال</label>
-              <input type="number" id="workerCount" name="workerCount" value={newReservation.workerCount} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /> {/* تصغير حجم الخط على الشاشات الصغيرة */}
-            </div>
-            <div className="mb-4 sm:mb-6"> {/* تقليل الـ mb للشاشات الصغيرة */}
-              <label htmlFor="price" className="block text-gray-700 text-sm font-bold mb-2">السعر</label>
-              <input
-                type="number"
-                id="price"
-                name="price"
-                value={newReservation.price}
-                onChange={handleFormChange}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline text-sm" /* تصغير حجم الخط على الشاشات الصغيرة */
-                disabled={!!editingReservationId}
-              />
-            </div>
-
-
-            <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 sm:space-x-2"> {/* تخطيط عمودي على الشاشات الصغيرة وأفقي على المتوسطة والكبيرة */}
-              <button onClick={closeNewReservationForm} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm w-full sm:w-auto" type="button"> {/* تصغير حجم الخط وجعل الزر يأخذ العرض الكامل على الشاشات الصغيرة */}
-                إلغاء
-              </button>
-              <button onClick={handleAddReservation} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm w-full sm:w-auto" type="button"> {/* تصغير حجم الخط وجعل الزر يأخذ العرض الكامل على الشاشات الصغيرة */}
-                <Save size={16} className="inline-block ml-2" />
-                {editingReservationId ? 'حفظ التعديلات' : 'حفظ الحجز'}
-              </button>
             </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
     ) : (
-     (router.push('/login'),
-      !loadingLoginCheck ? <div>يتم التحويل إلى صفحة تسجيل الدخول...</div> : null)
+      // If not logged in or not admin (after check)
+      !loadingLoginCheck ? <div className="flex justify-center items-center h-screen">{t('redirectToLogin')}</div> : null // Show redirect message only after check is complete
     )
   );
 };
