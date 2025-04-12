@@ -53,9 +53,7 @@ export async function GET(req: Request) {
 
         const uncompleted = await prisma.uncompleted.findMany({
             where: {
-                createdAt: {
-                    lte: targetDate, // جلب جميع السجلات التي تم إنشاؤها قبل أو تساوي هذا التاريخ
-                },
+            
                 called: false, // فقط السجلات التي لم يتم الاتصال بها
             },
             orderBy: { createdAt: "asc" }, // ترتيب تصاعدي حسب الوقت
