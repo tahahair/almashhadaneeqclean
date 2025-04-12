@@ -271,30 +271,77 @@ const ReservationManager = () => {
   const [tempDate, setTempDate] = useState(new Date().toISOString().split('T')[0]);
   const [tempTimePeriod, setTempTimePeriod] = useState<TimePeriodKey>('MORNING'); // Use key
 
-  // --- Translation Helper ---
-  const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: any): string => {
-    const langDict = translations[language];
-    // Type guard to ensure the key exists in the chosen language dictionary
-    if (key in langDict) {
-        const translation = (langDict as any)[key];
-        if (typeof translation === 'function') {
-            return translation(args); // Handle functions like maxDatesError
-        }
-        return translation;
-    }
-     // Fallback for keys that might only exist in one language (or error)
-    console.warn(`Translation key "${key}" not found for language "${language}". Falling back to English.`);
-    const fallbackLangDict = translations.en;
-     if (key in fallbackLangDict) {
-        const fallbackTranslation = (fallbackLangDict as any)[key];
-         if (typeof fallbackTranslation === 'function') {
-            return fallbackTranslation(args);
-        }
-        return fallbackTranslation;
-     }
-    return key; // Return the key itself if not found anywhere
-  };
+// --- Translation Helper ---
 
+// Define a type for the arguments object that functions might accept
+type TranslationArgs = Record<string, string | number | boolean>; // Allow string, number, or boolean values in args
+
+// Define the possible types for a value within a language dictionary
+type LanguageDictValue = string | ((args?: TranslationArgs) => string);
+
+// Define the structure for a single language's dictionary (assuming all keys exist)
+type StrictLanguageDict = { [K in TranslationKeys | ServiceTypeKey | TimePeriodKey]: LanguageDictValue };
+
+// Assuming your 'translations' object conforms to this structure:
+// const translations: Record<Language, StrictLanguageDict> = { ... };
+
+const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: TranslationArgs): string => {
+    // 1. Get the dictionary for the current language
+    const langDict = translations[language];
+    let translationValue: LanguageDictValue | undefined = undefined;
+
+    // 2. Check if the key exists in the current language dictionary
+    //    Using Object.prototype.hasOwnProperty.call is safer than 'key in' for arbitrary keys
+    if (Object.prototype.hasOwnProperty.call(langDict, key)) {
+        // Type assertion is safe here because we've checked ownership
+        translationValue = langDict[key as keyof typeof langDict];
+    }
+
+    // 3. Process the value if found in the current language
+    if (translationValue !== undefined) {
+        if (typeof translationValue === 'function') {
+            try {
+                // Call the function with args (it might not use them)
+                return translationValue(args);
+            } catch (error) {
+                console.error(`Error executing translation function for key "${key}" with args:`, args, error);
+                // Fallback in case the function fails
+            }
+        } else {
+             // It must be a string if not undefined and not a function
+            return translationValue;
+        }
+    }
+
+    // 4. Fallback to English if not found or if function failed
+    console.warn(`Translation key "${key}" not found for language "${language}" or function failed. Falling back to English.`);
+    const fallbackLangDict = translations.en;
+    let fallbackValue: LanguageDictValue | undefined = undefined;
+
+    if (Object.prototype.hasOwnProperty.call(fallbackLangDict, key)) {
+        fallbackValue = fallbackLangDict[key as keyof typeof fallbackLangDict];
+    }
+
+    // 5. Process the fallback value
+    if (fallbackValue !== undefined) {
+        if (typeof fallbackValue === 'function') {
+             try {
+                return fallbackValue(args);
+            } catch (error) {
+                 console.error(`Error executing English fallback translation function for key "${key}" with args:`, args, error);
+                 // Fallback if English function also fails
+            }
+        } else {
+            // It must be a string
+            return fallbackValue;
+        }
+    }
+
+    // 6. Ultimate fallback: return the key itself if not found anywhere
+    console.error(`Translation key "${key}" not found in English fallback either.`);
+    // Ensure the key is returned as a string
+    return String(key);
+};
   // --- Effects ---
 
   // Load language from localStorage on initial mount
