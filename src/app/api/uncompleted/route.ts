@@ -48,6 +48,8 @@ export async function GET(req: Request) {
 
         // تحويل التاريخ إلى نهاية اليوم (23:59:59.999) لجلب جميع السجلات حتى هذا اليوم
         const targetDate = new Date(date);
+        targetDate.setDate(targetDate.getDate() - 1);
+
         targetDate.setHours(23, 59, 59, 999);
 
         const uncompleted = await prisma.uncompleted.findMany({
