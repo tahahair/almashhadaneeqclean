@@ -280,8 +280,7 @@ type TranslationArgs = Record<string, string | number | boolean>; // Allow strin
 type LanguageDictValue = string | ((args?: TranslationArgs) => string);
 
 // Define the structure for a single language's dictionary (assuming all keys exist)
-type StrictLanguageDict = { [K in TranslationKeys | ServiceTypeKey | TimePeriodKey]: LanguageDictValue };
-
+ 
 // Assuming your 'translations' object conforms to this structure:
 // const translations: Record<Language, StrictLanguageDict> = { ... };
 
