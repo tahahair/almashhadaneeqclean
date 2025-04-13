@@ -271,77 +271,34 @@ const ReservationManager = () => {
   const [tempDate, setTempDate] = useState(new Date().toISOString().split('T')[0]);
   const [tempTimePeriod, setTempTimePeriod] = useState<TimePeriodKey>('MORNING'); // Use key
 
-// --- Translation Helper ---
-
-// Define a type for the arguments object that functions might accept
-type TranslationArgs = Record<string, string | number | boolean>; // Allow string, number, or boolean values in args
-
-// Define the possible types for a value within a language dictionary
-type LanguageDictValue = string | ((args?: TranslationArgs) => string);
-
-// Define the structure for a single language's dictionary (assuming all keys exist)
-type StrictLanguageDict = { [K in TranslationKeys | ServiceTypeKey | TimePeriodKey]: LanguageDictValue };
-
-// Assuming your 'translations' object conforms to this structure:
-const translations: Record<Language, StrictLanguageDict> = { ... };
-
-const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: TranslationArgs): string => {
-    // 1. Get the dictionary for the current language
+  // --- Translation Helper ---
+  const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: unknown): unknown => {
     const langDict = translations[language];
-    let translationValue: LanguageDictValue | undefined = undefined;
-
-    // 2. Check if the key exists in the current language dictionary
-    //    Using Object.prototype.hasOwnProperty.call is safer than 'key in' for arbitrary keys
-    if (Object.prototype.hasOwnProperty.call(langDict, key)) {
-        // Type assertion is safe here because we've checked ownership
-        translationValue = langDict[key as keyof typeof langDict];
-    }
-
-    // 3. Process the value if found in the current language
-    if (translationValue !== undefined) {
-        if (typeof translationValue === 'function') {
-            try {
-                // Call the function with args (it might not use them)
-                return translationValue(args);
-            } catch (error) {
-                console.error(`Error executing translation function for key "${key}" with args:`, args, error);
-                // Fallback in case the function fails
-            }
-        } else {
-             // It must be a string if not undefined and not a function
-            return translationValue;
+    // Type guard to ensure the key exists in the chosen language dictionary
+    if (key in langDict) {
+        const translation = langDict[key as keyof typeof langDict];
+        if (typeof translation === 'function') {
+            return (translation as (args?: unknown) => string)(args); // Handle functions like maxDatesError
         }
+        return translation ; // Ensure string return type
     }
-
-    // 4. Fallback to English if not found or if function failed
-    console.warn(`Translation key "${key}" not found for language "${language}" or function failed. Falling back to English.`);
+     // Fallback for keys that might only exist in one language (or error)
+    console.warn(`Translation key "${key}" not found for language "${language}". Falling back to English.`);
     const fallbackLangDict = translations.en;
-    let fallbackValue: LanguageDictValue | undefined = undefined;
-
-    if (Object.prototype.hasOwnProperty.call(fallbackLangDict, key)) {
-        fallbackValue = fallbackLangDict[key as keyof typeof fallbackLangDict];
-    }
-
-    // 5. Process the fallback value
-    if (fallbackValue !== undefined) {
-        if (typeof fallbackValue === 'function') {
-             try {
-                return fallbackValue(args);
-            } catch (error) {
-                 console.error(`Error executing English fallback translation function for key "${key}" with args:`, args, error);
-                 // Fallback if English function also fails
+     if (key in fallbackLangDict) {
+        const fallbackTranslation = fallbackLangDict[key as keyof typeof fallbackLangDict];
+         if (typeof fallbackTranslation === 'function') {
+            if (typeof args === 'number') {
+                return fallbackTranslation(args);
             }
-        } else {
-            // It must be a string
-            return fallbackValue;
+            console.warn(`Invalid argument type for translation key "${key}". Expected a number.`);
+            return key; // Fallback to the key itself if the argument is invalid
         }
-    }
+        return Array.isArray(fallbackTranslation) ? fallbackTranslation.join(', ') : fallbackTranslation;
+     }
+    return key; // Return the key itself if not found anywhere
+  };
 
-    // 6. Ultimate fallback: return the key itself if not found anywhere
-    console.error(`Translation key "${key}" not found in English fallback either.`);
-    // Ensure the key is returned as a string
-    return String(key);
-};
   // --- Effects ---
 
   // Load language from localStorage on initial mount
@@ -458,14 +415,24 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
   };
 
   const getDayName = (date: Date): string => {
-    return t('days')[date.getDay()];
+    const days = t('days');
+    if (Array.isArray(days)) {
+        return days[date.getDay()];
+    }
+    console.warn("Expected 'days' to be an array, but got:", days);
+    return '';
   };
 
   interface DateWithMonth {
     getMonth: () => number;
   }
   const getMonthName = (date: DateWithMonth): string => {
-    return t('months')[date.getMonth()];
+    const months = t('months');
+    if (Array.isArray(months)) {
+        return months[date.getMonth()];
+    }
+    console.warn("Expected 'months' to be an array, but got:", months);
+    return '';
   };
 
   const formatDateForDisplay = (date: Date): string => {
@@ -649,7 +616,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
   };
 
   const deleteReservation = async (id: number): Promise<void> => {
-    if (window.confirm(t('deleteConfirm'))) {
+    if (window.confirm(String(t('deleteConfirm')))) {
       setLoading(true);
       try {
         const response = await fetch('/api/booking', { // Assuming same endpoint for delete
@@ -896,7 +863,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
 
   // --- Render ---
   if (loadingLoginCheck) {
-    return <div className="flex justify-center items-center h-screen">{t('loadingLoginCheck')}</div>;
+    return <div className="flex justify-center items-center h-screen">{String(t('loadingLoginCheck'))}</div>;
   }
 
   // Main component render logic (only if logged in and admin)
@@ -910,7 +877,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
         {/* Header Area */}
         <div className="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-4">
           <h1 className="text-xl sm:text-2xl font-bold">
-             {editingReservationId && showNewReservationForm ? t('editReservationFormTitle') : t('reservationSystemTitle')}
+             {editingReservationId && showNewReservationForm ? String(t('editReservationFormTitle')) : String(t('reservationSystemTitle'))}
           </h1>
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 w-full sm:w-auto">
              {/* Language Switcher */}
@@ -925,8 +892,8 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
             {/* Worker Info */}
             <div className="bg-gray-100 p-2 sm:p-3 rounded-lg text-xs sm:text-sm flex items-center w-full sm:w-auto justify-center">
                <div className={`text-${language === 'ar' ? 'right' : 'left'} ${language === 'ar' ? 'ml-0 sm:ml-4' : 'mr-0 sm:mr-4'}`}>
-                <span className="block font-medium text-gray-800">{t('availableWorkersInfo')}</span>
-                <span className="block text-gray-600">{t('workersPerPeriod')}</span>
+                <span className="block font-medium text-gray-800">{t('availableWorkersInfo') as string}</span>
+                <span className="block text-gray-600">{t('workersPerPeriod') as string}</span>
               </div>
             </div>
              {/* New Booking Button */}
@@ -938,7 +905,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
               }}
             >
               <Plus size={20} className="me-2" />
-              {t('newBookingButton')}
+              {t('newBookingButton') as string}
             </button>
           </div>
         </div>
@@ -948,7 +915,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
           <button
             onClick={goToPreviousWeek}
             className="p-2 bg-white rounded-full shadow hover:bg-gray-50"
-            aria-label={t('previousWeek')}
+            aria-label={String(t('previousWeek'))}
           >
             {language === 'ar' ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
           </button>
@@ -963,7 +930,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
           <button
             onClick={goToNextWeek}
             className="p-2 bg-white rounded-full shadow hover:bg-gray-50"
-            aria-label={t('nextWeek')}
+            aria-label={String(t('nextWeek'))}
           >
              {language === 'ar' ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
           </button>
@@ -1001,7 +968,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
             </h2>
 
             {loading ? (
-              <div className="text-center py-8">{t('loadingData')}</div>
+              <div className="text-center py-8">{t('loadingData') as string}</div>
             ) : (
               <>
                 {/* Morning Reservations */}
@@ -1009,28 +976,28 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                    <div className="flex justify-between items-center bg-blue-50 p-2 rounded mb-2 sm:mb-4 text-sm sm:text-base">
                      <div className={`font-bold flex items-center text-${language === 'ar' ? 'right' : 'left'}`}>
                        <Clock size={18} className="me-2" />
-                       {t('morningPeriod')}
+                       {t('morningPeriod') as string}
                      </div>
                      <div className="flex items-center text-xs sm:text-sm">
                       <div className={`px-2 sm:px-3 py-1 rounded-full 
                         ${remainingMorningWorkers === 0 ? 'bg-red-100 text-red-800' :
                          remainingMorningWorkers < 5 ? 'bg-yellow-100 text-yellow-800' :
                          'bg-green-100 text-green-800'}`}>
-                        <span className="font-medium">{t('remainingWorkers')} {remainingMorningWorkers}</span>
-                        {remainingMorningWorkers === 0 && <span className="ms-1 text-xs">({t('noNewBookings')})</span>}
+                        <span className="font-medium">{t('remainingWorkers') as string} {remainingMorningWorkers}</span>
+                        {remainingMorningWorkers === 0 && <span className="ms-1 text-xs">({t('noNewBookings') as string})</span>}
                       </div>
                     </div>
                    </div>
                   {morningReservations.length === 0 ? (
-                    <p className="text-gray-500 text-center py-4 text-sm">{t('noBookingsMorning')}</p>
+                    <p className="text-gray-500 text-center py-4 text-sm">{t('noBookingsMorning') as string}</p>
                   ) : (
                      <div className="overflow-x-auto">
                          <table className={`min-w-full divide-y divide-gray-200 text-xs sm:text-sm text-${language === 'ar' ? 'right' : 'left'}`}>
                              <thead className="bg-gray-50">
                              <tr>
-                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('nameHeader')}</th>
-                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('phoneHeader')}</th>
-                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('actionsHeader')}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{String(t('nameHeader'))}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{String(t('phoneHeader'))}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{String(t('actionsHeader'))}</th>
                              </tr>
                              </thead>
                              <tbody className="bg-white divide-y divide-gray-200">
@@ -1046,10 +1013,10 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                                          </td>
                                          <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
                                              <div className="flex items-center justify-center sm:justify-start gap-2">
-                                                 <button className="text-blue-500 hover:text-blue-700" onClick={(e) => { e.stopPropagation(); editReservation(reservation, "COMPLETED"); }} aria-label={t('editReservationTitle')}>
+                                                 <button className="text-blue-500 hover:text-blue-700" onClick={(e) => { e.stopPropagation(); editReservation(reservation, "COMPLETED"); }} aria-label={String(t('editReservationTitle'))}>
                                                      <Edit size={16} />
                                                  </button>
-                                                 <button className="text-red-500 hover:text-red-700" onClick={(e) => { e.stopPropagation(); deleteReservation(reservation.id); }} aria-label={t('deleteConfirm')}>
+                                                 <button className="text-red-500 hover:text-red-700" onClick={(e) => { e.stopPropagation(); deleteReservation(reservation.id); }} aria-label={String(t('deleteConfirm'))}>
                                                      <X size={16} />
                                                  </button>
                                                  {expandedRows[reservation.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -1062,14 +1029,14 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                                             <td colSpan={3} className="px-4 py-3 bg-gray-50 text-xs sm:text-sm">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
                                                     {/* Details Fields */}
-                                                    <div className="flex items-start"><Mail size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('emailLabel')}</span> {reservation.email || t('notAvailable')}</div></div>
-                                                    <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('cityLabel')}</span> {reservation.city}</div></div>
-                                                    <div className="flex items-start md:col-span-2"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('addressLabel')}</span> {reservation.address}</div></div>
-                                                    {reservation.locationUrl && <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('locationLinkLabel')}</span> <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{t('openLocation')}</a></div></div>}
-                                                    <div className="flex items-start"><Calendar size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('serviceTypeLabel')}</span> {t(reservation.serviceType)}</div></div>
-                                                    <div className="flex items-start"><Clock size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('extraHoursLabel')}</span> {reservation.extraHours}</div></div>
-                                                    <div className="flex items-start"><Users size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('workerCountLabel')}</span> {reservation.workerCount}</div></div>
-                                                    <div className="flex items-start"><DollarSign size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('priceLabel')}</span> {reservation.price} {t('currency')}</div></div>
+                                                    <div className="flex items-start"><Mail size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('emailLabel'))}</span> {reservation.email || String(t('notAvailable'))}</div></div>
+                                                    <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('cityLabel'))}</span> {reservation.city}</div></div>
+                                                    <div className="flex items-start md:col-span-2"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('addressLabel'))}</span> {reservation.address}</div></div>
+                                                    {reservation.locationUrl && <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('locationLinkLabel'))}</span> <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{String(t('openLocation'))}</a></div></div>}
+                                                    <div className="flex items-start"><Calendar size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('serviceTypeLabel'))}</span> {String(t(reservation.serviceType))}</div></div>
+                                                    <div className="flex items-start"><Clock size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('extraHoursLabel'))}</span> {reservation.extraHours}</div></div>
+                                                    <div className="flex items-start"><Users size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('workerCountLabel'))}</span> {reservation.workerCount}</div></div>
+                                                    <div className="flex items-start"><DollarSign size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('priceLabel'))}</span> {reservation.price} {String(t('currency'))}</div></div>
                                                 </div>
                                             </td>
                                          </tr>
@@ -1087,29 +1054,29 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                    <div className="flex justify-between items-center bg-indigo-50 p-2 rounded mb-2 sm:mb-4 text-sm sm:text-base">
                      <div className={`font-bold flex items-center text-${language === 'ar' ? 'right' : 'left'}`}>
                        <Clock size={18} className="me-2" />
-                       {t('eveningPeriod')}
+                       {t('eveningPeriod') as string}
                      </div>
                       <div className="flex items-center text-xs sm:text-sm">
                         <div className={`px-2 sm:px-3 py-1 rounded-full 
                           ${remainingEveningWorkers === 0 ? 'bg-red-100 text-red-800' :
                            remainingEveningWorkers < 5 ? 'bg-yellow-100 text-yellow-800' :
                            'bg-green-100 text-green-800'}`}>
-                          <span className="font-medium">{t('remainingWorkers')} {remainingEveningWorkers}</span>
-                          {remainingEveningWorkers === 0 && <span className="ms-1 text-xs">({t('noNewBookings')})</span>}
+                          <span className="font-medium">{t('remainingWorkers') as string} {remainingEveningWorkers}</span>
+                          {remainingEveningWorkers === 0 && <span className="ms-1 text-xs">({t('noNewBookings') as string})</span>}
                         </div>
                       </div>
                    </div>
                   {eveningReservations.length === 0 ? (
-                    <p className="text-gray-500 text-center py-4 text-sm">{t('noBookingsEvening')}</p>
+                    <p className="text-gray-500 text-center py-4 text-sm">{String(t('noBookingsEvening'))}</p>
                   ) : (
                      <div className="overflow-x-auto">
                        {/* Table Structure identical to Morning, just map eveningReservations */}
                         <table className={`min-w-full divide-y divide-gray-200 text-xs sm:text-sm text-${language === 'ar' ? 'right' : 'left'}`}>
                              <thead className="bg-gray-50">
                              <tr>
-                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('nameHeader')}</th>
-                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('phoneHeader')}</th>
-                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('actionsHeader')}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{String(t('nameHeader'))}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{String(t('phoneHeader'))}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{String(t('actionsHeader'))}</th>
                              </tr>
                              </thead>
                              <tbody className="bg-white divide-y divide-gray-200">
@@ -1125,10 +1092,10 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                                          </td>
                                          <td className="px-2 sm:px-6 py-2 sm:py-4 whitespace-nowrap">
                                              <div className="flex items-center justify-center sm:justify-start gap-2">
-                                                 <button className="text-blue-500 hover:text-blue-700" onClick={(e) => { e.stopPropagation(); editReservation(reservation, "COMPLETED"); }} aria-label={t('editReservationTitle')}>
+                                                 <button className="text-blue-500 hover:text-blue-700" onClick={(e) => { e.stopPropagation(); editReservation(reservation, "COMPLETED"); }} aria-label={String(t('editReservationTitle'))}>
                                                      <Edit size={16} />
                                                  </button>
-                                                 <button className="text-red-500 hover:text-red-700" onClick={(e) => { e.stopPropagation(); deleteReservation(reservation.id); }} aria-label={t('deleteConfirm')}>
+                                                 <button className="text-red-500 hover:text-red-700" onClick={(e) => { e.stopPropagation(); deleteReservation(reservation.id); }} aria-label={String(t('deleteConfirm'))}>
                                                      <X size={16} />
                                                  </button>
                                                  {expandedRows[reservation.id] ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -1141,14 +1108,14 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                                             <td colSpan={3} className="px-4 py-3 bg-gray-50 text-xs sm:text-sm">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
                                                     {/* Details Fields - Same as Morning */}
-                                                    <div className="flex items-start"><Mail size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('emailLabel')}</span> {reservation.email || t('notAvailable')}</div></div>
-                                                    <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('cityLabel')}</span> {reservation.city}</div></div>
-                                                    <div className="flex items-start md:col-span-2"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('addressLabel')}</span> {reservation.address}</div></div>
-                                                    {reservation.locationUrl && <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('locationLinkLabel')}</span> <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{t('openLocation')}</a></div></div>}
-                                                    <div className="flex items-start"><Calendar size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('serviceTypeLabel')}</span> {t(reservation.serviceType)}</div></div>
-                                                    <div className="flex items-start"><Clock size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('extraHoursLabel')}</span> {reservation.extraHours}</div></div>
-                                                    <div className="flex items-start"><Users size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('workerCountLabel')}</span> {reservation.workerCount}</div></div>
-                                                    <div className="flex items-start"><DollarSign size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('priceLabel')}</span> {reservation.price} {t('currency')}</div></div>
+                                                    <div className="flex items-start"><Mail size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('emailLabel'))}</span> {reservation.email || String(t('notAvailable'))}</div></div>
+                                                    <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('cityLabel'))}</span> {reservation.city}</div></div>
+                                                    <div className="flex items-start md:col-span-2"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('addressLabel'))}</span> {reservation.address}</div></div>
+                                                    {reservation.locationUrl && <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('locationLinkLabel'))}</span> <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{String(t('openLocation'))}</a></div></div>}
+                                                    <div className="flex items-start"><Calendar size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('serviceTypeLabel'))}</span> {String(t(reservation.serviceType))}</div></div>
+                                                    <div className="flex items-start"><Clock size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('extraHoursLabel'))}</span> {reservation.extraHours}</div></div>
+                                                    <div className="flex items-start"><Users size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('workerCountLabel'))}</span> {reservation.workerCount}</div></div>
+                                                    <div className="flex items-start"><DollarSign size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('priceLabel'))}</span> {reservation.price} {String(t('currency'))}</div></div>
                                                 </div>
                                             </td>
                                          </tr>
@@ -1166,22 +1133,22 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                    <div className="flex justify-between items-center bg-orange-50 p-2 rounded mb-2 sm:mb-4 text-sm sm:text-base">
                      <div className={`font-bold flex items-center text-${language === 'ar' ? 'right' : 'left'}`}>
                        <Clock size={18} className="me-2" />
-                       {t('uncompletedReservations')}
+                       {String(t('uncompletedReservations'))}
                      </div>
                      {/* Optional: Add count or other info here */}
                    </div>
                     {loading ? ( // Use loading state for this section too if fetchUncompleted is separate
-                       <div className="text-center py-8">{t('loadingData')}</div>
+                       <div className="text-center py-8">{String(t('loadingData'))}</div>
                     ) : uncompletedReservations.length === 0 ? (
-                        <p className="text-gray-500 text-center py-4 text-sm">{t('noUncompletedBookings')}</p>
+                        <p className="text-gray-500 text-center py-4 text-sm">{String(t('noUncompletedBookings'))}</p>
                     ) : (
                      <div className="overflow-x-auto">
                         <table className={`min-w-full divide-y divide-gray-200 text-xs sm:text-sm text-${language === 'ar' ? 'right' : 'left'}`}>
                              <thead className="bg-gray-50">
                              <tr>
-                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('nameHeader')}</th>
-                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('phoneHeader')}</th>
-                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{t('actionsHeader')}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{String(t('nameHeader'))}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{String(t('phoneHeader'))}</th>
+                                 <th className={`px-2 sm:px-6 py-2 sm:py-3 text-${language === 'ar' ? 'right' : 'left'} text-xs font-medium text-gray-500 uppercase tracking-wider`}>{String(t('actionsHeader'))}</th>
                              </tr>
                              </thead>
                              <tbody className="bg-white divide-y divide-gray-200">
@@ -1202,17 +1169,17 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                                                     <button
                                                         className="text-green-600 hover:text-green-800 flex items-center text-xs sm:text-sm p-1 rounded border border-green-300 hover:bg-green-50"
                                                         onClick={(e) => { e.stopPropagation(); markAsCalled(reservation.id); }}
-                                                        aria-label={t('confirmCall')}
+                                                        aria-label={String(t('confirmCall'))}
                                                     >
                                                         <Phone size={14} className="me-1" />
-                                                        {t('confirmCall')}
+                                                        {String(t('confirmCall'))}
                                                     </button>
                                                   }
                                                   {/* Edit Button (treats uncompleted as a template for a new booking) */}
                                                  <button
                                                     className="text-blue-500 hover:text-blue-700 p-1"
                                                     onClick={(e) => { e.stopPropagation(); editReservation(reservation, "UNCOMPLETED"); }}
-                                                    aria-label={t('editReservationTitle')} // Or a different label like "Complete Booking"
+                                                    aria-label={String(t('editReservationTitle'))} // Or a different label like "Complete Booking"
                                                  >
                                                     <Edit size={16} />
                                                  </button>
@@ -1220,7 +1187,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                                                  <button
                                                     className="text-red-500 hover:text-red-700 p-1"
                                                     onClick={(e) => { e.stopPropagation(); deleteReservation(reservation.id); }} // Assuming delete works for uncompleted too
-                                                    aria-label={t('deleteConfirm')}
+                                                    aria-label={String(t('deleteConfirm'))}
                                                   >
                                                     <X size={16} />
                                                  </button>
@@ -1237,11 +1204,11 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                                             {/* Details are similar, but maybe fewer fields shown (e.g., no Price yet) */}
                                             <td colSpan={3} className="px-4 py-3 bg-gray-50 text-xs sm:text-sm">
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
-                                                    <div className="flex items-start"><Mail size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('emailLabel')}</span> {reservation.email || t('notAvailable')}</div></div>
-                                                    <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('cityLabel')}</span> {reservation.city}</div></div>
-                                                    <div className="flex items-start md:col-span-2"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('addressLabel')}</span> {reservation.address}</div></div>
-                                                    {reservation.locationUrl && <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('locationLinkLabel')}</span> <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{t('openLocation')}</a></div></div>}
-                                                    <div className="flex items-start"><Calendar size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('serviceTypeLabel')}</span> {t(reservation.serviceType)}</div></div>
+                                                    <div className="flex items-start"><Mail size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('emailLabel'))}</span> {reservation.email || String(t('notAvailable'))}</div></div>
+                                                    <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('cityLabel'))}</span> {reservation.city}</div></div>
+                                                    <div className="flex items-start md:col-span-2"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('addressLabel'))}</span> {reservation.address}</div></div>
+                                                    {reservation.locationUrl && <div className="flex items-start"><MapPin size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('locationLinkLabel'))}</span> <a href={reservation.locationUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{String(t('openLocation'))}</a></div></div>}
+                                                    <div className="flex items-start"><Calendar size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{String(t('serviceTypeLabel'))}</span> {String(t(reservation.serviceType))}</div></div>
                                                     {/* May not have these details yet for uncompleted */}
                                                     {/* <div className="flex items-start"><Clock size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('extraHoursLabel')}</span> {reservation.extraHours}</div></div> */}
                                                     {/* <div className="flex items-start"><Users size={14} className="mt-1 me-2 flex-shrink-0 text-gray-500" /><div><span className="font-medium text-gray-600">{t('workerCountLabel')}</span> {reservation.workerCount}</div></div> */}
@@ -1263,7 +1230,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
            // Placeholder when no date is selected
           <div className="bg-white rounded-lg shadow p-8 text-center">
             <Calendar size={48} className="mx-auto mb-4 text-gray-400" />
-            <p className="text-gray-500 text-sm">{t('selectDatePrompt')}</p>
+            <p className="text-gray-500 text-sm">{t('selectDatePrompt') as string}</p>
           </div>
         )}
 
@@ -1273,40 +1240,40 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
             {/* Added padding top/bottom to prevent cutoff */}
             <div className={`bg-white rounded-lg p-4 sm:p-6 shadow-lg w-full max-w-lg my-auto text-${language === 'ar' ? 'right' : 'left'}`} dir={language === 'ar' ? 'rtl' : 'ltr'}>
               <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 text-center">
-                  {editingReservationId ? t('editReservationFormTitle') : t('addReservationTitle')}
+                  {editingReservationId ? String(t('editReservationFormTitle')) : String(t('addReservationTitle'))}
               </h2>
 
               {/* Form Fields */}
                 <div className="space-y-3 sm:space-y-4">
                     {/* Basic Info */}
                     <div>
-                        <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-1">{t('customerNameLabel')}</label>
+                        <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-1">{t('customerNameLabel') as string}</label>
                         <input type="text" id="name" name="name" value={newReservation.name} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" required/>
                     </div>
                     <div>
-                        <label htmlFor="phone" className="block text-gray-700 text-sm font-bold mb-1">{t('phoneLabel')}</label>
+                        <label htmlFor="phone" className="block text-gray-700 text-sm font-bold mb-1">{t('phoneLabel') as string}</label>
                         <input type="tel" id="phone" name="phone" value={newReservation.phone} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" required/>
                     </div>
                     <div>
-                        <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-1">{t('emailLabelOptional')}</label>
+                        <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-1">{t('emailLabelOptional') as string}</label>
                         <input type="email" id="email" name="email" value={newReservation.email} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
                     </div>
                     <div>
-                        <label htmlFor="city" className="block text-gray-700 text-sm font-bold mb-1">{t('cityLabelMandatory')}</label>
+                        <label htmlFor="city" className="block text-gray-700 text-sm font-bold mb-1">{t('cityLabelMandatory') as string}</label>
                         <input type="text" id="city" name="city" value={newReservation.city} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" required/>
                     </div>
                     <div>
-                        <label htmlFor="address" className="block text-gray-700 text-sm font-bold mb-1">{t('addressLabelMandatory')}</label>
+                        <label htmlFor="address" className="block text-gray-700 text-sm font-bold mb-1">{t('addressLabelMandatory') as string}</label>
                         <textarea id="address" name="address" value={newReservation.address} onChange={handleFormChange} rows={2} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" required></textarea>
                     </div>
                     <div>
-                        <label htmlFor="locationUrl" className="block text-gray-700 text-sm font-bold mb-1">{t('locationUrlOptional')}</label>
+                        <label htmlFor="locationUrl" className="block text-gray-700 text-sm font-bold mb-1">{t('locationUrlOptional') as string}</label>
                         <input type="url" id="locationUrl" name="locationUrl" value={newReservation.locationUrl} onChange={handleFormChange} placeholder="https://maps.google.com/..." className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
                     </div>
 
                     {/* Service Type */}
                     <div>
-                        <label htmlFor="serviceType" className="block text-gray-700 text-sm font-bold mb-1">{t('serviceTypeLabelForm')}</label>
+                        <label htmlFor="serviceType" className="block text-gray-700 text-sm font-bold mb-1">{t('serviceTypeLabelForm') as string}</label>
                         <select
                             id="serviceType"
                             name="serviceType"
@@ -1316,14 +1283,14 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                             disabled={!!editingReservationId} // Disable if editing (usually service type isn't changed post-creation)
                         >
                             {ServiceTypeKeys.map((key) => (
-                                <option key={key} value={key}>{t(key)}</option>
+                                <option key={key} value={key}>{String(t(key))}</option>
                             ))}
                         </select>
                     </div>
 
                     {/* Date/Time Period Selection */}
                      <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">{t('addDatesAndPeriods')}</label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">{t('addDatesAndPeriods') as string}</label>
                         <div className="flex flex-col sm:flex-row items-center gap-2 mb-3">
                             <input
                                 type="date"
@@ -1331,16 +1298,16 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                                 value={tempDate}
                                 onChange={handleTempDateChange}
                                 min={formatDateForInput(new Date())} // Prevent past dates
-                                aria-label={t('addDatePlaceholder')}
+                                aria-label={String(t('addDatePlaceholder'))}
                             />
                             <select
                                 className="shadow border rounded w-full sm:w-auto py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm bg-white"
                                 value={tempTimePeriod}
                                 onChange={handleTempTimePeriodChange}
-                                aria-label={t('addTimePeriodPlaceholder')}
+                                aria-label={String(t('addTimePeriodPlaceholder'))}
                             >
                                 {TimePeriodKeys.map((key) => (
-                                    <option key={key} value={key}>{t(key)}</option>
+                                    <option key={key} value={key}>{String(t(key))}</option>
                                 ))}
                             </select>
                             <button
@@ -1348,22 +1315,22 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                                 className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm w-full sm:w-auto flex items-center justify-center"
                                 type="button"
                                 // Disable add button logic if needed (e.g., during specific edits)
-                                disabled={editingReservationId && newReservation.dates.length >= 1 && newReservation.serviceType !== 'ONE_TIME'}
+                                disabled={!!editingReservationId && newReservation.dates.length >= 1 && newReservation.serviceType !== 'ONE_TIME'}
                              >
                                 <Plus size={16} className="inline-block me-1" />
-                                {t('addButton')}
+                                {String(t('addButton'))}
                             </button>
                         </div>
 
                         {/* Display Selected Dates */}
                         {newReservation.dates.length > 0 && (
                             <div className="mt-3 border rounded p-2 bg-gray-50 max-h-32 overflow-y-auto">
-                                <h3 className="font-semibold mb-2 text-xs text-gray-600">{t('selectedDatesAndPeriods')}</h3>
+                                <h3 className="font-semibold mb-2 text-xs text-gray-600">{String(t('selectedDatesAndPeriods'))}</h3>
                                 <ul className="space-y-1">
                                   {newReservation.dates.map((datePeriod, index) => (
                                     <li key={index} className="flex justify-between items-center text-xs border-b last:border-b-0 pb-1">
                                         <span>
-                                            {formatDateForDisplay(datePeriod.date)} - {t(datePeriod.timePeriod)}
+                                            {formatDateForDisplay(datePeriod.date)} - {String(t(datePeriod.timePeriod))  }
                                         </span>
                                         <button
                                             onClick={() => removeDatePeriod(index)}
@@ -1371,7 +1338,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                                             type="button"
                                             aria-label={`${t('removeButton')} ${formatDateForDisplay(datePeriod.date)}`}
                                             // Disable removal if editing the only date
-                                            disabled={editingReservationId && newReservation.dates.length === 1}
+                                            disabled={!!editingReservationId && newReservation.dates.length === 1}
                                         >
                                             <X size={14} />
                                         </button>
@@ -1386,15 +1353,15 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                     {/* Other Details */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div>
-                            <label htmlFor="extraHours" className="block text-gray-700 text-sm font-bold mb-1">{t('extraHoursLabelForm')}</label>
+                            <label htmlFor="extraHours" className="block text-gray-700 text-sm font-bold mb-1">{t('extraHoursLabelForm') as string}</label>
                             <input type="number" id="extraHours" name="extraHours" min="0" value={newReservation.extraHours} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
                         </div>
                         <div>
-                            <label htmlFor="workerCount" className="block text-gray-700 text-sm font-bold mb-1">{t('workerCountLabelForm')}</label>
+                            <label htmlFor="workerCount" className="block text-gray-700 text-sm font-bold mb-1">{t('workerCountLabelForm') as string}</label>
                             <input type="number" id="workerCount" name="workerCount" min="1" value={newReservation.workerCount} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
                         </div>
                         <div>
-                            <label htmlFor="price" className="block text-gray-700 text-sm font-bold mb-1">{t('priceLabelForm')}</label>
+                            <label htmlFor="price" className="block text-gray-700 text-sm font-bold mb-1">{t('priceLabelForm') as string}</label>
                             <input
                                 type="number"
                                 id="price"
@@ -1415,7 +1382,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
               {/* Form Actions */}
               <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
                 <button onClick={closeNewReservationForm} className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline text-sm w-full sm:w-auto order-last sm:order-first" type="button">
-                  {t('cancelButton')}
+                  {t('cancelButton') as string}
                 </button>
                 <button
                     onClick={handleAddReservation}
@@ -1424,7 +1391,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
                     disabled={loading} // Disable button while loading
                  >
                   <Save size={16} className="inline-block me-2" />
-                   {loading ? t('loadingData') : (editingReservationId ? t('saveChangesButton') : t('saveBookingButton'))}
+                   {loading ? String(t('loadingData')) : (editingReservationId ? String(t('saveChangesButton')) : String(t('saveBookingButton')))}
                 </button>
               </div>
             </div>
@@ -1433,7 +1400,7 @@ const t = (key: TranslationKeys | ServiceTypeKey | TimePeriodKey, args?: Transla
       </div>
     ) : (
       // If not logged in or not admin (after check)
-      !loadingLoginCheck ? <div className="flex justify-center items-center h-screen">{t('redirectToLogin')}</div> : null // Show redirect message only after check is complete
+      !loadingLoginCheck ? <div className="flex justify-center items-center h-screen">{String(t('redirectToLogin'))}</div> : null // Show redirect message only after check is complete
     )
   );
 };
