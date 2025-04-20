@@ -97,7 +97,7 @@ const content = {
         date: "Date",
         totalPrice: "Total Price",
         creditCardInfo: "Credit Card Information",
-        selectDateAndTimeMessage: "Please select a date and time.",
+        selectDateAndTimeMessage: "Please select the date and time to complete the payment.",
         importantAlertTitle: "Important Alert:",
         importantAlertMessage: "Our appointments are filling up quickly! Customers book their appointments 3-5 days in advance." ,
         contactCustomerService: "Customer service will contact you to confirm upcoming appointments"
@@ -221,7 +221,7 @@ const content = {
         date: "التاريخ",
         totalPrice: "السعر الإجمالي",
         creditCardInfo: "معلومات بطاقة الائتمان",
-        selectDateAndTimeMessage: "الرجاء تحديد التاريخ والوقت.",
+        selectDateAndTimeMessage: " الرجاء تحديد التاريخ والوقت لإكمال عملية الدفع.",
         importantAlertTitle: "تنبيه هام:",
         importantAlertMessage: "مواعيدنا تنفذ بسرعة! عملاؤنا يحجزون مواعيدهم قبل 3-5 أيام مقدماً.",
         contactCustomerService: "سيتم التواصل معاكم من قبل خدمة العملاء لتثبيت المواعيد القادمة"
@@ -306,6 +306,7 @@ const [selectedCity, setSelectedCity] = useState("");
 // إعادة تعيين حقول النموذج
 
 
+const [loading, setLoading] = useState<boolean>(false);
 
 const [locationUrl, setLocationUrl] = useState("");
 
@@ -357,6 +358,21 @@ const [currentTab, setCurrentTab] = useState(0);
         }
     }
 };
+
+useEffect(() => {
+  if (currentTab === 3) {
+window.scrollTo({
+  top: document.body.scrollHeight,
+  behavior: 'smooth',
+
+});}
+}, [currentTab,loading]);
+
+const [isStripeReady, setIsStripeReady] = useState(false);
+
+useEffect(() => {
+  stripePromise.then(() => setIsStripeReady(true));
+}, []);
 
 useEffect(() => {
     console.log("totalPrice useeffect", totalPrice);
@@ -735,7 +751,6 @@ const renderBookingSummary = () => {
     // States for Time and Offer Selection remain the same
     const [selectedOffer, setSelectedOffer] = useState<string | null>(null);
     const [selectedDate, setSelectedDate] = useState<string>('');
- const [loading, setLoading] = useState<boolean>(false);
 
  const [availableCleanersM, setAvailableCleanersM] = useState<number>(15);
 const [availableCleanersE, setAvailableCleanersE] = useState<number>(15);
@@ -1478,6 +1493,15 @@ if (user?.phone.substring(0, 2) !== "05") {
     setCurrentWeekStart(firstDayOfWeek);
   }, []);
 
+const scrolfunction = () => {
+  if (currentTab === 3) {
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: 'smooth',
+  });}
+  return true;
+}
+
   // تحديث عرض الأيام عند تغيير بداية الأسبوع
   useEffect(() => {
     updateDisplayDays();
@@ -1519,6 +1543,7 @@ if (user?.phone.substring(0, 2) !== "05") {
 const handleDateSelection = (day: DisplayDay) => {
   setSelectedTimeSlot(" ");
   setSelectedTime("");
+
     if (!day.isDisabled) {
       const dateString = `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
       setSelectedDate(dateString);
@@ -1676,7 +1701,7 @@ const handleDateSelection = (day: DisplayDay) => {
 
 
               }
-{ !loading && (
+{ !loading && scrolfunction() && (
   <div className="max-w-2xl mx-auto">
 
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1741,12 +1766,14 @@ const handleDateSelection = (day: DisplayDay) => {
             aria-pressed={isSelected}
           >
             {/* مؤشر الاختيار */}
-            {isSelected && (
+            {isSelected && scrolfunction() && (
               <div className="absolute top-2 right-2 bg-blue-500 text-white rounded-full p-1">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
+                {scrolfunction()}
               </div>
+              
             )}
 
             {/* عرض الوقت */}
@@ -1782,11 +1809,13 @@ const handleDateSelection = (day: DisplayDay) => {
         }
       </div>
     )}
+   
   </div>
 )}
 
 
             </div>
+            {scrolfunction()}
           </div>
         );
       };
@@ -1794,6 +1823,7 @@ const handleDateSelection = (day: DisplayDay) => {
 
 
     const testfunc = (): boolean => {
+      scrolfunction()
       console.log("tester value", selectedTime);
 
       if (selectedTime && selectedDate) {
@@ -2124,6 +2154,7 @@ const ProgressIndicator = () => {
             <div>
                 <strong>{t.dateTimePayment.importantAlertTitle}</strong> {t.dateTimePayment.importantAlertMessage}
             </div>
+            
         </div>
                         {renderDateTimeSelection()}
 
@@ -2132,7 +2163,7 @@ const ProgressIndicator = () => {
                         {currentTab === 3 && (
                             <div className="form-group">
 
-
+ 
 
                                 {serviceType != 'one-time' && (
                                     <>
@@ -2152,28 +2183,52 @@ const ProgressIndicator = () => {
 
 
                         {testfunc() ? (
-                                <div className="payment-info">
+                          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full relative">
+            <button
+              className="absolute top-2 right-2 text-gray-600 hover:text-black"
+              onClick={() => { setSelectedTime("");}}
+            >
+              ✖
+            </button>
 
-                                    <h3>{t.dateTimePayment.creditCardInfo}</h3>
+            <div className="payment-info">
+              <h3 className="text-lg font-semibold mb-4">
+                {t.dateTimePayment.creditCardInfo}
+              </h3>
 
-
-
-                                    <Elements
-        stripe={stripePromise}
-        options={{
-          mode: "payment",
-          amount: totalPrice*100,
-          currency: "aed",
-        }}
-      >
-        <CheckoutPage amount={totalPrice}   language={lang.toLowerCase() as "ar" | "en"}  bookingData={createBookingdata()} />
-      </Elements>
-                                </div>
+            {!isStripeReady ? (
+            <div className="flex justify-center items-center h-40">
+              <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12"></div>
+            </div>
+          ) : (
+            <Elements
+              stripe={stripePromise}
+              options={{
+                mode: "payment",
+                amount: totalPrice * 100,
+                currency: "aed",
+              }}
+            >
+              <CheckoutPage
+                amount={totalPrice}
+                language={lang.toLowerCase() as "ar" | "en"}
+                bookingData={createBookingdata()}
+              />
+            </Elements>
+          )}
+            </div>
+          </div>
+        </div>
+      
 
                         ) : (
-                            <div className="error-message">{t.dateTimePayment.selectDateAndTimeMessage}</div>
+                          <div className="error-message text-center mx-auto my-4 px-4 py-3 bg-red-100 border-l-4 border-red-500 rounded-md shadow-md animate-pulse max-w-md">
+                          <span className="font-bold text-red-700">{t.dateTimePayment.selectDateAndTimeMessage}</span>
+                        </div>
                         )}
                     </div>
+                   
                 </div>
   {renderBookingSummary()}
 
