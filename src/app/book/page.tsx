@@ -121,8 +121,8 @@ const content = {
 
     },
     timeSlots: {
-        morning: "Morning Period 11:00 AM - 11:30 AM",
-        evening: "Evening Period 4:00 PM - 4:30 PM",
+        morning: "Morning Period 11:00-11:30",
+        evening: "Evening Period 16:00-16:30",
         availableLimitedTime: "Available for a limited time",
         workersRemaining: "Only {workerCount} workers remaining!",
         allWorkersBooked: "All workers are booked",
@@ -136,7 +136,7 @@ const content = {
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
       ],
-    dayNames: ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    dayNames: ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
     serviceAreaText: "We serve you across all Emirates of the country | A licensed company"
 
 
@@ -1023,9 +1023,9 @@ console.log("selectedTimeSlot", selectedTimeSlot);
       }, [currentTab, t.locationSelection.searchPlaceholder]);
 
 const converttime = (i: number) => {
-  if (offerTimeSlots[i].timeSlot==='11:00 AM - 11:30 AM') {
+  if (offerTimeSlots[i].timeSlot==='11:00-11:30') {
     return "MORNING";
-  } else if (offerTimeSlots[i].timeSlot==='4:00 PM - 4:30 PM') {
+  } else if (offerTimeSlots[i].timeSlot==='16:00-16:30') {
     return "EVENING";
   }
 }
@@ -1085,9 +1085,9 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
-                timePeriod:selectedTime=== '11:00 AM - 11:30 AM'
+                timePeriod:selectedTime=== '11:00-11:30'
                 ? "MORNING"
-                : selectedTime === '4:00 PM - 4:30 PM'
+                : selectedTime === '16:00-16:30'
                 ? "EVENING"
                 : "MORNING" , // Default to MORNING if neither or both are selected. Important
                 extraHours: hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
@@ -1385,10 +1385,10 @@ if (user?.phone.substring(0, 2) !== "05") {
 
     if (  date !== "") {
         times = [
-            { time: '9:00 AM - 9:30 AM', disabled: false },
-            { time: '11:00 AM - 11:30 AM', disabled: false },
-            { time: '1:00 PM - 1:30 PM', disabled: false },
-            { time: '4:00 PM - 4:30 PM', disabled: false },
+            { time: '9:00-9:30', disabled: false },
+            { time: '11:00-11:30', disabled: false },
+            { time: '13:00-13:30', disabled: false },
+            { time: '16:00-16:30', disabled: false },
         ];
 
         if (date === formattedDate) {
@@ -1650,7 +1650,9 @@ const handleDateSelection = (day: DisplayDay) => {
         percentage = 100; // إذا كانت القيم تساوي 0، يتم ضبط النسبة إلى 100%
       }
 
-      return `Warning: More than ${percentage}% of appointments for ${dayName} ${formattedDate} have been booked`;    })()}
+      return isRTL 
+  ? `تحذير: تم حجز أكثر من ${percentage}% من المواعيد ليوم ${dayName} ${formattedDate}`
+  : `Warning: More than ${percentage}% of appointments for ${dayName} ${formattedDate} have been booked`;    })()}
   </div>
 )}
 
@@ -1704,18 +1706,18 @@ const handleDateSelection = (day: DisplayDay) => {
 { !loading && scrolfunction() && (
   <div className="max-w-2xl mx-auto">
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-2  sm:grid-cols-4   gap-2  ">
       {times.map((item) => {
         // تحديد توفر العمال بناءً على الفترات الزمنية المحددة
         let isAvailable = false;
         let workerCount = 0;
         let timeSlot = "";
 
-        if (item.time === '11:00 AM - 11:30 AM') {
+        if (item.time === '11:00-11:30') {
           workerCount = availableCleanersM;
           isAvailable = availableCleanersM > workers;
           timeSlot = "MORNING";
-        } else if (item.time === '4:00 PM - 4:30 PM') {
+        } else if (item.time === '16:00-16:30') {
           workerCount = availableCleanersE;
           isAvailable = availableCleanersE > workers;
           timeSlot = "EVENING";
@@ -1731,7 +1733,7 @@ const handleDateSelection = (day: DisplayDay) => {
 
         if (item.disabled) {
           statusText = t.timeSlots.unavailableForBooking;
-          statusClass = 'bg-gray-100 text-gray-500';
+          statusClass = 'bg-gray-100 text-gray-500 ';
         } else if (!isAvailable) {
           statusText = t.timeSlots.allWorkersBooked;
           statusClass = 'bg-red-100 text-red-700';
@@ -1742,14 +1744,14 @@ const handleDateSelection = (day: DisplayDay) => {
           statusIcon = '⚠️';
         } else {
           statusText = t.timeSlots.availableLimitedTime;
-          statusClass = 'bg-green-100 text-green-700';
+          statusClass = 'bg-green-100 text-green-700 ';
           statusIcon = '✅';
         }
 
         return (
           <button
             key={item.time}
-            className={`relative p-4 rounded-lg border transition-all ${
+            className={`relative p-0.5 rounded-lg border transition-all ${
               isDisabled
                 ? 'bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed'
                 : isSelected
@@ -1782,7 +1784,7 @@ const handleDateSelection = (day: DisplayDay) => {
             </div>
 
             {/* مؤشر الحالة */}
-            <div className={`${statusClass} px-3 py-1.5 rounded-md text-sm text-center flex items-center justify-center`}>
+            <div className={`${statusClass} px-1 py-1.5 rounded-md text-sm text-center flex items-center justify-center`}>
               {statusIcon && <span className="ml-1">{statusIcon}</span>}
               <span>{statusText}</span>
             </div>
@@ -1865,7 +1867,7 @@ const ProgressIndicator = () => {
                 <div className="step-number">{index + 1}</div>
               )}
             </div>
-            <div   className="text-xs text-gray-500 text-center transition-all duration-300 max-w-[1000px]  text-ellipsis whitespace-nowrap"
+            <div   className="text-xs text-gray-500 text-center transition-all duration-300 max-w-[1000px] "
             >{step}</div>
           </div>
         ))}
