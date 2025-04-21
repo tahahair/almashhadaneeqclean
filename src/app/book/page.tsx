@@ -2038,7 +2038,7 @@ const ProgressIndicator = () => {
 
             {/* Load Google Maps JavaScript API */}
             <Script
-                src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyAaDAaMUyqGhUKIZWQ-QbsQloq60oyBi8s&libraries=places`}
+                src={`https://maps.googleapis.com/maps/api/js?key=AIzaSyAYFnmvmt2rAmrlyQinq1suYslRK3hUgUU&libraries=places`}
                 strategy="afterInteractive"
             />
 
