@@ -1023,9 +1023,9 @@ console.log("selectedTimeSlot", selectedTimeSlot);
       }, [currentTab, t.locationSelection.searchPlaceholder]);
 
 const converttime = (i: number) => {
-  if (offerTimeSlots[i].timeSlot==='11:00-11:30') {
+  if (offerTimeSlots[i].timeSlot==='9:00-9:30') {
     return "MORNING";
-  } else if (offerTimeSlots[i].timeSlot==='16:00-16:30') {
+  } else if (offerTimeSlots[i].timeSlot==='14:30-15:00') {
     return "EVENING";
   }
 }
@@ -1085,9 +1085,9 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
                                     ? 'OFFER_12'
                                     : 'ONE_TIME', // Default to ONE_TIME if offer is not selected.  Important!
                 date: selectedDate ? new Date(selectedDate) : new Date(), // Convert to DateTime, handle empty string
-                timePeriod:selectedTime=== '11:00-11:30'
+                timePeriod:selectedTime=== '9:00-9:30'
                 ? "MORNING"
-                : selectedTime === '16:00-16:30'
+                : selectedTime === '14:30-15:00'
                 ? "EVENING"
                 : "MORNING" , // Default to MORNING if neither or both are selected. Important
                 extraHours: hours-4,  // Use ternary for correct hours.  Also, needs to be zero if both or neither time selected.
@@ -1387,7 +1387,7 @@ if (user?.phone.substring(0, 2) !== "05") {
         times = [
             { time: '9:00-9:30', disabled: false },
             { time: '11:00-11:30', disabled: false },
-            { time: '13:00-13:30', disabled: false },
+            { time: '14:30-15:00', disabled: false },
             { time: '16:00-16:30', disabled: false },
         ];
 
@@ -1713,11 +1713,11 @@ const handleDateSelection = (day: DisplayDay) => {
         let workerCount = 0;
         let timeSlot = "";
 
-        if (item.time === '11:00-11:30') {
+        if (item.time === '9:00-9:30') {
           workerCount = availableCleanersM;
           isAvailable = availableCleanersM > workers;
           timeSlot = "MORNING";
-        } else if (item.time === '16:00-16:30') {
+        } else if (item.time === '14:30-15:00') {
           workerCount = availableCleanersE;
           isAvailable = availableCleanersE > workers;
           timeSlot = "EVENING";
