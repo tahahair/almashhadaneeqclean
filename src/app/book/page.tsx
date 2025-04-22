@@ -335,7 +335,7 @@ const [currentTab, setCurrentTab] = useState(0);
     } else if (serviceType === 'package-4') {
       if (hours <=4 && workers === 1) {
 
-        setTotalPrice(2);}
+        setTotalPrice(340);}
         else  {
 
             setTotalPrice((340+ (hours - 4) *4* 20)*workers);
@@ -2186,6 +2186,7 @@ const ProgressIndicator = () => {
 
                         {testfunc() ? (
                           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div className="bg-white max-h-[80vh] w-full max-w-xl overflow-y-auto rounded-lg p-4">
           <div className="bg-white p-6 rounded-lg max-w-md w-full relative">
             <button
               className="absolute top-2 right-2 text-gray-600 hover:text-black"
@@ -2222,7 +2223,7 @@ const ProgressIndicator = () => {
             </div>
           </div>
         </div>
-      
+          </div>
 
                         ) : (
                           <div className="error-message text-center mx-auto my-4 px-4 py-3 bg-red-100 border-l-4 border-red-500 rounded-md shadow-md animate-pulse max-w-md">
