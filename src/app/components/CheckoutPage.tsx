@@ -293,11 +293,11 @@ const CheckoutPage = ({
       let arrivalTime: string;
       switch (data.timePeriod) {
       case 'MORNING':
-        arrivalTime = '11:00 AM - 11:30 AM';
+        arrivalTime = '9:00 AM - 9:30 AM';
         break;
       
       case 'EVENING':
-        arrivalTime = '16:00 PM - 16:30 PM';
+        arrivalTime = '14:30 PM - 15:00 PM';
         break;
       default:
         arrivalTime = '08:00 AM - 11:00 AM';
