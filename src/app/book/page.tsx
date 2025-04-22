@@ -335,7 +335,7 @@ const [currentTab, setCurrentTab] = useState(0);
     } else if (serviceType === 'package-4') {
       if (hours <=4 && workers === 1) {
 
-        setTotalPrice(1);}
+        setTotalPrice(2);}
         else  {
 
             setTotalPrice((340+ (hours - 4) *4* 20)*workers);
