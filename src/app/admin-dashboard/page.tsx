@@ -778,7 +778,7 @@ const ReservationManager = () => {
   const addDatePeriod = () => {
     if (!tempDate) return; // Ensure a date is selected
 
-    const selected = new Date(tempDate + "T03:00:00Z"); // Add time/zone to avoid date shifts
+    const selected = new Date(tempDate); // Add time/zone to avoid date shifts
 
     if (isNaN(selected.getTime())) {
         alert("Invalid date selected."); // Basic validation
