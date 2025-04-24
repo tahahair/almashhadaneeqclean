@@ -40,6 +40,10 @@ export async function DELETE(req: Request) {
 
 // Get bookings by date (required) and optional timePeriod
 export async function GET(req: Request) {  
+
+
+
+    
     try {
         const { searchParams } = new URL(req.url);
         const date = searchParams.get("date");
@@ -63,6 +67,12 @@ export async function GET(req: Request) {
 
         return NextResponse.json(bookings, { status: 200 });
     } catch (error) {
+          console.log('Received request:', {
+    method: req.method,
+    query: req.query,
+    body: req.body,
+    headers: req.headers,
+  });
         return NextResponse.json({ error: (error as Error).message }, { status: 400 });
     }
 }
