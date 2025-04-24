@@ -559,7 +559,7 @@ const ReservationManager = () => {
       setExpandedRows({});
     } catch (error) {
       console.error("Failed to fetch reservations:", error);
-      alert(t('fetchError'));
+      alert(`${t('fetchError')}: ${error}`);
       setReservations([]);
     } finally {
       setLoading(false);
@@ -582,7 +582,7 @@ const ReservationManager = () => {
        })));
     } catch (error) {
       console.error("Failed to fetch uncompleted reservations:", error);
-      alert(t('fetchUncompletedError'));
+      alert(`${t('fetchUncompletedError')}: ${error}`);
       setUncompletedReservations([]);
     } finally {
       setLoading(false);
