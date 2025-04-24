@@ -75,8 +75,10 @@ console.log('Received request:', {
     method: req.method,
     body: req.body,
     headers: req.headers,
+  }
+       ,              
     NextResponse.json({ error: (error as Error).message }, { status: 400 })
-  });
+);
         
         return NextResponse.json({ error: (error as Error).message }, { status: 400 });
     }
