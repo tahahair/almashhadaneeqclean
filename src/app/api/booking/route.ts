@@ -69,7 +69,6 @@ export async function GET(req: Request) {
     } catch (error) {
           console.log('Received request:', {
     method: req.method,
-    query: req.query,
     body: req.body,
     headers: req.headers,
   });
