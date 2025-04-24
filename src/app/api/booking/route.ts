@@ -64,7 +64,11 @@ export async function GET(req: Request) {
         }
 
         const bookings = await prisma.booking.findMany({ where: whereClause });
-
+console.log('Received request:', {
+    method: req.method,
+    body: req.body,
+    headers: req.headers,
+  });
         return NextResponse.json(bookings, { status: 200 });
     } catch (error) {
           console.log('Received request:', {
