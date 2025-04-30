@@ -117,7 +117,8 @@ const content = {
         citySelectionRequired: "Please select a city within our service area (Dubai, Ajman, Sharjah, Umm Al Quwain).",
         enterPersonalInfo: "Please enter your personal information.",
         invalidPhoneNumber: "Please enter a valid phone number.",
-        invalidName: "Please enter a valid name."
+        invalidName: "Please enter a valid name.",
+        locationconfirmationRequired: "Please confirm the location.",
 
     },
     timeSlots: {
@@ -241,7 +242,9 @@ const content = {
         citySelectionRequired: "الرجاء اختيار مدينة ضمن الخدمة دبي عجمان الشارقة ام القيوين",
         enterPersonalInfo: "الرجاء إدخال معلوماتك الشخصية",
         invalidPhoneNumber: "الرجاء إدخال رقم هاتف صحيح",
-        invalidName: "الرجاء إدخال اسم صحيح."
+        invalidName: "الرجاء إدخال اسم صحيح.",
+        locationconfirmationRequired: "الرجاء تأكيد الموقع.",
+
     },
     timeSlots: {
         morning: "الفترة الصباحية من 11:00-11:30 الى 15:00-15:30",
@@ -305,6 +308,7 @@ const [selectedCity, setSelectedCity] = useState("");
 
 // إعادة تعيين حقول النموذج
 
+const [locationconfirmed, setLocationConfirmed] = useState(false);
 
 const [loading, setLoading] = useState<boolean>(false);
 
@@ -366,7 +370,14 @@ window.scrollTo({
   behavior: 'smooth',
 
 });}
-}, [currentTab,loading]);
+
+if (currentTab === 1) {
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: 'smooth',
+  
+  });}
+}, [currentTab,loading,locationconfirmed]);
 
 const [isStripeReady, setIsStripeReady] = useState(false);
 
@@ -745,6 +756,8 @@ const renderBookingSummary = () => {
     const mapInstanceRef = useRef<google.maps.Map | null>(null);
     const markerRef = useRef<google.maps.Marker | null>(null)
     const router = useRouter();
+    const [locationSelected, setLocationSelected] = useState(false);
+
 
 
 
@@ -824,6 +837,7 @@ console.log("selectedTimeSlot", selectedTimeSlot);
         { id: 'offer2', label: '4 hours X 8 times in a month one cleaner 680 AED', times: 8, price: 680 },
         { id: 'offer3', label: '4 hours X 12 times in a month one cleaner 1000 AED', times: 12, price: 1000 }
     ];
+    const [showDetails, setShowDetails] = useState(false);
 
     const selectedOfferData = offers.find(offer => offer.id === selectedOffer);
     console.log("selectedOfferData", selectedOfferData);
@@ -1020,7 +1034,7 @@ console.log("selectedTimeSlot", selectedTimeSlot);
           loadAddress();
 
         }
-      }, [currentTab, t.locationSelection.searchPlaceholder]);
+      }, [currentTab, showDetails, t.locationSelection.searchPlaceholder]);
 
 const converttime = (i: number) => {
   if (offerTimeSlots[i].timeSlot==='9:00-9:30') {
@@ -1139,6 +1153,7 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
 
             // Set the formatted address
             setAddressDetails(results[0].formatted_address);
+            setLocationSelected(true);
 
             // Generate Google Maps URL for the location
             const locationLink = `https://www.google.com/maps?q=${location.lat},${location.lng}`;
@@ -1154,6 +1169,8 @@ const loadAddress = () => {
 
   // Initialize with default values first
   setAddressDetails(parsedAddress.addressDetails || "");
+  if (parsedAddress.coordinates !== null) {
+    setLocationSelected(true);}
   setLocationNotes(parsedAddress.locationNotes || "");
   setSelectedCity(parsedAddress.selectedCity || "");
   setLocationUrl(parsedAddress.locationUrl || "");
@@ -1323,6 +1340,11 @@ if (user?.phone.substring(0, 2) !== "05") {
 
 
         }
+        if (currentTab === 1 && (!locationconfirmed)) {
+          alert(t.alert.locationconfirmationRequired);
+
+          return;
+      }
         if (currentTab === 1 && (!locationNotes || locationNotes.trim() === "")) {
             alert(t.alert.locationNotesRequired);
 
@@ -1879,11 +1901,35 @@ const ProgressIndicator = () => {
 
   const [currentPath, setCurrentPath] = useState('/');
   const [showMenu, setShowMenu] = useState(false); // Add this line to define showMenu state
-
-
+ 
+  // تأكيد الموقع
+  const confirmLocation = () => {
+    setLocationConfirmed(true);
+    if (addressDetails!== "" ) {
+      setShowDetails(true);
+    } else {
+      alert(t.alert.citySelectionRequired );
+    }
+  };
+  
+  // تعديل الموقع
+  const editLocation = () => {
+    setShowDetails(false);
+    setLocationConfirmed(false);
+    
+    // إعادة تهيئة الخريطة إذا لزم الأمر
+  };
   const isRTL = lang === "AR";
   const isLTR = lang === "EN";
-
+ 
+    // Set layout direction based on isRTL
+    const dirClass = isRTL ? 'rtl' : 'ltr';
+    const textAlignClass = isRTL ? 'text-right' : 'text-left';
+     const marginSideClass = isRTL ? 'ml-3' : 'mr-3';
+    const reverseMarginSideClass = isRTL ? 'mr-3' : 'ml-3';
+    const justifyClass = isRTL ? 'justify-start' : 'justify-end';
+    const iconPositionClass = isRTL ? 'left-3' : 'right-3';
+    const paddingClass = isRTL ? 'pl-10 pr-3' : 'pr-10 pl-3';
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -2056,42 +2102,112 @@ const ProgressIndicator = () => {
 
                     </div>
 
-                    <div className={`tab ${currentTab === 1 ? 'active' : ''}`}>
-                        <h2>{t.locationSelection.title}</h2>
+                    <div className={` ${currentTab === 1 ? 'active' : ''}`}>
+                        
                         {(currentTab === 1 )  && (
             <>
 
 
-      <div  className="location-container">
-
-
-                              <div className="map-container" ref={mapRef}></div>
-
-                              <label>{t.locationSelection.selectedLocationLabel}</label>
-                                  <textarea
-                                      value={addressDetails + "\n " + locationUrl}
-                                       rows={1}
-                                      readOnly
-                                  />
-
-                              <div className="form-group">
-                                  <label>{t.locationSelection.cityLabel}</label>
-                                  <input type="text" value={selectedCity} readOnly />
-
-
-
-                                  <label>{t.locationSelection.buildingApartmentLabel}</label>
-                                  <textarea
-                                      value={locationNotes}
-                                      onChange={(e) => setLocationNotes(e.target.value)}
-                                      placeholder={t.locationSelection.buildingApartmentPlaceholder}
-                                      rows={3}
-                                  />
-
-
-                              </div>
-                              </div>
-
+<div className={`font-sans max-w-3xl mx-auto rounded-xl shadow-lg bg-white overflow-hidden transition-all duration-300 ${dirClass} ${textAlignClass}`}>
+      {/* Map selection phase */}
+      {!showDetails && (
+        <div className="p-5">
+          <div className="h-[300px] w-full rounded-lg mb-4 shadow-md border border-gray-200" ref={mapRef}></div>
+          
+          
+          
+          <div className="mb-0">
+            <label className="block font-semibold mb-2 text-gray-700 text-sm">{t.locationSelection.selectedLocationLabel}</label>
+            <div className="relative">
+              <textarea
+                value={addressDetails}
+                rows={1}
+                readOnly
+                className={`w-full border border-gray-300 rounded-lg ${paddingClass} py-3 text-sm text-gray-700 resize-none transition-colors bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200`}
+              />
+              <span className={`absolute ${iconPositionClass} top-1/2 transform -translate-y-1/2 text-blue-500`}>
+                <i className="fas fa-map-pin"></i>
+              </span>
+            </div>
+          </div>
+          
+          <div className={`flex ${justifyClass} `}>
+            <button
+              className={`${locationSelected ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-400 cursor-not-allowed'} text-white rounded-lg px-6 py-3 text-sm font-semibold transition-all duration-200 ${locationSelected ? 'hover:-translate-y-0.5' : ''}`}
+              onClick={confirmLocation}
+              disabled={!locationSelected}
+            >
+              {isRTL ? 'تأكيد الموقع' : 'Confirm Location'}
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {/* Location details phase */}
+      {showDetails && (
+        <div className="p-5">
+        
+          
+          <div className="mb-5">
+            <label className="block font-semibold mb-2 text-gray-700 text-sm">{t.locationSelection.selectedLocationLabel}</label>
+            <div className="relative">
+              <textarea
+                value={addressDetails + "\n " + locationUrl}
+                rows={5}
+                readOnly
+                className={`w-full border border-gray-300 rounded-lg ${paddingClass} py-3 text-sm text-gray-700 resize-none transition-colors bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200`}
+              />
+              <span className={`absolute ${iconPositionClass} top-5 transform -translate-y-1/2 text-blue-500`}>
+                <i className="fas fa-map-pin"></i>
+              </span>
+            </div>
+          </div>
+          
+          <div className="mb-5">
+            <div className="mb-4">
+              <label className="block font-semibold mb-2 text-gray-700 text-sm">{t.locationSelection.cityLabel}</label>
+              <div className="relative">
+                <input 
+                  type="text" 
+                  value={selectedCity} 
+                  readOnly 
+                  className={`w-full border border-gray-300 rounded-lg ${paddingClass} py-3 text-sm text-gray-700 transition-colors bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200`} 
+                />
+                <span className={`absolute ${iconPositionClass} top-1/2 transform -translate-y-1/2 text-blue-500`}>
+                  <i className="fas fa-city"></i>
+                </span>
+              </div>
+            </div>
+            
+            <div className="mb-4">
+              <label className="block font-semibold mb-2 text-gray-700 text-sm">{t.locationSelection.buildingApartmentLabel}</label>
+              <div className="relative">
+                <textarea
+                  value={locationNotes}
+                  onChange={(e) => setLocationNotes(e.target.value)}
+                  placeholder={t.locationSelection.buildingApartmentPlaceholder}
+                  rows={1}
+                  className={`w-full border border-gray-300 rounded-lg ${paddingClass} py-3 text-sm text-gray-700 resize-none transition-colors bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200`}
+                />
+                <span className={`absolute ${iconPositionClass} top-6 transform -translate-y-1/2 text-blue-500`}>
+                  <i className="fas fa-building"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div className={`flex ${justifyClass} mt-4`}>
+            <button 
+              className="bg-gray-50 text-blue-500 border border-blue-500 rounded-lg px-5 py-2.5 text-sm font-semibold flex items-center transition-all duration-200 hover:bg-blue-50 hover:-translate-y-0.5" 
+              onClick={editLocation}
+            >
+              <i className={`fas fa-edit ${isRTL ? reverseMarginSideClass : marginSideClass}`}></i>
+              <span>{isRTL ? 'تعديل الموقع على الخريطة' : 'Edit Location on Map'}</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
 
           </>
             )}
@@ -2515,7 +2631,7 @@ const ProgressIndicator = () => {
 
                 .tab {
                     display: none;
-                    padding: 15px;
+                    padding: 10px;
                     background-color: #ffffff;
                     border-radius: 8px;
                     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);

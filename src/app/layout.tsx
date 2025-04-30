@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Almarai } from "next/font/google"; // Import Almarai
 import "./globals.css";
+import Script from 'next/script'; // استيراد مكون Script
 
 // Load local fonts
 const geistSans = localFont({
@@ -36,10 +37,25 @@ export default function RootLayout({
     <html lang="ar"> {/* Updated language to Arabic */}
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        
       </head>
+      
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${almarai.variable} antialiased`}
       >
+         <Script
+          id="microsoft-clarity-init" // معرف فريد للسكريبت
+          strategy="beforeInteractive" // يمكن استخدام "afterInteractive" أيضاً حسب الحاجة
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(c,l,a,r,i,t,y){
+                  c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                  t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                  y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", "rccl9ovvym"); // <<-- تأكد من أن هذا هو معرف موقعك
+            `,
+          }}
+        />
         {children}
       </body>
     </html>
