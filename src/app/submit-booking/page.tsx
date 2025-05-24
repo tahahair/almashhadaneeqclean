@@ -84,8 +84,10 @@ let searchParams: ReturnType<typeof useSearchParams> | null = null;
     return <input placeholder="Search..." />
   }
 
+localStorage.setItem("currentTab", "0");
+localStorage.setItem("selectedTime", "");
+localStorage.setItem("selectedTimeSlot", "");
 
-  
   useEffect(() => {
     const storedLang = localStorage.getItem('lang') as 'EN' | 'AR';
     if (storedLang) {

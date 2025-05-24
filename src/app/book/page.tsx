@@ -362,13 +362,13 @@ const [selectedCity, setSelectedCity] = useState("");
 // إعادة تعيين حقول النموذج
 
 const [locationconfirmed, setLocationConfirmed] = useState(false);
+const [launchLoading, setLaunchLoading] = useState<boolean>(false);
 
 const [loading, setLoading] = useState<boolean>(false);
 
 const [locationUrl, setLocationUrl] = useState("");
 
 const [currentTab, setCurrentTab] = useState(0);
-
  const calculateTotalPrice = ({hours, workers, currentBasePrice}: {hours: number; workers: number,currentBasePrice: number}) => {
 
     if (serviceType === 'one-time') {
@@ -416,6 +416,7 @@ const [currentTab, setCurrentTab] = useState(0);
     }
 };
 
+
 useEffect(() => {
   if (currentTab === 3) {
 window.scrollTo({
@@ -425,6 +426,7 @@ window.scrollTo({
 });}
 
 if (currentTab === 1) {
+ setLaunchLoading(true);
   window.scrollTo({
     top: document.body.scrollHeight,
     behavior: 'smooth',
@@ -547,6 +549,18 @@ const renderBookingSummary = () => {
     const renderBookingDetails = () => {
 
 
+      function saveselected1(w: number, hours: number, serviceType: string, selectedOffer: string | null, totalPrice: number) {
+        // Save booking details to localStorage for persistence across steps
+        const bookingDetails = {
+          hours,
+          workers: w,
+          serviceType,
+          selectedOffer,
+          totalPrice
+        };
+        localStorage.setItem("bookingDetails", JSON.stringify(bookingDetails));
+      }
+
         return (
           <div >
    <div className="border-b pb-3 mb-4">
@@ -572,7 +586,7 @@ const renderBookingSummary = () => {
                   ? 'bg-teal-600 text-white ring-2 ring-teal-300'
                   : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
               }`}
-              onClick={() => setWorkers(w)}
+              onClick={() => { setWorkers(w); saveselected1(w, hours, serviceType, selectedOffer, totalPrice); }}
             >
               <span className="text-lg font-semibold">{w}</span>
             </button>
@@ -592,7 +606,7 @@ const renderBookingSummary = () => {
             ? 'bg-teal-100 border-teal-600 text-teal-800 shadow-md'
             : 'bg-gray-50 border-gray-200 hover:border-gray-300 hover:bg-gray-100'
         }`}
-        onClick={() => setHours(h)}
+        onClick={() => { setHours(h); saveselected1(workers, h, serviceType, selectedOffer, totalPrice); }}
       >
         <div className="text-lg font-medium">{h}</div>
 
@@ -639,7 +653,7 @@ const renderBookingSummary = () => {
       className={`rounded-lg border-2 p-5 cursor-pointer transition-all duration-300 hover:shadow-md ${
         serviceType === 'one-time' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
       }`}
-      onClick={() => handleserviceTypeSelect('one-time')}
+      onClick={() => { handleserviceTypeSelect('one-time'); saveselected1(1, 4, 'one-time', selectedOffer, totalPrice); }}
     >
       <div className="flex justify-between items-center mb-2">
         <div className="font-bold text-gray-800 text-lg">{t.bookingDetails.oneTimeVisit}</div>
@@ -656,7 +670,7 @@ const renderBookingSummary = () => {
       className={`rounded-lg border-2 p-5 cursor-pointer relative transition-all duration-300 hover:shadow-md ${
         serviceType === 'package-4' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
       }`}
-      onClick={() => handleserviceTypeSelect('package-4')}
+      onClick={() => { handleserviceTypeSelect('package-4'); saveselected1(1, 4, 'package-4', selectedOffer, totalPrice); }}
     >
       <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md">
         {t.bookingDetails.bronzeOfferDiscount}
@@ -694,7 +708,7 @@ const renderBookingSummary = () => {
       className={`rounded-lg border-2 p-5 cursor-pointer relative transition-all duration-300 hover:shadow-md ${
         serviceType === 'package-8' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
       }`}
-      onClick={() => handleserviceTypeSelect('package-8')}
+      onClick={() => { handleserviceTypeSelect('package-8'); saveselected1(1, 4, 'package-8', selectedOffer, totalPrice); }}
     >
       <div className="absolute -top-3 -right-3 bg-orange-500 text-white text-xs px-3 py-1 rounded-full font-bold shadow-md">
         {t.bookingDetails.silverOfferDiscount}
@@ -732,7 +746,7 @@ const renderBookingSummary = () => {
       className={`rounded-lg border-2 p-5 cursor-pointer relative transition-all duration-300 hover:shadow-md ${
         serviceType === 'package-12' ? 'border-teal-500 bg-teal-50' : 'border-gray-200 hover:border-gray-300'
       }`}
-      onClick={() => handleserviceTypeSelect('package-12')}
+      onClick={() => { handleserviceTypeSelect('package-12'); saveselected1(1, 4, 'package-12', selectedOffer, totalPrice); }}
     >
       <div className="absolute -top-3 -right-3 bg-orange-500 text-white px-3 py-1 rounded-full font-bold shadow-lg animate-bounce">
         {t.bookingDetails.goldOfferBestSeller}
@@ -974,7 +988,7 @@ console.log("selectedTimeSlot", selectedTimeSlot);
 const loadAddress = () => {
   const storedAddress = localStorage.getItem("userAddress");
   const parsedAddress = storedAddress ? JSON.parse(storedAddress) : {};
-
+  
   // Initialize with default values first
   setAddressDetails(parsedAddress.addressDetails || "");
   if (parsedAddress.coordinates !== null) {
@@ -1018,6 +1032,10 @@ const loadAddress = () => {
         if (typeof window !== 'undefined' && window.google && mapRef.current && currentTab === 1) {
           // Initialize the map centered on UAE
           const initialPosition = { lat: 25.276987, lng: 55.296249 }; // Dubai coordinates as default
+          if (selectedLocation) {
+            initialPosition.lat = selectedLocation.lat;
+            initialPosition.lng = selectedLocation.lng;
+          }
           const map = new google.maps.Map(mapRef.current, {
             zoom: 10,
             center: initialPosition,
@@ -1131,7 +1149,7 @@ const loadAddress = () => {
           loadAddress();
 
         }
-      }, [currentTab, showDetails, t.locationSelection.searchPlaceholder,  loadAddress]);
+      }, [currentTab, showDetails, t.locationSelection.searchPlaceholder,launchLoading]);
 
 const converttime = (i: number) => {
   if (offerTimeSlots[i].timeSlot==='9:00-9:30') {
@@ -1212,6 +1230,22 @@ if (offerTimeSlots  && offerTimeSlots.length > 3) {
         }
     // Function to get address details from coordinates using Geocoding API
    // Fix the getAddressFromCoordinates function
+
+   
+ const handleSaveAddress = () => {
+const opject = {
+    "addressDetails": addressDetails,
+    "locationNotes": locationNotes,
+    "selectedCity": selectedCity,
+    "locationUrl": locationUrl,
+  }
+
+
+  if (locationNotes.trim() !== "") {
+    localStorage.setItem("userAddress", JSON.stringify(opject));
+
+  }
+};
 const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     const geocoder = new google.maps.Geocoder();
     geocoder.geocode({ location: location }, (results: google.maps.GeocoderResult[] | null, status: google.maps.GeocoderStatus) => {
@@ -1263,20 +1297,6 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
 
 
 
- const handleSaveAddress = () => {
-const opject = {
-    "addressDetails": addressDetails,
-    "locationNotes": locationNotes,
-    "selectedCity": selectedCity,
-    "locationUrl": locationUrl,
-  }
-
-
-  if (locationNotes.trim() !== "") {
-    localStorage.setItem("userAddress", JSON.stringify(opject));
-
-  }
-};
     const handleNext = async () => {
 
         // Add validation for location tab
@@ -1531,6 +1551,21 @@ if (user?.phone.substring(0, 2) !== "05") {
           let monthNames = [];
           monthNames = t.monthsOfYear;
 
+useEffect(() => {
+  console.log("selectedLocation", selectedLocation);
+         const locationData = {
+                        coordinates: selectedLocation,
+                        city: selectedCity,
+                        address: addressDetails,
+                        notes: locationNotes,
+                        mapUrl: locationUrl
+                    };
+
+                    localStorage.setItem("locationData", JSON.stringify(locationData));
+                    handleSaveAddress();
+                    
+}
+, [addressDetails, locationNotes, selectedCity, locationUrl, selectedLocation]);
 
     const [currentWeekStart, setCurrentWeekStart] = useState(new Date());
     interface DisplayDay {
@@ -1595,8 +1630,10 @@ if (user?.phone.substring(0, 2) !== "05") {
 
     const firstDayOfWeek = new Date(today);
 
-
-
+setSelectedDate(localStorage.getItem("selectedDate") || ` `);
+      setDate(localStorage.getItem("selectedDate") || ` `);
+setSelectedTime(localStorage.getItem("selectedTime") || ` `);
+setSelectedTimeSlot(localStorage.getItem("selectedTimeSlot") || ` `);
     setCurrentWeekStart(firstDayOfWeek);
   }, []);
 
@@ -1657,6 +1694,8 @@ const handleDateSelection = (day: DisplayDay) => {
       setSelectedDate(dateString);
       setDate(dateString);
       getcleaners(new Date(dateString));
+      localStorage.setItem("selectedDate", dateString);
+
 
     }
   };
@@ -1871,6 +1910,8 @@ const handleDateSelection = (day: DisplayDay) => {
 
               setSelectedTime(item.time);
               setSelectedTimeSlot(timeSlot);
+              localStorage.setItem("selectedTime", item.time);
+              localStorage.setItem("selectedTimeSlot", timeSlot);
             }}
             disabled={isDisabled}
             aria-pressed={isSelected}
@@ -2193,7 +2234,6 @@ const ProgressIndicator = () => {
                         {(currentTab === 1 )  && (
             <>
 
-
 <div className={`font-sans max-w-3xl mx-auto rounded-xl shadow-lg bg-white overflow-hidden transition-all duration-300 ${dirClass} ${textAlignClass}`}>
       {/* Map selection phase */}
       {!showDetails && (
@@ -2209,6 +2249,7 @@ const ProgressIndicator = () => {
                 value={addressDetails}
                 rows={1}
                 readOnly
+                
                 className={`w-full border border-gray-300 rounded-lg ${paddingClass} py-3 text-sm text-gray-700 resize-none transition-colors bg-gray-50 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200`}
               />
               <span className={`absolute ${iconPositionClass} top-1/2 transform -translate-y-1/2 text-blue-500`}>
