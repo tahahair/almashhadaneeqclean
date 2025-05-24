@@ -82,8 +82,8 @@ function BookingContent() {
     if (typeof window !== 'undefined') {
       // Clear localStorage items
       localStorage.setItem("currentTab", "0");
-      localStorage.setItem("selectedTime", "");
-      localStorage.setItem("selectedTimeSlot", "");
+              localStorage.setItem("selectedTime", "");
+              localStorage.setItem("selectedTimeSlot", "");
 
       // Load language from local storage
       const storedLang = localStorage.getItem('lang') as 'EN' | 'AR';

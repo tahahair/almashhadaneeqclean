@@ -1496,7 +1496,8 @@ if (user?.phone.substring(0, 2) !== "05") {
 
        
       
-    
+    setSelectedTimeSlot('');
+    setSelectedTime('');
           localStorage.setItem("currentTab", (currentTab-1).toString());
 
         if (currentTab > 0) {
