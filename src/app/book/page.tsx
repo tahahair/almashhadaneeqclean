@@ -894,6 +894,17 @@ console.log("cleanersE", availableCleanersE);
     let items: string[] = [];
     const [selectedTimeSlot, setSelectedTimeSlot] = useState<string>('');
 console.log("selectedTimeSlot", selectedTimeSlot);
+interface SetOfferTimeSlotsFun {
+  (): void;
+}
+
+const setOfferTimeSlotsfun: SetOfferTimeSlotsFun = () => {
+  setOfferTimeSlots([]);
+  return "";
+};
+console.log("setOfferTimeSlotsfun", setOfferTimeSlotsfun);
+
+
     // Available time slots
     //const availableTimeSlots = [
        // "الفترة الصباحية من 11:00-11:30 الى 15:00-15:30","الفترة المسائية من 16:00-16:30 الى 20:00-20:30"  ];
