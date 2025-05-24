@@ -1643,8 +1643,7 @@ useEffect(() => {
 
 setSelectedDate(localStorage.getItem("selectedDate") || ` `);
       setDate(localStorage.getItem("selectedDate") || ` `);
-setSelectedTime(localStorage.getItem("selectedTime") || ` `);
-setSelectedTimeSlot(localStorage.getItem("selectedTimeSlot") || ` `);
+
     setCurrentWeekStart(firstDayOfWeek);
   }, []);
 
