@@ -1483,10 +1483,9 @@ if (user?.phone.substring(0, 2) !== "05") {
 
     const handlePrev = () => {
 
-      setDate("");
-      setOfferTimeSlots([]);
-      setSelectedTime("");
-      setSelectedDate("");
+       
+      
+    
           localStorage.setItem("currentTab", (currentTab-1).toString());
 
         if (currentTab > 0) {
