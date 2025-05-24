@@ -1488,6 +1488,8 @@ if (user?.phone.substring(0, 2) !== "05") {
 
         if (currentTab < 3) {
             setCurrentTab(currentTab + 1);
+                           localStorage.setItem("currentTab", (currentTab+1).toString());
+
         }
         
     };
