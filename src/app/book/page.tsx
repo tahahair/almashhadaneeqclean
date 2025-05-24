@@ -301,6 +301,59 @@ const [selectedCity, setSelectedCity] = useState("");
 
 
 
+  useEffect(() => {
+    const storedTab = localStorage.getItem("currentTab");
+    if (storedTab) {
+      setCurrentTab(parseInt(storedTab, 10));
+    }
+
+    const storedLang = localStorage.getItem("lang");
+    if (storedLang === "AR" || storedLang === "EN") {
+      setLang(storedLang as "AR" | "EN");
+    }
+
+
+    const userData = JSON.parse(localStorage.getItem("user") || "{}");
+
+    if (userData.name && userData.phone) {
+      setUser(userData);
+      setName(userData.name);
+      setPhone(userData.phone);
+
+    }
+
+    const storedLocationData = localStorage.getItem("locationData");
+    if (storedLocationData) {
+        const locationData = JSON.parse(storedLocationData);
+        // Set the loaded data to your state variables
+        if (locationData.city) {setSelectedCity(locationData.city);}
+        if (locationData.address) {setAddressDetails(locationData.address);}
+        if (locationData.notes) {setLocationNotes(locationData.notes);}
+        if (locationData.mapUrl) {setLocationUrl(locationData.mapUrl);}
+
+
+        if (locationData.coordinates) {
+            setSelectedLocation(locationData.coordinates);
+             setLocationSelected(true);
+            // Set marker position if it exists
+
+        }
+    }
+
+    const storedBookingDetails = localStorage.getItem("bookingDetails");
+    if (storedBookingDetails) {
+      const bookingDetails = JSON.parse(storedBookingDetails);
+      setHours(bookingDetails.hours);
+      setWorkers(bookingDetails.workers);
+      setServiceType(bookingDetails.serviceType);
+      setSelectedOffer(bookingDetails.selectedOffer)
+      setTotalPrice(bookingDetails.totalPrice);
+
+    }
+
+    loadAddress();
+
+  }, []);
 
 
 
@@ -465,6 +518,7 @@ const renderBookingSummary = () => {
             setHours(4);
             setWorkers(1);
 
+ localStorage.setItem("currentTab", currentTab.toString());
 
 
         // Set base price based on booking type
@@ -879,6 +933,7 @@ console.log("selectedTimeSlot", selectedTimeSlot);
     logedin: true,
   };
   localStorage.setItem("user", JSON.stringify(userdata));
+  localStorage.setItem("currentTab", currentTab.toString());
 
 } ;
 
@@ -916,6 +971,48 @@ console.log("selectedTimeSlot", selectedTimeSlot);
         return controlDiv;
     };
 
+const loadAddress = () => {
+  const storedAddress = localStorage.getItem("userAddress");
+  const parsedAddress = storedAddress ? JSON.parse(storedAddress) : {};
+
+  // Initialize with default values first
+  setAddressDetails(parsedAddress.addressDetails || "");
+  if (parsedAddress.coordinates !== null) {
+    setLocationSelected(true);}
+  setLocationNotes(parsedAddress.locationNotes || "");
+  setSelectedCity(parsedAddress.selectedCity || "");
+  setLocationUrl(parsedAddress.locationUrl || "");
+
+  // Only process location URL if it exists and is valid
+  if (parsedAddress.locationUrl) {
+    try {
+      const url = new URL(parsedAddress.locationUrl);
+      const params = new URLSearchParams(url.search);
+      const coordinates = params.get("q");
+
+      if (coordinates) {
+        const [lat, lng] = coordinates.split(",").map(Number);
+
+        // Only update if both coordinates are valid numbers
+        if (!isNaN(lat) && !isNaN(lng)) {
+          setSelectedLocation({ lat, lng });
+
+          // Update map and marker if references exist
+          if (markerRef.current && mapInstanceRef.current) {
+            markerRef.current.setPosition({ lat, lng });
+            mapInstanceRef.current.setCenter({ lat, lng });
+          }
+
+          getAddressFromCoordinates({ lat, lng });
+        }
+      }
+    } catch (error) {
+      console.error("Error processing saved address:", error);
+      // Optionally clear invalid location URL
+      setLocationUrl("");
+    }
+  }
+};
     useEffect(() => {
         // Check if the Google Maps script is loaded and the map container exists
         if (typeof window !== 'undefined' && window.google && mapRef.current && currentTab === 1) {
@@ -1034,7 +1131,7 @@ console.log("selectedTimeSlot", selectedTimeSlot);
           loadAddress();
 
         }
-      }, [currentTab, showDetails, t.locationSelection.searchPlaceholder]);
+      }, [currentTab, showDetails, t.locationSelection.searchPlaceholder,  loadAddress]);
 
 const converttime = (i: number) => {
   if (offerTimeSlots[i].timeSlot==='9:00-9:30') {
@@ -1163,48 +1260,6 @@ const getAddressFromCoordinates = (location: google.maps.LatLngLiteral) => {
     });
 };
 
-const loadAddress = () => {
-  const storedAddress = localStorage.getItem("userAddress");
-  const parsedAddress = storedAddress ? JSON.parse(storedAddress) : {};
-
-  // Initialize with default values first
-  setAddressDetails(parsedAddress.addressDetails || "");
-  if (parsedAddress.coordinates !== null) {
-    setLocationSelected(true);}
-  setLocationNotes(parsedAddress.locationNotes || "");
-  setSelectedCity(parsedAddress.selectedCity || "");
-  setLocationUrl(parsedAddress.locationUrl || "");
-
-  // Only process location URL if it exists and is valid
-  if (parsedAddress.locationUrl) {
-    try {
-      const url = new URL(parsedAddress.locationUrl);
-      const params = new URLSearchParams(url.search);
-      const coordinates = params.get("q");
-
-      if (coordinates) {
-        const [lat, lng] = coordinates.split(",").map(Number);
-
-        // Only update if both coordinates are valid numbers
-        if (!isNaN(lat) && !isNaN(lng)) {
-          setSelectedLocation({ lat, lng });
-
-          // Update map and marker if references exist
-          if (markerRef.current && mapInstanceRef.current) {
-            markerRef.current.setPosition({ lat, lng });
-            mapInstanceRef.current.setCenter({ lat, lng });
-          }
-
-          getAddressFromCoordinates({ lat, lng });
-        }
-      }
-    } catch (error) {
-      console.error("Error processing saved address:", error);
-      // Optionally clear invalid location URL
-      setLocationUrl("");
-    }
-  }
-};
 
 
 
@@ -1225,6 +1280,32 @@ const opject = {
     const handleNext = async () => {
 
         // Add validation for location tab
+               localStorage.setItem("currentTab", (currentTab+1).toString());
+
+        if (currentTab === 0) {
+          const bookingDetails = {
+            hours,
+            workers,
+            serviceType,
+            selectedOffer,
+            totalPrice
+
+          };
+
+          localStorage.setItem("bookingDetails", JSON.stringify(bookingDetails));
+        }
+
+                if (currentTab === 1) {
+                    const locationData = {
+                        coordinates: selectedLocation,
+                        city: selectedCity,
+                        address: addressDetails,
+                        notes: locationNotes,
+                        mapUrl: locationUrl
+                    };
+
+                    localStorage.setItem("locationData", JSON.stringify(locationData));
+                }
    if (currentTab === 0) {
 
 loadAddress();
@@ -1377,13 +1458,17 @@ if (user?.phone.substring(0, 2) !== "05") {
         if (currentTab < 3) {
             setCurrentTab(currentTab + 1);
         }
+        
     };
 
     const handlePrev = () => {
+
       setDate("");
       setOfferTimeSlots([]);
       setSelectedTime("");
       setSelectedDate("");
+          localStorage.setItem("currentTab", (currentTab-1).toString());
+
         if (currentTab > 0) {
             setCurrentTab(currentTab - 1);
         }
@@ -1565,6 +1650,7 @@ const scrolfunction = () => {
 const handleDateSelection = (day: DisplayDay) => {
   setSelectedTimeSlot(" ");
   setSelectedTime("");
+  localStorage.setItem("currentTab", currentTab.toString());
 
     if (!day.isDisabled) {
       const dateString = `${day.year}-${String(day.month + 1).padStart(2, '0')}-${String(day.day).padStart(2, '0')}`;
