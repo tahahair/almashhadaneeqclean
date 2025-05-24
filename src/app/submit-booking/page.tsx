@@ -70,59 +70,40 @@ const langDict = {
   },
 };
 
-
-  
-
-export default function BookingConfirmation() {
-  // Load language from local storage or default to 'AR'
+// Component that uses useSearchParams - must be wrapped in Suspense
+function BookingContent() {
+  const searchParams = useSearchParams();
   const [lang, setLang] = useState<'EN' | 'AR'>('AR');
-let searchParams: ReturnType<typeof useSearchParams> | null = null;
-
-  function Search() {
-    searchParams = useSearchParams();
-   
-    return <input placeholder="Search..." />
-  }
-
-localStorage.setItem("currentTab", "0");
-localStorage.setItem("selectedTime", "");
-localStorage.setItem("selectedTimeSlot", "");
-
-  useEffect(() => {
-    const storedLang = localStorage.getItem('lang') as 'EN' | 'AR';
-    if (storedLang) {
-      setLang(storedLang);
-    }
-  }, []);
-    const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [bookingData, setBookingData] = useState<BookingData>(defaultBookingData);
 
-
   useEffect(() => {
-    // Load language from local storage on mount
-    const storedLang = localStorage.getItem('lang') as 'EN' | 'AR';
-    if (storedLang) {
-      setLang(storedLang);
+    // Safely access localStorage only on client side
+    if (typeof window !== 'undefined') {
+      // Clear localStorage items
+      localStorage.setItem("currentTab", "0");
+      localStorage.setItem("selectedTime", "");
+      localStorage.setItem("selectedTimeSlot", "");
+
+      // Load language from local storage
+      const storedLang = localStorage.getItem('lang') as 'EN' | 'AR';
+      if (storedLang) {
+        setLang(storedLang);
+      }
     }
   }, []);
-
-
-
-
-  
 
   useEffect(() => {
     // Function to parse booking data from URL query parameters
     const parseBookingData = () => {
       // Get individual parameters from URL
-      const type = searchParams ? searchParams.get('type') : null;
-      const workers = searchParams ? searchParams.get('workers') : null;
-      const hours = searchParams ? searchParams.get('hours') : null;
-      const location = searchParams ? searchParams.get('location') : null;
-      const time = searchParams ? searchParams.get('time') : null;
-      const date = searchParams ? searchParams.get('date') : null;
-      const price = searchParams ? searchParams.get('price') : null;
-
+      const type = searchParams.get('type');
+      const workers = searchParams.get('workers');
+      const hours = searchParams.get('hours');
+      const location = searchParams.get('location');
+      const time = searchParams.get('time');
+      const date = searchParams.get('date');
+      const price = searchParams.get('price');
 
       // If we have at least some of the parameters, create a new booking data object
       if (type || workers || hours || location || time || date || price) {
@@ -166,9 +147,6 @@ localStorage.setItem("selectedTimeSlot", "");
 
     parseBookingData();
   }, [searchParams]);
-
-
-
 
   const showSuccessPopup = (): void => {
     const popup = document.getElementById('successPopup');
@@ -331,22 +309,15 @@ localStorage.setItem("selectedTimeSlot", "");
       }
     );
   };
- 
 
   return (
     <>
-
       {/* Loading Spinner */}
       {isLoading && (
-      <div>
-        <Suspense>
-          <Search />
-        </Suspense>
         <div className="loading-container">
           <div className="loading-spinner"></div>
           <div className="loading-text">{langDict[lang].loadingData}</div>
         </div>
-      </div>
       )}
 
       <div className="celebration-container" id="celebrationContainer"></div>
@@ -469,7 +440,7 @@ localStorage.setItem("selectedTimeSlot", "");
           margin-top: 40px;
           position: relative;
           overflow: hidden;
-          text-align: ${lang === 'AR' ? 'right' : 'left'}; /* For right-to-left text */
+          text-align: ${lang === 'AR' ? 'right' : 'left'};
         }
 
         .success-icon {
@@ -538,7 +509,7 @@ localStorage.setItem("selectedTimeSlot", "");
           font-size: 18px;
           font-weight: bold;
           color: var(--secondary-color);
-          text-align: left; /* Keep left aligned for numbers */
+          text-align: left;
         }
 
         .support-info {
@@ -558,7 +529,7 @@ localStorage.setItem("selectedTimeSlot", "");
           font-weight: bold;
           margin-top: 10px;
           transition: all 0.3s ease;
-          flex-direction: ${lang === 'AR' ? 'row-reverse' : 'row'}; /* Reverse for Arabic */
+          flex-direction: ${lang === 'AR' ? 'row-reverse' : 'row'};
         }
 
         .home-button {
@@ -641,6 +612,7 @@ localStorage.setItem("selectedTimeSlot", "");
           height: 100%;
           background-color: rgba(255, 255, 255, 0.9);
           display: flex;
+          flex-direction: column;
           justify-content: center;
           align-items: center;
           z-index: 50;
@@ -656,8 +628,7 @@ localStorage.setItem("selectedTimeSlot", "");
         }
 
         .loading-text {
-          position: absolute;
-          margin-top: 80px;
+          margin-top: 20px;
           font-size: 16px;
           color: var(--primary-color);
           font-weight: bold;
@@ -719,10 +690,23 @@ localStorage.setItem("selectedTimeSlot", "");
 
           .loading-text {
             font-size: 14px;
-            margin-top: 70px;
           }
         }
       `}</style>
     </>
+  );
+}
+
+// Main component that wraps BookingContent in Suspense
+export default function BookingConfirmation() {
+  return (
+    <Suspense fallback={
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <div className="loading-text">Loading...</div>
+      </div>
+    }>
+      <BookingContent />
+    </Suspense>
   );
 }
