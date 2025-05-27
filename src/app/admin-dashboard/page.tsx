@@ -1356,20 +1356,19 @@ const ReservationManager = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div>
                             <label htmlFor="extraHours" className="block text-gray-700 text-sm font-bold mb-1">{t('extraHoursLabelForm') as string}</label>
-                            <input type="number" id="extraHours" name="extraHours" min="0" value={newReservation.extraHours} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
+                            <input  id="extraHours" name="extraHours" min="0" value={newReservation.extraHours} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
                         </div>
                         <div>
                             <label htmlFor="workerCount" className="block text-gray-700 text-sm font-bold mb-1">{t('workerCountLabelForm') as string}</label>
-                            <input type="number" id="workerCount" name="workerCount" min="1" value={newReservation.workerCount} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
+                            <input  id="workerCount" name="workerCount" min="1" value={newReservation.workerCount} onChange={handleFormChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm" />
                         </div>
                         <div>
                             <label htmlFor="price" className="block text-gray-700 text-sm font-bold mb-1">{t('priceLabelForm') as string}</label>
                             <input
-                                type="number"
                                 id="price"
                                 name="price"
                                 min="0"
-                                step="0.01"
+                                step="1"
                                 value={newReservation.price}
                                 onChange={handleFormChange}
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-300 text-sm"
